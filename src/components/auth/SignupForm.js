@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { signup } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const validationSchema = Yup.object({
     firstName: Yup.string()
@@ -29,6 +29,7 @@ const validationSchema = Yup.object({
 
 const SignupForm = () => {
     const { startVerification } = useAuth();
+    const navigate = useNavigate();
 
     const formik = useFormik({
         initialValues: {
@@ -45,6 +46,7 @@ const SignupForm = () => {
                 await signup(values);
                 toast.success('Please check your email for verification code.');
                 startVerification(values.email);
+                navigate('/verify-email');
             } catch (error) {
                 toast.error(error.toString());
             } finally {

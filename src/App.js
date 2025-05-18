@@ -8,6 +8,7 @@ import LoginPage from './pages/auth/LoginPage';
 import Layout from "./components/Layout";
 import HomePage from "./pages/Homepage";
 import ConsultancyPage from "./pages/Consultancy";
+import OTPVerification from './components/auth/OTPVerification';
 // import more pages...
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
                         <Route path="consultancy" element={<ConsultancyPage />} />
                         <Route path="signup" element={<SignupPage />} />
                         <Route path="login" element={<LoginPage />} />
+                        <Route path="verify-email" element={<OTPVerification />} />
                         {/* Add other routes here */}
                     </Route>
                 </Routes>
