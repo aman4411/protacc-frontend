@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { FaEnvelope, FaPhoneAlt, FaFacebookF, FaInstagram, FaYoutube, FaLinkedinIn } from "react-icons/fa";
-import { FaWhatsapp } from "react-icons/fa6";
+import { FaEnvelope, FaPhoneAlt, FaFacebookF, FaInstagram, FaYoutube, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
 
 export default function Footer() {
     return (
@@ -18,8 +17,8 @@ export default function Footer() {
                     </div>
                     <div className="flex items-center gap-3 group">
                         <FaPhoneAlt className="text-lg group-hover:text-indigo-300 transition-colors" />
-                        <a href="tel:+917206071581" className="hover:text-indigo-300 transition-colors">
-                            +91 7206071581
+                        <a href="tel:+919817889933" className="hover:text-indigo-300 transition-colors">
+                            +91 9817889933
                         </a>
                     </div>
                 </div>
@@ -108,7 +107,7 @@ export default function Footer() {
 
             {/* WhatsApp Floating Button */}
             <a
-                href="https://wa.me/917206071581"
+                href="https://wa.me/919817889933"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 hover:scale-110 z-50"

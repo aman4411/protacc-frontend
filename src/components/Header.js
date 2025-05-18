@@ -122,8 +122,8 @@ export default function Header() {
                 </div>
 
                 <div className="hidden md:flex flex-wrap items-center gap-8 text-indigo-600 text-sm">
-                    <a href="tel:+917206071581" className="flex items-center gap-2 hover:text-indigo-700 transition-colors">
-                        <FaPhoneAlt className="text-base" /> +91 7206071581
+                    <a href="tel:+919817889933" className="flex items-center gap-2 hover:text-indigo-700 transition-colors">
+                        <FaPhoneAlt className="text-base" /> +91 9817889933
                     </a>
                     <div className="flex items-center gap-4">
                         <Link to="/signup" className="flex items-center gap-2 hover:text-indigo-700 transition-colors">

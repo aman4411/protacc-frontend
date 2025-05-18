@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaCheckCircle, FaUserTie, FaChartLine, FaClock, FaAward } from 'react-icons/fa';
+import { FaCheckCircle, FaUserTie, FaChartLine } from 'react-icons/fa';
 import CountUp from 'react-countup';
 
 export default function HomePage() {
