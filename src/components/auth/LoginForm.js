@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { login } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const validationSchema = Yup.object({
     email: Yup.string()
@@ -16,6 +16,11 @@ const validationSchema = Yup.object({
 
 const LoginForm = () => {
     const { login: authLogin } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    // Get the redirect path from location state or default to '/'
+    const from = location.state?.from?.pathname || '/';
 
     const formik = useFormik({
         initialValues: {
@@ -26,8 +31,11 @@ const LoginForm = () => {
         onSubmit: async (values, { setSubmitting }) => {
             try {
                 const response = await login(values);
-                authLogin(response.token);
+                // Pass both token and user data to auth context
+                authLogin(response);
                 toast.success('Successfully logged in!');
+                // Redirect to the intended page or home
+                navigate(from, { replace: true });
             } catch (error) {
                 toast.error(error.toString());
             } finally {

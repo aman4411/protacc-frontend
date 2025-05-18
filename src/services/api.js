@@ -15,6 +15,20 @@ const api = axios.create({
     withCredentials: true,
 });
 
+// Add request interceptor for authentication
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('protacc_auth_token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 // Add request interceptor for logging
 if (process.env.REACT_APP_ENABLE_LOGS === 'true') {
     api.interceptors.request.use(
@@ -53,7 +67,14 @@ if (process.env.REACT_APP_ENABLE_LOGS === 'true') {
 export const signup = async (userData) => {
     try {
         const response = await api.post('/auth/signup', userData);
-        return response.data;
+        const token = response.headers.authorization?.replace('Bearer ', '');
+        if (!token) {
+            throw new Error('No token received');
+        }
+        return {
+            token,
+            user: response.data
+        };
     } catch (error) {
         throw error.response?.data?.error || 'An error occurred during signup';
     }
@@ -62,7 +83,14 @@ export const signup = async (userData) => {
 export const login = async (credentials) => {
     try {
         const response = await api.post('/auth/login', credentials);
-        return response.data;
+        const token = response.headers.authorization?.replace('Bearer ', '');
+        if (!token) {
+            throw new Error('No token received');
+        }
+        return {
+            token,
+            user: response.data
+        };
     } catch (error) {
         throw error.response?.data?.error || 'Invalid email or password';
     }
@@ -74,5 +102,23 @@ export const verifyEmail = async (verificationData) => {
         return response.data;
     } catch (error) {
         throw error.response?.data?.error || 'An error occurred during email verification';
+    }
+};
+
+export const getProfile = async () => {
+    try {
+        const response = await api.get('/user/profile');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch profile';
+    }
+};
+
+export const getUsers = async () => {
+    try {
+        const response = await api.get('/admin/users');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch users';
     }
 }; 

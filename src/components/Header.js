@@ -7,16 +7,22 @@ import {
     FaSearch,
     FaBars,
     FaTimes,
+    FaSignOutAlt,
 } from "react-icons/fa";
 import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Header() {
+    const { user, logout, isAuthenticated } = useAuth();
     const [openMenu, setOpenMenu] = useState(null);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [openSubMenu, setOpenSubMenu] = useState(null);
+    const [profileOpen, setProfileOpen] = useState(false);
     const navRef = useRef(null);
+    const profileRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth <= 768);
@@ -31,6 +37,9 @@ export default function Header() {
                 setOpenMenu(null);
                 setOpenSubMenu(null);
             }
+            if (profileRef.current && !profileRef.current.contains(e.target)) {
+                setProfileOpen(false);
+            }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -38,6 +47,12 @@ export default function Header() {
 
     const toggleMenu = (menu) => {
         setOpenMenu(openMenu === menu ? null : menu);
+    };
+
+    const handleLogout = () => {
+        logout();
+        setProfileOpen(false);
+        navigate('/');
     };
 
     const menuItems = [
@@ -121,15 +136,168 @@ export default function Header() {
                     </button>
                 </div>
 
+                {/* Mobile Menu */}
+                {mobileOpen && (
+                    <div className="md:hidden w-full">
+                        <div className="flex flex-col space-y-4 py-4 border-t border-gray-100">
+                            {isAuthenticated ? (
+                                <>
+                                    {/* User Profile Section */}
+                                    <div className="flex items-center px-4 py-2 bg-indigo-50 rounded-lg">
+                                        <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                                            <span className="text-indigo-600 font-medium">
+                                                {user?.firstName?.charAt(0)}
+                                                {user?.lastName?.charAt(0)}
+                                            </span>
+                                        </div>
+                                        <div className="ml-3">
+                                            <p className="text-sm font-medium text-gray-900">{user?.firstName} {user?.lastName}</p>
+                                            <p className="text-xs text-gray-500">{user?.email}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Profile Actions */}
+                                    <Link
+                                        to="/profile"
+                                        className="flex items-center px-4 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                        onClick={() => setMobileOpen(false)}
+                                    >
+                                        <FaUser className="mr-3" />
+                                        Profile
+                                    </Link>
+
+                                    {user?.role === 'admin' && (
+                                        <Link
+                                            to="/admin"
+                                            className="flex items-center px-4 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                            onClick={() => setMobileOpen(false)}
+                                        >
+                                            <svg className="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                            Admin Dashboard
+                                        </Link>
+                                    )}
+
+                                    <button
+                                        onClick={() => {
+                                            handleLogout();
+                                            setMobileOpen(false);
+                                        }}
+                                        className="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors w-full text-left"
+                                    >
+                                        <FaSignOutAlt className="mr-3" />
+                                        Logout
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <Link
+                                        to="/login"
+                                        className="flex items-center px-4 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                        onClick={() => setMobileOpen(false)}
+                                    >
+                                        <FaUser className="mr-3" />
+                                        Login
+                                    </Link>
+                                    <Link
+                                        to="/signup"
+                                        className="flex items-center px-4 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                        onClick={() => setMobileOpen(false)}
+                                    >
+                                        <svg className="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                                        </svg>
+                                        Register
+                                    </Link>
+                                </>
+                            )}
+
+                            {/* Common Mobile Menu Items */}
+                            <div className="border-t border-gray-100 pt-4">
+                                <a
+                                    href="tel:+919817889933"
+                                    className="flex items-center px-4 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                >
+                                    <FaPhoneAlt className="mr-3" />
+                                    +91 9817889933
+                                </a>
+                                <Link
+                                    to="/track-order"
+                                    className="flex items-center px-4 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                    onClick={() => setMobileOpen(false)}
+                                >
+                                    <svg className="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                    </svg>
+                                    Track Order
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Desktop Menu */}
                 <div className="hidden md:flex flex-wrap items-center gap-8 text-indigo-600 text-sm">
                     <a href="tel:+919817889933" className="flex items-center gap-2 hover:text-indigo-700 transition-colors">
                         <FaPhoneAlt className="text-base" /> +91 9817889933
                     </a>
                     <div className="flex items-center gap-4">
-                        <Link to="/signup" className="flex items-center gap-2 hover:text-indigo-700 transition-colors">
-                            <FaUser className="text-base" /> Register
-                        </Link>
-                        <span className="text-gray-300">|</span>
+                        {isAuthenticated ? (
+                            <div ref={profileRef} className="relative">
+                                <button
+                                    onClick={() => setProfileOpen(!profileOpen)}
+                                    className="flex items-center gap-2 hover:text-indigo-700 transition-colors"
+                                >
+                                    <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                                        <span className="text-indigo-600 font-medium">
+                                            {user?.firstName?.charAt(0)}
+                                            {user?.lastName?.charAt(0)}
+                                        </span>
+                                    </div>
+                                    <span>{user?.firstName}</span>
+                                    <MdKeyboardArrowDown className={`transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
+                                </button>
+                                
+                                {profileOpen && (
+                                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100">
+                                        <Link
+                                            to="/profile"
+                                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                            onClick={() => setProfileOpen(false)}
+                                        >
+                                            <FaUser className="text-indigo-600" />
+                                            Profile
+                                        </Link>
+                                        {user?.role === 'admin' && (
+                                            <Link
+                                                to="/admin"
+                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                onClick={() => setProfileOpen(false)}
+                                            >
+                                                Admin Dashboard
+                                            </Link>
+                                        )}
+                                        <button
+                                            onClick={handleLogout}
+                                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                                        >
+                                            <FaSignOutAlt className="text-indigo-600" />
+                                            Logout
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <>
+                                <Link to="/signup" className="flex items-center gap-2 hover:text-indigo-700 transition-colors">
+                                    <FaUser className="text-base" /> Register
+                                </Link>
+                                <span className="text-gray-300">|</span>
+                                <Link to="/login" className="hover:text-indigo-700 transition-colors">Login</Link>
+                            </>
+                        )}
                         <Link to="/track-order" className="hover:text-indigo-700 transition-colors">Track Order</Link>
                     </div>
                     <Link to="/cart" className="relative hover:text-indigo-700 transition-colors">

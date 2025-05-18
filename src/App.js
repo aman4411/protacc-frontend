@@ -9,6 +9,9 @@ import Layout from "./components/Layout";
 import HomePage from "./pages/Homepage";
 import ConsultancyPage from "./pages/Consultancy";
 import OTPVerification from './components/auth/OTPVerification';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import ProfilePage from './pages/ProfilePage';
+import AdminDashboard from './pages/admin/Dashboard';
 // import more pages...
 
 function App() {
@@ -17,12 +20,32 @@ function App() {
             <Router>
                 <Routes>
                     <Route path="/" element={<Layout />}>
+                        {/* Public Routes */}
                         <Route index element={<HomePage />} />
-                        <Route path="consultancy" element={<ConsultancyPage />} />
                         <Route path="signup" element={<SignupPage />} />
                         <Route path="login" element={<LoginPage />} />
                         <Route path="verify-email" element={<OTPVerification />} />
-                        {/* Add other routes here */}
+                        <Route path="consultancy" element={<ConsultancyPage />} />
+
+                        {/* Protected Routes */}
+                        <Route
+                            path="profile"
+                            element={
+                                <ProtectedRoute>
+                                    <ProfilePage />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        {/* Admin Routes */}
+                        <Route
+                            path="admin/*"
+                            element={
+                                <ProtectedRoute roles={['admin']}>
+                                    <AdminDashboard />
+                                </ProtectedRoute>
+                            }
+                        />
                     </Route>
                 </Routes>
                 <Toaster position="top-right" />
