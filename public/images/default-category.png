@@ -1,0 +1,5 @@
+This is a binary file and cannot be edited directly. Please create the default category image manually by:
+
+1. Creating a 'public/images' directory in your frontend project
+2. Adding a default-category.png image there
+3. The image should be a simple, professional icon around 64x64 pixels 

@@ -8,7 +8,7 @@ console.log('API Base URL:', API_BASE_URL);
 
 // Create axios instance with default config
 const api = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: `${API_BASE_URL}/api/v1`,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -63,6 +63,18 @@ if (process.env.REACT_APP_ENABLE_LOGS === 'true') {
         }
     );
 }
+
+// Add response interceptor to handle errors
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            localStorage.removeItem('protacc_auth_token');
+            window.location.href = '/login';
+        }
+        return Promise.reject(error);
+    }
+);
 
 export const signup = async (userData) => {
     try {
@@ -120,5 +132,109 @@ export const getUsers = async () => {
         return response.data;
     } catch (error) {
         throw error.response?.data?.error || 'Failed to fetch users';
+    }
+};
+
+// Service Categories
+export const getServiceCategories = async () => {
+    try {
+        const response = await api.get('/services/categories');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch service categories';
+    }
+};
+
+// Services
+export const getServices = async (categoryId = null) => {
+    try {
+        const params = categoryId ? { category_id: categoryId } : {};
+        const response = await api.get('/services', { params });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch services';
+    }
+};
+
+export const getServiceBySlug = async (slug) => {
+    try {
+        const response = await api.get(`/services/slug/${slug}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch service details';
+    }
+};
+
+// Cart
+export const getCartItems = async () => {
+    try {
+        const response = await api.get('/cart');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch cart items';
+    }
+};
+
+export const addToCart = async (serviceId) => {
+    try {
+        const response = await api.post(`/cart/${serviceId}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to add item to cart';
+    }
+};
+
+export const removeFromCart = async (serviceId) => {
+    try {
+        const response = await api.delete(`/cart/${serviceId}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to remove item from cart';
+    }
+};
+
+// Orders
+export const createOrder = async (serviceId) => {
+    try {
+        const response = await api.post(`/orders/services/${serviceId}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to create order';
+    }
+};
+
+export const getOrders = async () => {
+    try {
+        const response = await api.get('/orders');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch orders';
+    }
+};
+
+export const getOrderByNumber = async (orderNumber) => {
+    try {
+        const response = await api.get(`/orders/${orderNumber}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch order details';
+    }
+};
+
+export const updateOrderStatus = async (orderId, status, notes) => {
+    try {
+        const response = await api.patch(`/orders/${orderId}/status`, { status, notes });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update order status';
+    }
+};
+
+export const getOrderStatusHistory = async (orderId) => {
+    try {
+        const response = await api.get(`/orders/${orderId}/history`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch order history';
     }
 }; 

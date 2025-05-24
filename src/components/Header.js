@@ -8,6 +8,7 @@ import {
     FaBars,
     FaTimes,
     FaSignOutAlt,
+    FaClipboardList,
 } from "react-icons/fa";
 import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
@@ -139,46 +140,40 @@ export default function Header() {
                 {/* Mobile Menu */}
                 {mobileOpen && (
                     <div className="md:hidden w-full">
-                        <div className="flex flex-col space-y-4 py-4 border-t border-gray-100">
+                        <div className="bg-white py-4 px-4 space-y-4">
                             {isAuthenticated ? (
                                 <>
-                                    {/* User Profile Section */}
-                                    <div className="flex items-center px-4 py-2 bg-indigo-50 rounded-lg">
-                                        <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                                            <span className="text-indigo-600 font-medium">
-                                                {user?.firstName?.charAt(0)}
-                                                {user?.lastName?.charAt(0)}
-                                            </span>
+                                    <div className="flex items-center justify-between gap-4 pb-4 border-b border-gray-100">
+                                        <div>
+                                            <p className="font-semibold text-gray-900">{user?.firstName} {user?.lastName}</p>
+                                            <p className="text-sm text-gray-600">{user?.email}</p>
                                         </div>
-                                        <div className="ml-3">
-                                            <p className="text-sm font-medium text-gray-900">{user?.firstName} {user?.lastName}</p>
-                                            <p className="text-xs text-gray-500">{user?.email}</p>
+                                        <div className="flex items-center gap-4">
+                                            <Link
+                                                to="/cart"
+                                                className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                                onClick={() => setMobileOpen(false)}
+                                            >
+                                                <FaShoppingCart className="text-xl" />
+                                            </Link>
+                                            <Link
+                                                to="/orders"
+                                                className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                                onClick={() => setMobileOpen(false)}
+                                            >
+                                                <FaClipboardList className="text-xl" />
+                                            </Link>
                                         </div>
                                     </div>
 
-                                    {/* Profile Actions */}
                                     <Link
                                         to="/profile"
                                         className="flex items-center px-4 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                                         onClick={() => setMobileOpen(false)}
                                     >
                                         <FaUser className="mr-3" />
-                                        Profile
+                                        Profile Settings
                                     </Link>
-
-                                    {user?.role === 'admin' && (
-                                        <Link
-                                            to="/admin"
-                                            className="flex items-center px-4 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                                            onClick={() => setMobileOpen(false)}
-                                        >
-                                            <svg className="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                            Admin Dashboard
-                                        </Link>
-                                    )}
 
                                     <button
                                         onClick={() => {
@@ -214,7 +209,6 @@ export default function Header() {
                                 </>
                             )}
 
-                            {/* Common Mobile Menu Items */}
                             <div className="border-t border-gray-100 pt-4">
                                 <a
                                     href="tel:+919817889933"
@@ -245,65 +239,81 @@ export default function Header() {
                     </a>
                     <div className="flex items-center gap-4">
                         {isAuthenticated ? (
-                            <div ref={profileRef} className="relative">
-                                <button
-                                    onClick={() => setProfileOpen(!profileOpen)}
+                            <>
+                                <Link
+                                    to="/cart"
+                                    className="flex items-center gap-2 hover:text-indigo-700 transition-colors relative"
+                                >
+                                    <FaShoppingCart className="text-xl" />
+                                    <span className="sr-only">Cart</span>
+                                </Link>
+                                <Link
+                                    to="/orders"
                                     className="flex items-center gap-2 hover:text-indigo-700 transition-colors"
                                 >
-                                    <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                                        <span className="text-indigo-600 font-medium">
-                                            {user?.firstName?.charAt(0)}
-                                            {user?.lastName?.charAt(0)}
-                                        </span>
-                                    </div>
-                                    <span>{user?.firstName}</span>
-                                    <MdKeyboardArrowDown className={`transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
-                                </button>
-                                
-                                {profileOpen && (
-                                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100">
-                                        <Link
-                                            to="/profile"
-                                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                                            onClick={() => setProfileOpen(false)}
-                                        >
-                                            <FaUser className="text-indigo-600" />
-                                            Profile
-                                        </Link>
-                                        {user?.role === 'admin' && (
+                                    <FaClipboardList className="text-xl" />
+                                    <span className="sr-only">Orders</span>
+                                </Link>
+                                <div className="relative" ref={profileRef}>
+                                    <button
+                                        onClick={() => setProfileOpen(!profileOpen)}
+                                        className="flex items-center gap-2 hover:text-indigo-700 transition-colors"
+                                    >
+                                        <FaUser className="text-xl" />
+                                        <span className="sr-only">Profile</span>
+                                    </button>
+                                    {/* Profile Dropdown */}
+                                    {profileOpen && (
+                                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
                                             <Link
-                                                to="/admin"
-                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                to="/profile"
+                                                className="block px-4 py-2 text-gray-800 hover:bg-indigo-50 hover:text-indigo-600"
                                                 onClick={() => setProfileOpen(false)}
                                             >
-                                                Admin Dashboard
+                                                Profile Settings
                                             </Link>
-                                        )}
-                                        <button
-                                            onClick={handleLogout}
-                                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                                        >
-                                            <FaSignOutAlt className="text-indigo-600" />
-                                            Logout
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
+                                            <Link
+                                                to="/orders"
+                                                className="block px-4 py-2 text-gray-800 hover:bg-indigo-50 hover:text-indigo-600"
+                                                onClick={() => setProfileOpen(false)}
+                                            >
+                                                My Orders
+                                            </Link>
+                                            <button
+                                                onClick={() => {
+                                                    handleLogout();
+                                                    setProfileOpen(false);
+                                                }}
+                                                className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
+                                            >
+                                                Logout
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </>
                         ) : (
                             <>
-                                <Link to="/signup" className="flex items-center gap-2 hover:text-indigo-700 transition-colors">
-                                    <FaUser className="text-base" /> Register
+                                <Link
+                                    to="/signup"
+                                    className="flex items-center gap-2 hover:text-indigo-700 transition-colors"
+                                >
+                                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                                    </svg>
+                                    <span>Register</span>
                                 </Link>
                                 <span className="text-gray-300">|</span>
-                                <Link to="/login" className="hover:text-indigo-700 transition-colors">Login</Link>
+                                <Link
+                                    to="/login"
+                                    className="hover:text-indigo-700 transition-colors"
+                                >
+                                    Login
+                                </Link>
                             </>
                         )}
                         <Link to="/track-order" className="hover:text-indigo-700 transition-colors">Track Order</Link>
                     </div>
-                    <Link to="/cart" className="relative hover:text-indigo-700 transition-colors">
-                        <FaShoppingCart className="text-lg" />
-                        <span className="absolute -top-2 -right-2 bg-indigo-700 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">1</span>
-                    </Link>
                     <Link to="/search" className="hover:text-indigo-700 transition-colors">
                         <FaSearch className="text-lg" />
                     </Link>
