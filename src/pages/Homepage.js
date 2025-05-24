@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaCheckCircle, FaUserTie, FaChartLine, FaArrowRight, FaFileAlt, FaHandshake, FaChartBar, FaSpinner } from 'react-icons/fa';
+import { FaCheckCircle, FaChartLine, FaArrowRight, FaSpinner, FaHandshake } from 'react-icons/fa';
 import CountUp from 'react-countup';
 import { useAuth } from '../context/AuthContext';
 import { getServiceCategories } from '../services/api';
@@ -57,45 +57,6 @@ export default function HomePage() {
             }
         };
     }, []);
-
-    const services = [
-        {
-            title: "Business Registration",
-            description: "Expert guidance on choosing the right business structure - Private Limited, LLP, OPC, or Partnership.",
-            icon: <FaUserTie className="text-4xl text-indigo-600 mb-4" />,
-            link: "/business-startup-registrations/private-limited-company-registration"
-        },
-        {
-            title: "Tax & Compliance",
-            description: "Comprehensive tax solutions including GST, Income Tax, TDS & international taxation with expert advisory.",
-            icon: <FaFileAlt className="text-4xl text-indigo-600 mb-4" />,
-            link: "/compliances/income-tax/itr-1"
-        },
-        {
-            title: "Audit & Assurance",
-            description: "Statutory, internal & tax audits ensuring compliance and providing valuable business insights.",
-            icon: <FaCheckCircle className="text-4xl text-indigo-600 mb-4" />,
-            link: "/services/audit"
-        },
-        {
-            title: "Business Advisory",
-            description: "Strategic financial planning, risk assessment, and growth advisory for sustainable business success.",
-            icon: <FaChartLine className="text-4xl text-indigo-600 mb-4" />,
-            link: "/consultancy"
-        },
-        {
-            title: "Virtual CFO Services",
-            description: "Professional financial management and strategic guidance for growing businesses.",
-            icon: <FaChartBar className="text-4xl text-indigo-600 mb-4" />,
-            link: "/services/virtual-cfo"
-        },
-        {
-            title: "International Business",
-            description: "Cross-border taxation, FEMA compliance, and global business expansion support.",
-            icon: <FaHandshake className="text-4xl text-indigo-600 mb-4" />,
-            link: "/services/international"
-        }
-    ];
 
     const stats = [
         { number: 1000, label: "Happy Clients", suffix: "+" },

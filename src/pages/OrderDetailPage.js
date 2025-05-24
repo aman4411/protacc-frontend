@@ -5,8 +5,8 @@ import toast from 'react-hot-toast';
 import { getOrderByNumber, getOrderStatusHistory } from '../services/api';
 
 const OrderStatusBadge = ({ status }) => {
-    const getStatusColor = (status) => {
-        switch (status) {
+    const getStatusColor = (orderStatus) => {
+        switch (orderStatus) {
             case 'pending_payment':
                 return 'bg-yellow-100 text-yellow-800';
             case 'payment_received':
@@ -28,8 +28,8 @@ const OrderStatusBadge = ({ status }) => {
         }
     };
 
-    const formatStatus = (status) => {
-        return status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    const formatStatus = (orderStatus) => {
+        return orderStatus.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     };
 
     return (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaShoppingCart, FaSpinner, FaClock, FaCheckCircle, FaFileAlt } from 'react-icons/fa';
+import { FaShoppingCart, FaSpinner, FaCheckCircle, FaClock, FaFileAlt } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { getServiceBySlug, addToCart } from '../services/api';
