@@ -153,6 +153,80 @@ export const getAdminOrders = async (params = {}) => {
     }
 };
 
+// Admin Service Management
+export const getAdminServices = async (params = {}) => {
+    try {
+        const response = await api.get('/admin/services', { params });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch services';
+    }
+};
+
+export const createService = async (serviceData) => {
+    try {
+        const response = await api.post('/admin/services', serviceData);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to create service';
+    }
+};
+
+export const updateService = async (serviceId, serviceData) => {
+    try {
+        const response = await api.put(`/admin/services/${serviceId}`, serviceData);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update service';
+    }
+};
+
+export const deleteService = async (serviceId) => {
+    try {
+        const response = await api.delete(`/admin/services/${serviceId}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to delete service';
+    }
+};
+
+// Admin Category Management  
+export const getAdminCategories = async () => {
+    try {
+        const response = await api.get('/admin/categories');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch categories';
+    }
+};
+
+export const createCategory = async (categoryData) => {
+    try {
+        const response = await api.post('/admin/categories', categoryData);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to create category';
+    }
+};
+
+export const updateCategory = async (categoryId, categoryData) => {
+    try {
+        const response = await api.put(`/admin/categories/${categoryId}`, categoryData);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update category';
+    }
+};
+
+export const deleteCategory = async (categoryId) => {
+    try {
+        const response = await api.delete(`/admin/categories/${categoryId}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to delete category';
+    }
+};
+
 // Service Categories
 export const getServiceCategories = async () => {
     try {
