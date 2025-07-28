@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaSpinner, FaTrash, FaShoppingBag, FaShoppingCart } from 'react-icons/fa';
+import { FaSpinner, FaTrash, FaShoppingBag, FaShoppingCart, FaCreditCard } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
-import { getCartItems, removeFromCart, createOrderFromCart } from '../services/api';
+import { getCartItems, removeFromCart, createOrderFromCart, createPaymentOrder, verifyPayment } from '../services/api';
 
 const CartPage = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -16,9 +16,11 @@ const CartPage = () => {
     const fetchCartItems = useCallback(async () => {
         try {
             const items = await getCartItems();
-            setCartItems(items);
+            setCartItems(items || []); // Ensure it's always an array
         } catch (error) {
+            console.error('Failed to fetch cart items:', error);
             toast.error('Failed to load cart items');
+            setCartItems([]); // Set empty array on error
         } finally {
             setLoading(false);
         }
@@ -52,27 +54,106 @@ const CartPage = () => {
             await fetchCartItems();
             toast.success('Item removed from cart');
         } catch (error) {
+            console.error('Failed to remove item:', error);
             toast.error('Failed to remove item from cart');
         } finally {
             setRemovingItem(null);
         }
     };
 
+    const loadRazorpayScript = () => {
+        return new Promise((resolve) => {
+            // Check if Razorpay is already loaded
+            if (window.Razorpay) {
+                resolve(true);
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    };
+
+    const handlePayment = async (order) => {
+        const razorpayLoaded = await loadRazorpayScript();
+        
+        if (!razorpayLoaded) {
+            toast.error('Failed to load payment gateway');
+            return;
+        }
+
+        try {
+            // Create payment order
+            const paymentOrder = await createPaymentOrder(order.id);
+            
+            const options = {
+                key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+                amount: paymentOrder.amount,
+                currency: paymentOrder.currency,
+                name: 'ProtAcc',
+                description: `Payment for Order ${paymentOrder.order_number}`,
+                order_id: paymentOrder.razorpay_order_id,
+                handler: async (response) => {
+                    try {
+                        await verifyPayment({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                        });
+                        
+                        toast.success('Payment successful!');
+                        navigate(`/orders/${order.order_number}`);
+                    } catch (error) {
+                        console.error('Payment verification failed:', error);
+                        toast.error('Payment verification failed: ' + error);
+                    }
+                },
+                prefill: {
+                    name: 'Customer Name',
+                    email: 'customer@example.com',
+                },
+                theme: {
+                    color: '#4f46e5',
+                },
+                modal: {
+                    ondismiss: () => {
+                        toast.error('Payment cancelled');
+                    }
+                }
+            };
+
+            const razorpay = new window.Razorpay(options);
+            razorpay.open();
+        } catch (error) {
+            console.error('Failed to initiate payment:', error);
+            toast.error('Failed to initiate payment: ' + error);
+        }
+    };
+
     const handleCheckout = async () => {
-        if (cartItems.length === 0) {
+        // Add null check here too
+        if (!cartItems || cartItems.length === 0) {
             toast.error('Cart is empty');
             return;
         }
 
         setProcessingOrder(true);
         try {
+            // Create order from cart
             const order = await createOrderFromCart();
-            toast.success('Order created successfully! Redirecting to order details...');
+            toast.success('Order created successfully!');
+            
             // Clear cart since order was successful
             setCartItems([]);
-            // Navigate to order details
-            navigate(`/orders/${order.order_number}`);
+            
+            // Initiate payment
+            await handlePayment(order);
+            
         } catch (error) {
+            console.error('Failed to create order:', error);
             toast.error('Failed to create order: ' + error);
         } finally {
             setProcessingOrder(false);
@@ -80,8 +161,23 @@ const CartPage = () => {
     };
 
     const calculateTotals = () => {
-        const totalAmount = cartItems.reduce((sum, item) => sum + item.service.price, 0);
-        const bookingAmount = cartItems.reduce((sum, item) => sum + item.service.booking_amount, 0);
+        // Add null/empty check for cartItems
+        if (!cartItems || cartItems.length === 0) {
+            return { totalAmount: 0, bookingAmount: 0, remainingAmount: 0 };
+        }
+
+        const totalAmount = cartItems.reduce((sum, item) => {
+            // Add null checks for item and service
+            const price = item?.service?.price || 0;
+            return sum + price;
+        }, 0);
+        
+        const bookingAmount = cartItems.reduce((sum, item) => {
+            // Add null checks for item and service
+            const booking = item?.service?.booking_amount || 0;
+            return sum + booking;
+        }, 0);
+        
         const remainingAmount = totalAmount - bookingAmount;
         
         return { totalAmount, bookingAmount, remainingAmount };
@@ -100,7 +196,7 @@ const CartPage = () => {
         );
     }
 
-    if (cartItems.length === 0) {
+    if (!cartItems || cartItems.length === 0) {
         return (
             <div className="min-h-screen bg-gray-50 py-12">
                 <div className="container mx-auto px-4">
@@ -128,25 +224,31 @@ const CartPage = () => {
                 <div className="grid lg:grid-cols-3 gap-8">
                     {/* Cart Items */}
                     <div className="lg:col-span-2 space-y-6">
-                        {cartItems.map((item) => (
+                        {cartItems && cartItems.map((item) => {
+                            // Add null safety for item and service
+                            if (!item || !item.service) {
+                                return null;
+                            }
+                            
+                            return (
                             <div key={item.id} className="bg-white rounded-xl shadow-lg p-6">
                                 <div className="flex flex-col md:flex-row justify-between gap-6">
                                     <div className="flex-grow">
                                         <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                                            {item.service.name}
+                                            {item.service.name || 'Unknown Service'}
                                         </h3>
-                                        <p className="text-gray-600 mb-4">{item.service.short_description}</p>
+                                        <p className="text-gray-600 mb-4">{item.service.short_description || 'No description available'}</p>
                                         <div className="flex items-center gap-4">
                                             <div>
                                                 <p className="text-sm text-gray-500">Total Price</p>
                                                 <p className="text-lg font-semibold text-indigo-600">
-                                                    ₹{item.service.price}
+                                                    ₹{item.service.price || 0}
                                                 </p>
                                             </div>
                                             <div>
                                                 <p className="text-sm text-gray-500">Booking Amount</p>
                                                 <p className="text-lg font-semibold text-green-600">
-                                                    ₹{item.service.booking_amount}
+                                                    ₹{item.service.booking_amount || 0}
                                                 </p>
                                             </div>
                                         </div>
@@ -167,7 +269,8 @@ const CartPage = () => {
                                     </div>
                                 </div>
                             </div>
-                        ))}
+                        );
+                        })}
                     </div>
 
                     {/* Summary */}
@@ -211,8 +314,8 @@ const CartPage = () => {
                                     </>
                                 ) : (
                                     <>
-                                        <FaShoppingCart />
-                                        Proceed to Checkout
+                                        <FaCreditCard />
+                                        Proceed to Payment
                                     </>
                                 )}
                             </button>

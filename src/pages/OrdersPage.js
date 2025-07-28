@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FaSpinner, FaClipboardList, FaExclamationTriangle } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { getOrders } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const OrderStatusBadge = ({ status }) => {
     const getStatusColor = (status) => {
@@ -43,26 +44,74 @@ const OrdersPage = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { user, token } = useAuth();
+
+    const fetchOrders = async () => {
+        try {
+            setError(null);
+            setLoading(true);
+            console.log('Fetching orders...');
+            console.log('User from context:', user);
+            console.log('Token from context:', token ? 'Present' : 'Missing');
+            
+            // Check if user is authenticated using AuthContext
+            if (!user || !token) {
+                throw new Error('No authentication found. Please log in again.');
+            }
+            
+            // Double-check localStorage token (in case of mismatch)
+            const storedToken = localStorage.getItem('protacc_auth_token');
+            console.log('Token found in localStorage:', storedToken ? 'Yes' : 'No');
+            console.log('Token length:', storedToken ? storedToken.length : 0);
+            
+            if (!storedToken) {
+                throw new Error('No authentication token found. Please log in again.');
+            }
+            
+            console.log('Making API call to get orders...');
+            const data = await getOrders();
+            console.log('Orders fetched successfully:', data);
+            
+            // Ensure data is always an array
+            setOrders(Array.isArray(data) ? data : []);
+        } catch (error) {
+            console.error('Failed to load orders:', error);
+            console.error('Error type:', typeof error);
+            console.error('Error message:', error.message);
+            console.error('Full error object:', error);
+            
+            // Provide more specific error messages
+            let errorMessage = 'Failed to load orders. Please try again.';
+            
+            if (error.message?.includes('No authentication')) {
+                errorMessage = 'Please log in to view your orders.';
+            } else if (error.message?.includes('Invalid or expired token')) {
+                errorMessage = 'Your session has expired. Please log in again.';
+            } else if (error.message?.includes('Authorization header is required')) {
+                errorMessage = 'Authentication required. Please log in again.';
+            } else if (error.message?.includes('Network Error')) {
+                errorMessage = 'Network error. Please check your connection and try again.';
+            } else if (typeof error === 'string') {
+                errorMessage = error;
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
+            
+            setError(errorMessage);
+            setOrders([]); // Ensure orders is always an array
+            toast.error(errorMessage);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                setError(null);
-                const data = await getOrders();
-                // Ensure data is always an array
-                setOrders(Array.isArray(data) ? data : []);
-            } catch (error) {
-                console.error('Failed to load orders:', error);
-                setError('Failed to load orders. Please try again.');
-                setOrders([]); // Ensure orders is always an array
-                toast.error('Failed to load orders');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchOrders();
     }, []);
+
+    const handleRetry = () => {
+        fetchOrders();
+    };
 
     if (loading) {
         return (
@@ -84,7 +133,7 @@ const OrdersPage = () => {
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">Error Loading Orders</h2>
                         <p className="text-gray-600 mb-6">{error}</p>
                         <button
-                            onClick={() => window.location.reload()}
+                            onClick={handleRetry}
                             className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors inline-block"
                         >
                             Try Again

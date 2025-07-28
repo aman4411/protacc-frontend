@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaSpinner, FaArrowLeft, FaClock, FaFileAlt, FaMoneyBillWave } from 'react-icons/fa';
 import toast from 'react-hot-toast';
-import { getOrderByNumber, getOrderStatusHistory } from '../services/api';
+import { getOrderByNumber, getOrderStatusHistory, createPaymentOrder, verifyPayment } from '../services/api';
 
 const OrderStatusBadge = ({ status }) => {
     const getStatusColor = (orderStatus) => {
@@ -45,18 +45,208 @@ const OrderDetailPage = () => {
     const [order, setOrder] = useState(null);
     const [statusHistory, setStatusHistory] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [processingPayment, setProcessingPayment] = useState(false);
+
+    const loadRazorpayScript = () => {
+        return new Promise((resolve) => {
+            // Check if Razorpay is already loaded
+            if (window.Razorpay) {
+                resolve(true);
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    };
+
+    const handlePayment = async () => {
+        if (!order) {
+            toast.error('Order data not available');
+            return;
+        }
+
+        console.log('Starting payment process for order:', order.id);
+        setProcessingPayment(true);
+        
+        try {
+            const razorpayLoaded = await loadRazorpayScript();
+            
+            if (!razorpayLoaded) {
+                toast.error('Failed to load payment gateway');
+                return;
+            }
+
+            console.log('Creating payment order...');
+            // Create payment order
+            let paymentOrder;
+            try {
+                paymentOrder = await createPaymentOrder(order.id);
+                console.log('Payment order created:', paymentOrder);
+            } catch (paymentOrderError) {
+                console.error('Failed to create payment order:', paymentOrderError);
+                toast.error('Failed to create payment order: ' + paymentOrderError);
+                return;
+            }
+            
+            const razorpayKeyId = process.env.REACT_APP_RAZORPAY_KEY_ID;
+            console.log('Razorpay Key ID:', razorpayKeyId ? 'Present' : 'Missing');
+            console.log('Razorpay Key ID value:', razorpayKeyId);
+            
+            if (!razorpayKeyId) {
+                toast.error('Payment gateway configuration missing');
+                return;
+            }
+            
+            // Validate Razorpay key format
+            if (!razorpayKeyId.startsWith('rzp_')) {
+                console.error('Invalid Razorpay key format. Key should start with rzp_');
+                toast.error('Invalid payment gateway configuration');
+                return;
+            }
+            
+            if (razorpayKeyId.includes('test') && !razorpayKeyId.startsWith('rzp_test_')) {
+                console.error('Invalid test key format. Test keys should start with rzp_test_');
+                toast.error('Invalid test payment configuration');
+                return;
+            }
+            
+            // Validate payment order response
+            if (!paymentOrder.razorpay_order_id) {
+                console.error('Invalid payment order response - missing razorpay_order_id:', paymentOrder);
+                toast.error('Invalid payment order response');
+                return;
+            }
+
+            const options = {
+                key: razorpayKeyId,
+                amount: paymentOrder.amount,
+                currency: paymentOrder.currency,
+                name: 'ProtAcc',
+                description: `Payment for Order ${paymentOrder.order_number}`,
+                order_id: paymentOrder.razorpay_order_id,
+                handler: async (response) => {
+                    try {
+                        console.log('Payment response received:', response);
+                        await verifyPayment({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                        });
+                        
+                        toast.success('Payment successful!');
+                        // Refresh the order data to show updated payment status
+                        window.location.reload();
+                    } catch (error) {
+                        console.error('Payment verification failed:', error);
+                        toast.error('Payment verification failed: ' + error);
+                    }
+                },
+                prefill: {
+                    name: 'Customer Name',
+                    email: 'customer@example.com',
+                },
+                theme: {
+                    color: '#4f46e5',
+                },
+                modal: {
+                    ondismiss: () => {
+                        console.log('Payment modal dismissed by user');
+                        toast.error('Payment cancelled');
+                    },
+                    escape: false,
+                    confirm_close: true
+                },
+                timeout: 300, // 5 minutes timeout
+                retry: {
+                    enabled: true,
+                    max_count: 3
+                },
+                callback_url: window.location.origin + '/orders/' + order.order_number,
+                notes: {
+                    order_number: paymentOrder.order_number,
+                    user_id: order.user_id
+                }
+            };
+
+            console.log('Opening Razorpay with options:', {
+                ...options,
+                key: razorpayKeyId + ' (length: ' + razorpayKeyId.length + ')'
+            });
+            
+            try {
+                const razorpay = new window.Razorpay(options);
+                
+                // Add error event listener
+                razorpay.on('payment.failed', function (response) {
+                    console.error('Razorpay payment failed:', response);
+                    console.error('Error code:', response.error.code);
+                    console.error('Error description:', response.error.description);
+                    console.error('Error source:', response.error.source);
+                    console.error('Error step:', response.error.step);
+                    console.error('Error reason:', response.error.reason);
+                    
+                    let errorMessage = 'Payment failed';
+                    if (response.error.description) {
+                        errorMessage += ': ' + response.error.description;
+                    } else if (response.error.reason) {
+                        errorMessage += ': ' + response.error.reason;
+                    }
+                    
+                    toast.error(errorMessage);
+                });
+                
+                razorpay.open();
+            } catch (razorpayError) {
+                console.error('Error creating Razorpay instance:', razorpayError);
+                toast.error('Failed to initialize payment gateway: ' + razorpayError.message);
+            }
+        } catch (error) {
+            console.error('Failed to initiate payment:', error);
+            toast.error('Failed to initiate payment: ' + error);
+        } finally {
+            setProcessingPayment(false);
+        }
+    };
 
     useEffect(() => {
         const fetchOrderDetails = async () => {
             try {
-                const [orderData, historyData] = await Promise.all([
-                    getOrderByNumber(orderNumber),
-                    getOrderStatusHistory(orderNumber)
-                ]);
+                console.log('Fetching order details for order number:', orderNumber);
+                
+                // First fetch the order data
+                const orderData = await getOrderByNumber(orderNumber);
+                console.log('Order data fetched:', orderData);
                 setOrder(orderData);
-                setStatusHistory(historyData);
+                
+                // Then fetch the order history using the order ID
+                console.log('Fetching order history for order ID:', orderData.id);
+                const historyData = await getOrderStatusHistory(orderData.id);
+                console.log('Order history fetched:', historyData);
+                // Ensure historyData is always an array
+                setStatusHistory(Array.isArray(historyData) ? historyData : []);
             } catch (error) {
-                toast.error('Failed to load order details');
+                console.error('Error fetching order details:', error);
+                console.error('Error type:', typeof error);
+                console.error('Error message:', error.message);
+                
+                let errorMessage = 'Failed to load order details';
+                if (error.message?.includes('Order not found')) {
+                    errorMessage = 'Order not found';
+                } else if (error.message?.includes('Authorization')) {
+                    errorMessage = 'Please log in to view order details';
+                } else if (typeof error === 'string') {
+                    errorMessage = error;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                toast.error(errorMessage);
+                // Ensure statusHistory is always an array even on error
+                setStatusHistory([]);
                 navigate('/orders');
             } finally {
                 setLoading(false);
@@ -163,27 +353,38 @@ const OrderDetailPage = () => {
                         <div className="bg-white rounded-xl shadow-lg p-6">
                             <h3 className="text-lg font-semibold text-gray-900 mb-6">Order Timeline</h3>
                             <div className="space-y-8">
-                                {statusHistory.map((history, index) => (
-                                    <div key={history.id} className="relative">
-                                        {index !== statusHistory.length - 1 && (
-                                            <div className="absolute top-8 left-4 bottom-0 w-0.5 bg-gray-200" />
-                                        )}
-                                        <div className="flex gap-4">
-                                            <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                                                <div className="w-3 h-3 rounded-full bg-indigo-600" />
-                                            </div>
-                                            <div>
-                                                <OrderStatusBadge status={history.status} />
-                                                <p className="text-sm text-gray-600 mt-2">
-                                                    {history.notes}
-                                                </p>
-                                                <p className="text-sm text-gray-500 mt-1">
-                                                    {new Date(history.created_at).toLocaleString()} by {history.user.first_name} {history.user.last_name}
-                                                </p>
+                                {statusHistory && statusHistory.length > 0 ? (
+                                    statusHistory.map((history, index) => (
+                                        <div key={history.id} className="relative">
+                                            {index !== statusHistory.length - 1 && (
+                                                <div className="absolute top-8 left-4 bottom-0 w-0.5 bg-gray-200" />
+                                            )}
+                                            <div className="flex gap-4">
+                                                <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                                                    <div className="w-3 h-3 rounded-full bg-indigo-600" />
+                                                </div>
+                                                <div>
+                                                    <OrderStatusBadge status={history.status} />
+                                                    {history.notes && (
+                                                        <p className="text-sm text-gray-600 mt-2">
+                                                            {history.notes}
+                                                        </p>
+                                                    )}
+                                                    <p className="text-sm text-gray-500 mt-1">
+                                                        {new Date(history.created_at).toLocaleString()}
+                                                        {history.user && (
+                                                            <> by {history.user.first_name} {history.user.last_name}</>
+                                                        )}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
+                                    ))
+                                ) : (
+                                    <div className="text-gray-500 text-center py-4">
+                                        No status history available
                                     </div>
-                                ))}
+                                )}
                             </div>
                         </div>
                     </div>
@@ -226,9 +427,21 @@ const OrderDetailPage = () => {
                                     Please complete the payment to proceed with your order.
                                 </p>
                                 <button
-                                    className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                                    onClick={handlePayment}
+                                    disabled={processingPayment}
+                                    className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                                 >
-                                    Pay Now
+                                    {processingPayment ? (
+                                        <>
+                                            <FaSpinner className="animate-spin mr-2" />
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <FaMoneyBillWave className="mr-2" />
+                                            Pay Now (₹{order.booking_amount})
+                                        </>
+                                    )}
                                 </button>
                             </div>
                         )}

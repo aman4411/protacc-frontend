@@ -431,9 +431,42 @@ export const createOrderFromCart = async () => {
 export const getOrders = async () => {
     try {
         const response = await api.get('/orders');
-        return response.data;
+        // Handle the new response structure with orders and pagination
+        if (response.data && response.data.orders) {
+            return response.data.orders;
+        }
+        // Fallback for old structure (if response.data is directly an array)
+        return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
         throw error.response?.data?.error || 'Failed to fetch orders';
+    }
+};
+
+// Payment APIs
+export const createPaymentOrder = async (orderId) => {
+    try {
+        const response = await api.post(`/payments/orders/${orderId}/create`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to create payment order';
+    }
+};
+
+export const verifyPayment = async (paymentData) => {
+    try {
+        const response = await api.post('/payments/verify', paymentData);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Payment verification failed';
+    }
+};
+
+export const getPaymentStatus = async (orderId) => {
+    try {
+        const response = await api.get(`/payments/orders/${orderId}/status`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to get payment status';
     }
 };
 
