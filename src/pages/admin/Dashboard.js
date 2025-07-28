@@ -5,6 +5,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import UserManagement from './UserManagement';
 import ServiceManagement from './ServiceManagement';
 import OrderManagement from './OrderManagement';
+import SystemSettings from './SystemSettings';
 import DashboardOverview from './DashboardOverview';
 
 const AdminDashboard = () => {
@@ -30,7 +31,7 @@ const AdminDashboard = () => {
                 <Route path="/users" element={<UserManagement />} />
                 <Route path="/orders" element={<OrderManagement />} />
                 <Route path="/services" element={<ServiceManagement />} />
-                <Route path="/settings" element={<div className="p-6"><h2 className="text-2xl font-bold">System Settings</h2><p className="text-gray-600">Coming soon...</p></div>} />
+                <Route path="/settings" element={<SystemSettings />} />
                 <Route path="/reports" element={<div className="p-6"><h2 className="text-2xl font-bold">Reports & Analytics</h2><p className="text-gray-600">Coming soon...</p></div>} />
                 <Route path="/notifications" element={<div className="p-6"><h2 className="text-2xl font-bold">Notifications</h2><p className="text-gray-600">Coming soon...</p></div>} />
                 <Route path="*" element={<Navigate to="/admin" replace />} />

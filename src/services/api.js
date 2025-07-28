@@ -245,6 +245,100 @@ export const deleteCategory = async (categoryId) => {
     }
 };
 
+// Admin Settings Management
+export const getAllSettings = async () => {
+    try {
+        const response = await api.get('/admin/settings');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch settings';
+    }
+};
+
+export const getSettingsByCategory = async () => {
+    try {
+        const response = await api.get('/admin/settings/categories');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch settings by category';
+    }
+};
+
+export const getSetting = async (category, key) => {
+    try {
+        const response = await api.get(`/admin/settings/${category}/${key}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch setting';
+    }
+};
+
+export const updateSetting = async (category, key, value) => {
+    try {
+        const response = await api.put(`/admin/settings/${category}/${key}`, { value });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update setting';
+    }
+};
+
+export const updateMultipleSettings = async (settings) => {
+    try {
+        const response = await api.put('/admin/settings/bulk', { settings });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update settings';
+    }
+};
+
+export const createSetting = async (settingData) => {
+    try {
+        const response = await api.post('/admin/settings', settingData);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to create setting';
+    }
+};
+
+export const deleteSetting = async (category, key) => {
+    try {
+        const response = await api.delete(`/admin/settings/${category}/${key}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to delete setting';
+    }
+};
+
+export const testEmailSettings = async () => {
+    try {
+        const response = await api.post('/admin/settings/test-email');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to test email settings';
+    }
+};
+
+export const resetSettingsToDefaults = async (category) => {
+    try {
+        const response = await api.post('/admin/settings/reset-defaults', null, {
+            params: { category }
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to reset settings';
+    }
+};
+
+// Public settings (for frontend use)
+export const getPublicSettings = async () => {
+    try {
+        const response = await api.get('/settings/public');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch public settings';
+    }
+};
+
 // Service Categories
 export const getServiceCategories = async () => {
     try {
@@ -289,7 +383,8 @@ export const searchServices = async (query) => {
 // Cart
 export const getCartItems = async () => {
     try {
-        const response = await api.get('/cart');
+        // Add cache-busting parameter to ensure fresh data
+        const response = await api.get(`/cart?_t=${Date.now()}`);
         return response.data;
     } catch (error) {
         throw error.response?.data?.error || 'Failed to fetch cart items';

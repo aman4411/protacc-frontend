@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaSpinner, FaTrash, FaShoppingBag, FaShoppingCart } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
@@ -13,15 +13,7 @@ const CartPage = () => {
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
 
-    useEffect(() => {
-        if (!isAuthenticated) {
-            navigate('/login');
-            return;
-        }
-        fetchCartItems();
-    }, [isAuthenticated, navigate]);
-
-    const fetchCartItems = async () => {
+    const fetchCartItems = useCallback(async () => {
         try {
             const items = await getCartItems();
             setCartItems(items);
@@ -30,13 +22,34 @@ const CartPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login');
+            return;
+        }
+        fetchCartItems();
+    }, [isAuthenticated, navigate, fetchCartItems]);
+
+    // Refetch cart data when page becomes visible (handles tab switching)
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (!document.hidden && isAuthenticated) {
+                fetchCartItems();
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    }, [isAuthenticated, fetchCartItems]);
 
     const handleRemoveItem = async (serviceId) => {
         setRemovingItem(serviceId);
         try {
             await removeFromCart(serviceId);
-            setCartItems(cartItems.filter(item => item.service.id !== serviceId));
+            // Refetch the cart data from server to ensure consistency
+            await fetchCartItems();
             toast.success('Item removed from cart');
         } catch (error) {
             toast.error('Failed to remove item from cart');
@@ -140,11 +153,11 @@ const CartPage = () => {
                                     </div>
                                     <div className="flex items-center">
                                         <button
-                                            onClick={() => handleRemoveItem(item.service.id)}
-                                            disabled={removingItem === item.service.id}
+                                            onClick={() => handleRemoveItem(item.service?.id || item.service_id)}
+                                            disabled={removingItem === (item.service?.id || item.service_id)}
                                             className="px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-2"
                                         >
-                                            {removingItem === item.service.id ? (
+                                            {removingItem === (item.service?.id || item.service_id) ? (
                                                 <FaSpinner className="animate-spin" />
                                             ) : (
                                                 <FaTrash />
