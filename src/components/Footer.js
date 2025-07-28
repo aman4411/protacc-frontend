@@ -5,9 +5,9 @@ export default function Footer() {
     return (
         <footer className="relative bg-indigo-600 text-white">
             {/* Top Section */}
-            <div className="container mx-auto grid grid-cols-1 md:grid-cols-5 gap-8 px-6 py-12">
-                {/* Contact Info */}
-                <div className="md:col-span-1 space-y-4">
+            <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-6 py-12">
+                {/* Contact Info & Quick Links */}
+                <div className="space-y-4">
                     <h3 className="text-lg font-bold mb-6 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-white/30">Contact Us</h3>
                     <div className="flex items-center gap-3 group">
                         <FaEnvelope className="text-lg group-hover:text-indigo-300 transition-colors" />
@@ -21,59 +21,63 @@ export default function Footer() {
                             +91 9817889933
                         </a>
                     </div>
+                    
+                    {/* Quick Links */}
+                    <div className="pt-4">
+                        <h4 className="text-md font-semibold mb-4 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-8 after:h-0.5 after:bg-white/30">Quick Links</h4>
+                        <ul className="space-y-2 text-sm">
+                            <li><Link to="/" className="hover:text-indigo-300 transition-colors block">Home</Link></li>
+                            <li><Link to="/about" className="hover:text-indigo-300 transition-colors block">About Us</Link></li>
+                            <li><Link to="/contact" className="hover:text-indigo-300 transition-colors block">Contact Us</Link></li>
+                            <li><Link to="/track-order" className="hover:text-indigo-300 transition-colors block">Track Order</Link></li>
+                            <li><Link to="/privacy-policy" className="hover:text-indigo-300 transition-colors block">Privacy Policy</Link></li>
+                        </ul>
+                    </div>
                 </div>
 
-                {/* Useful Links */}
+                {/* Business & Registration Services */}
                 <div className="space-y-4">
-                    <h3 className="text-lg font-bold mb-6 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-white/30">Useful Links</h3>
-                    <ul className="space-y-2">
-                        <li><Link to="/" className="hover:text-indigo-300 transition-colors block">Home</Link></li>
-                        <li><Link to="/about" className="hover:text-indigo-300 transition-colors block">About Us</Link></li>
-                        <li><Link to="/contact" className="hover:text-indigo-300 transition-colors block">Contact Us</Link></li>
-                        <li><Link to="/privacy-policy" className="hover:text-indigo-300 transition-colors block">Privacy Policy</Link></li>
-                        <li><Link to="/terms" className="hover:text-indigo-300 transition-colors block">Terms & Conditions</Link></li>
-                        <li><Link to="/disclaimer" className="hover:text-indigo-300 transition-colors block">Disclaimer</Link></li>
-                        <li><Link to="/account" className="hover:text-indigo-300 transition-colors block">My Account</Link></li>
-                        <li><Link to="/track-order" className="hover:text-indigo-300 transition-colors block">Track Order</Link></li>
-                        <li><Link to="/pay-now" className="hover:text-indigo-300 transition-colors block">Pay Now</Link></li>
-                    </ul>
-                </div>
-
-                {/* Start a Business */}
-                <div className="space-y-4">
-                    <h3 className="text-lg font-bold mb-6 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-white/30">Start a Business</h3>
-                    <ul className="space-y-2">
-                        <li><Link to="/services/proprietorship" className="hover:text-indigo-300 transition-colors block">Proprietorship Registration</Link></li>
-                        <li><Link to="/services/partnership" className="hover:text-indigo-300 transition-colors block">Partnership Firm Registration</Link></li>
-                        <li><Link to="/services/opc" className="hover:text-indigo-300 transition-colors block">One Person Company</Link></li>
-                        <li><Link to="/services/private-limited" className="hover:text-indigo-300 transition-colors block">Private Limited Company</Link></li>
-                        <li><Link to="/services/llp" className="hover:text-indigo-300 transition-colors block">Limited Liability Partnership</Link></li>
-                        <li><Link to="/services/nidhi" className="hover:text-indigo-300 transition-colors block">Nidhi Company</Link></li>
-                        <li><Link to="/services/producer" className="hover:text-indigo-300 transition-colors block">Producer Company</Link></li>
-                        <li><Link to="/services/ngo" className="hover:text-indigo-300 transition-colors block">Section 8 Company/NGO</Link></li>
-                    </ul>
-                </div>
-
-                {/* GST */}
-                <div className="space-y-4">
-                    <h3 className="text-lg font-bold mb-6 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-white/30">GST</h3>
-                    <ul className="space-y-2">
-                        <li><Link to="/services/gst-registration" className="hover:text-indigo-300 transition-colors block">GST Registration in India</Link></li>
-                        <li><Link to="/services/gst-filing" className="hover:text-indigo-300 transition-colors block">GST Filing (Monthly/Quarterly)</Link></li>
-                        <li><Link to="/services/gst-annual" className="hover:text-indigo-300 transition-colors block">GST Annual Filing</Link></li>
-                    </ul>
-                </div>
-
-                {/* Licenses & Registrations */}
-                <div className="space-y-4">
-                    <h3 className="text-lg font-bold mb-6 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-white/30">Licences & Registrations</h3>
-                    <ul className="space-y-2">
+                    <h3 className="text-lg font-bold mb-6 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-white/30">Business & Registration</h3>
+                    <ul className="space-y-2 text-sm">
+                        <li><Link to="/services/proprietorship-registration" className="hover:text-indigo-300 transition-colors block">Proprietorship Registration</Link></li>
+                        <li><Link to="/services/partnership-registration" className="hover:text-indigo-300 transition-colors block">Partnership Registration</Link></li>
+                        <li><Link to="/services/private-limited-company" className="hover:text-indigo-300 transition-colors block">Private Limited Company</Link></li>
+                        <li><Link to="/services/llp-registration" className="hover:text-indigo-300 transition-colors block">LLP Registration</Link></li>
+                        <li><Link to="/services/fssai-registration" className="hover:text-indigo-300 transition-colors block">FSSAI Registration</Link></li>
+                        <li><Link to="/services/trademark-registration" className="hover:text-indigo-300 transition-colors block">Trademark Registration</Link></li>
+                        <li><Link to="/services/import-export-code" className="hover:text-indigo-300 transition-colors block">Import Export Code</Link></li>
+                        <li><Link to="/services/udyam-msme-registration" className="hover:text-indigo-300 transition-colors block">MSME Registration</Link></li>
                         <li><Link to="/services/digital-signature" className="hover:text-indigo-300 transition-colors block">Digital Signature</Link></li>
-                        <li><Link to="/services/msme" className="hover:text-indigo-300 transition-colors block">MSME Registration</Link></li>
-                        <li><Link to="/services/import-export" className="hover:text-indigo-300 transition-colors block">Import Export Code</Link></li>
-                        <li><Link to="/services/trademark" className="hover:text-indigo-300 transition-colors block">Trademark Registration</Link></li>
-                        <li><Link to="/services/pan" className="hover:text-indigo-300 transition-colors block">PAN Application</Link></li>
-                        <li><Link to="/services/tan" className="hover:text-indigo-300 transition-colors block">TAN Application</Link></li>
+                    </ul>
+                </div>
+
+                {/* Tax Services */}
+                <div className="space-y-4">
+                    <h3 className="text-lg font-bold mb-6 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-white/30">Tax Services</h3>
+                    <ul className="space-y-2 text-sm">
+                        <li><Link to="/services/gst-registration" className="hover:text-indigo-300 transition-colors block">GST Registration</Link></li>
+                        <li><Link to="/services/gstr-1-filing" className="hover:text-indigo-300 transition-colors block">GSTR 1 Filing</Link></li>
+                        <li><Link to="/services/gstr-3b-filing" className="hover:text-indigo-300 transition-colors block">GSTR 3B Filing</Link></li>
+                        <li><Link to="/services/pan-registration" className="hover:text-indigo-300 transition-colors block">PAN Registration</Link></li>
+                        <li><Link to="/services/itr-1-filing" className="hover:text-indigo-300 transition-colors block">ITR 1 Filing</Link></li>
+                        <li><Link to="/services/itr-2-filing" className="hover:text-indigo-300 transition-colors block">ITR 2 Filing</Link></li>
+                        <li><Link to="/services/itr-3-filing" className="hover:text-indigo-300 transition-colors block">ITR 3 Filing</Link></li>
+                        <li><Link to="/services/tds-return-filing" className="hover:text-indigo-300 transition-colors block">TDS Return Filing</Link></li>
+                        <li><Link to="/services/gst-notice-handling" className="hover:text-indigo-300 transition-colors block">Tax Notice Handling</Link></li>
+                    </ul>
+                </div>
+
+                {/* Compliance & Additional Services */}
+                <div className="space-y-4">
+                    <h3 className="text-lg font-bold mb-6 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-white/30">Compliance & Services</h3>
+                    <ul className="space-y-2 text-sm">
+                        <li><Link to="/services/company-compliances" className="hover:text-indigo-300 transition-colors block">Company Compliances</Link></li>
+                        <li><Link to="/services/llp-compliances" className="hover:text-indigo-300 transition-colors block">LLP Compliances</Link></li>
+                        <li><Link to="/services/fssai-return-filing" className="hover:text-indigo-300 transition-colors block">FSSAI Return Filing</Link></li>
+                        <li><Link to="/services/consultancy" className="hover:text-indigo-300 transition-colors block">Business Consultancy</Link></li>
+                        <li><Link to="/services/project-reports" className="hover:text-indigo-300 transition-colors block">Project Reports</Link></li>
+                        <li><Link to="/services/bookkeeping" className="hover:text-indigo-300 transition-colors block">Bookkeeping Services</Link></li>
+                        <li><Link to="/services/cma-data" className="hover:text-indigo-300 transition-colors block">CMA Data Preparation</Link></li>
                     </ul>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaSpinner, FaClipboardList } from 'react-icons/fa';
+import { FaSpinner, FaClipboardList, FaExclamationTriangle } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { getOrders } from '../services/api';
 
@@ -42,13 +42,19 @@ const OrderStatusBadge = ({ status }) => {
 const OrdersPage = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchOrders = async () => {
             try {
+                setError(null);
                 const data = await getOrders();
-                setOrders(data);
+                // Ensure data is always an array
+                setOrders(Array.isArray(data) ? data : []);
             } catch (error) {
+                console.error('Failed to load orders:', error);
+                setError('Failed to load orders. Please try again.');
+                setOrders([]); // Ensure orders is always an array
                 toast.error('Failed to load orders');
             } finally {
                 setLoading(false);
@@ -61,12 +67,35 @@ const OrdersPage = () => {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <FaSpinner className="animate-spin text-4xl text-indigo-600" />
+                <div className="text-center">
+                    <FaSpinner className="animate-spin text-4xl text-indigo-600 mx-auto mb-4" />
+                    <p className="text-gray-600">Loading your orders...</p>
+                </div>
             </div>
         );
     }
 
-    if (orders.length === 0) {
+    if (error) {
+        return (
+            <div className="min-h-screen bg-gray-50 py-12">
+                <div className="container mx-auto px-4">
+                    <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+                        <FaExclamationTriangle className="text-6xl text-red-300 mx-auto mb-4" />
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Error Loading Orders</h2>
+                        <p className="text-gray-600 mb-6">{error}</p>
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors inline-block"
+                        >
+                            Try Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (!orders || orders.length === 0) {
         return (
             <div className="min-h-screen bg-gray-50 py-12">
                 <div className="container mx-auto px-4">
@@ -100,7 +129,7 @@ const OrdersPage = () => {
                                         Order Number
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Service
+                                        Services
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Amount
@@ -123,8 +152,28 @@ const OrdersPage = () => {
                                             {order.order_number}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="text-sm text-gray-900">{order.service.name}</div>
-                                            <div className="text-sm text-gray-500">{order.service.short_description}</div>
+                                            {order.items && order.items.length > 0 ? (
+                                                <div className="space-y-1">
+                                                    {order.items.length === 1 ? (
+                                                        <>
+                                                            <div className="text-sm text-gray-900">{order.items[0].service?.name || 'Unknown Service'}</div>
+                                                            <div className="text-sm text-gray-500">{order.items[0].service?.short_description || ''}</div>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <div className="text-sm text-gray-900 font-medium">
+                                                                {order.items.length} Services
+                                                            </div>
+                                                            <div className="text-sm text-gray-500">
+                                                                {order.items.slice(0, 2).map(item => item.service?.name || 'Unknown').join(', ')}
+                                                                {order.items.length > 2 && ` +${order.items.length - 2} more`}
+                                                            </div>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <div className="text-sm text-gray-500">No services found</div>
+                                            )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-gray-900">₹{order.total_amount}</div>

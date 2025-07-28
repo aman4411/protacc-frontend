@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaSpinner, FaTrash, FaShoppingBag } from 'react-icons/fa';
+import { FaSpinner, FaTrash, FaShoppingBag, FaShoppingCart } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
-import { getCartItems, removeFromCart, createOrder } from '../services/api';
+import { getCartItems, removeFromCart, createOrderFromCart } from '../services/api';
 
 const CartPage = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -45,26 +45,44 @@ const CartPage = () => {
         }
     };
 
-    const handleCreateOrder = async (serviceId) => {
+    const handleCheckout = async () => {
+        if (cartItems.length === 0) {
+            toast.error('Cart is empty');
+            return;
+        }
+
         setProcessingOrder(true);
         try {
-            const order = await createOrder(serviceId);
-            toast.success('Order created successfully');
-            // Remove the ordered item from cart
-            setCartItems(cartItems.filter(item => item.service.id !== serviceId));
-            // Navigate to order details or payment page
+            const order = await createOrderFromCart();
+            toast.success('Order created successfully! Redirecting to order details...');
+            // Clear cart since order was successful
+            setCartItems([]);
+            // Navigate to order details
             navigate(`/orders/${order.order_number}`);
         } catch (error) {
-            toast.error('Failed to create order');
+            toast.error('Failed to create order: ' + error);
         } finally {
             setProcessingOrder(false);
         }
     };
 
+    const calculateTotals = () => {
+        const totalAmount = cartItems.reduce((sum, item) => sum + item.service.price, 0);
+        const bookingAmount = cartItems.reduce((sum, item) => sum + item.service.booking_amount, 0);
+        const remainingAmount = totalAmount - bookingAmount;
+        
+        return { totalAmount, bookingAmount, remainingAmount };
+    };
+
+    const { totalAmount, bookingAmount, remainingAmount } = calculateTotals();
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <FaSpinner className="animate-spin text-4xl text-indigo-600" />
+                <div className="text-center">
+                    <FaSpinner className="animate-spin text-4xl text-indigo-600 mx-auto mb-4" />
+                    <p className="text-gray-600">Loading your cart...</p>
+                </div>
             </div>
         );
     }
@@ -120,7 +138,7 @@ const CartPage = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col md:flex-row gap-4 items-center">
+                                    <div className="flex items-center">
                                         <button
                                             onClick={() => handleRemoveItem(item.service.id)}
                                             disabled={removingItem === item.service.id}
@@ -133,17 +151,6 @@ const CartPage = () => {
                                             )}
                                             Remove
                                         </button>
-                                        <button
-                                            onClick={() => handleCreateOrder(item.service.id)}
-                                            disabled={processingOrder}
-                                            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-                                        >
-                                            {processingOrder ? (
-                                                <FaSpinner className="animate-spin" />
-                                            ) : (
-                                                'Proceed to Pay'
-                                            )}
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -152,26 +159,62 @@ const CartPage = () => {
 
                     {/* Summary */}
                     <div className="bg-white rounded-xl shadow-lg p-6 h-fit">
-                        <h2 className="text-xl font-semibold text-gray-900 mb-4">Cart Summary</h2>
+                        <h2 className="text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
                         <div className="space-y-3 mb-6">
                             <div className="flex justify-between text-gray-600">
-                                <span>Number of Items</span>
+                                <span>Number of Services</span>
                                 <span>{cartItems.length}</span>
                             </div>
-                            <div className="flex justify-between font-semibold text-gray-900">
-                                <span>Total Booking Amount</span>
-                                <span>₹{cartItems.reduce((sum, item) => sum + item.service.booking_amount, 0)}</span>
+                            <div className="flex justify-between text-gray-600">
+                                <span>Total Amount</span>
+                                <span>₹{totalAmount}</span>
+                            </div>
+                            <div className="flex justify-between text-green-600 font-semibold">
+                                <span>Booking Amount (Pay Now)</span>
+                                <span>₹{bookingAmount}</span>
+                            </div>
+                            <div className="flex justify-between text-gray-500">
+                                <span>Remaining Amount</span>
+                                <span>₹{remainingAmount}</span>
+                            </div>
+                            <div className="border-t pt-3">
+                                <div className="flex justify-between font-bold text-lg text-gray-900">
+                                    <span>Total to Pay Now</span>
+                                    <span>₹{bookingAmount}</span>
+                                </div>
                             </div>
                         </div>
-                        <p className="text-sm text-gray-500 mb-6">
-                            * Each service requires a booking amount of ₹99. The remaining amount can be paid later.
+                        
+                        <div className="space-y-3">
+                            <button
+                                onClick={handleCheckout}
+                                disabled={processingOrder || cartItems.length === 0}
+                                className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {processingOrder ? (
+                                    <>
+                                        <FaSpinner className="animate-spin" />
+                                        Processing...
+                                    </>
+                                ) : (
+                                    <>
+                                        <FaShoppingCart />
+                                        Proceed to Checkout
+                                    </>
+                                )}
+                            </button>
+                            
+                            <button
+                                onClick={() => navigate('/services')}
+                                className="w-full px-6 py-3 text-indigo-600 border border-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors"
+                            >
+                                Continue Shopping
+                            </button>
+                        </div>
+                        
+                        <p className="text-sm text-gray-500 mt-4">
+                            * You only pay the booking amount now. The remaining amount can be paid after service delivery.
                         </p>
-                        <button
-                            onClick={() => navigate('/services')}
-                            className="w-full px-6 py-3 text-indigo-600 border border-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors"
-                        >
-                            Continue Shopping
-                        </button>
                     </div>
                 </div>
             </div>

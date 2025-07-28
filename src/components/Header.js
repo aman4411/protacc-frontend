@@ -59,63 +59,120 @@ export default function Header() {
     const menuItems = [
         { name: "Home", path: "/" },
         {
-            name: "Business Startup Registrations",
+            name: "Startup",
             submenu: [
-                { name: "Proprietorship Registration", path: "/business-startup-registrations/proprietorship-registration" },
-                { name: "Private Limited Company Registration", path: "/business-startup-registrations/private-limited-company-registration" },
-                { name: "Producer Company", path: "/business-startup-registrations/producer-company" },
-                { name: "Partnership Firm Registration", path: "/business-startup-registrations/partnership-firm-registration" },
-                { name: "Limited Liability Partnership", path: "/business-startup-registrations/limited-liability-partnership" },
-                { name: "Section 8 Company/NGO", path: "/business-startup-registrations/section-8-company-ngo" },
-                { name: "One Person Company Registration", path: "/business-startup-registrations/one-person-company-registration" },
-                { name: "Public Limited Company", path: "/business-startup-registrations/public-limited-company" },
+                { name: "Proprietorship", path: "/services/proprietorship-registration" },
+                { name: "Partnership", path: "/services/partnership-registration" },
+                { name: "LLP - Limited Liability Partnership", path: "/services/llp-registration" },
+                { name: "OPC - One Person Company", path: "/services/opc-registration" },
+                { name: "Private Limited Company", path: "/services/private-limited-company" },
+                { name: "Public Limited Company", path: "/services/public-limited-company" },
+                { name: "Section 8 Company / NGO", path: "/services/section-8-ngo-registration" },
+                { name: "Trust", path: "/services/trust-registration" },
+                { name: "Producer Company", path: "/services/producer-company-registration" },
+                { name: "Society", path: "/services/society-registration" },
+                { name: "Co-Operative Society", path: "/services/cooperative-society-registration" },
             ],
         },
-        { name: "Digital Signature", path: "/digital-signature" },
-        { name: "Trademark Registration", path: "/trademark" },
         {
-            name: "Compliances",
+            name: "Registrations",
             submenu: [
-                { name: "PAN/TAN", 
-                    nested: [
-                        { name: "PAN Application", path: "/compliances/pan-application" },
-                        { name: "TAN Application", path: "/compliances/tan-application" },
-                    ],
-                },
-                { name: "Income Tax", 
-                    nested: [
-                        { name: "ITR 1", path: "/compliances/income-tax/itr-1" },
-                        { name: "ITR 2", path: "/compliances/income-tax/itr-2" },
-                        { name: "ITR 3", path: "/compliances/income-tax/itr-3" },
-                        { name: "ITR 4", path: "/compliances/income-tax/itr-4" },
-                        { name: "ITR 5", path: "/compliances/income-tax/itr-5" },
-                        { name: "ITR 6", path: "/compliances/income-tax/itr-6" },
-                    ],
-                },
-                {
-                    name: "GST",
-                    nested: [
-                        { name: "GST Registration In India", path: "/compliances/gst/gst-registration" },
-                        { name: "GST Filing (Monthly/Quarterly)", path: "/compliances/gst/gst-filing" },
-                        { name: "GST Annual Filing (Monthly/Quarterly)", path: "/compliances/gst/gst-annual-filing" },
-                    ],
-                },
-                {
-                    name: "Annual Compliance",
-                    nested: [
-                        { name: "Proprietorship", path: "/compliances/annual-compliance/proprietorship" },
-                        { name: "Partnership", path: "/compliances/annual-compliance/partnership" },
-                        { name: "Private Limited Company", path: "/compliances/annual-compliance/private-limited-company" },
-                        { name: "Limited Liability Partnership", path: "/compliances/annual-compliance/limited-liability-partnership" },
-                    ],
-                },  
-                {
-                    name: "Import Export Code", path: "/compliances/import-export-code",
-                }
+                { name: "Startup India", path: "/services/startup-india" },
+                { name: "Shop Act Registration", path: "/services/shop-act-registration" },
+                { name: "FSSAI Registration / Renewal", path: "/services/fssai-registration" },
+                { name: "FSSAI License / Renewal", path: "/services/fssai-license" },
+                { name: "IEC - Import Export Code", path: "/services/import-export-code" },
+                { name: "ICEGATE Registration", path: "/services/icegate-registration" },
+                { name: "LEI - Legal Entity Identifier Code", path: "/services/lei-registration" },
+                { name: "ISO Registration", path: "/services/iso-registration" },
+                { name: "Trademark Registration", path: "/services/trademark-registration" },
+                { name: "Brandname Registration", path: "/services/brand-name-registration" },
+                { name: "Logo Registration", path: "/services/logo-registration" },
+                { name: "ESI Registration", path: "/services/esi-registration" },
+                { name: "PF Registration", path: "/services/pf-registration" },
+                { name: "Udyam Registration / MSME", path: "/services/udyam-msme-registration" },
             ],
         },
-        { name: "ISO", path: "/iso" },
-        { name: "Consultancy", path: "/consultancy" },
+        {
+            name: "Goods & Service Tax",
+            submenu: [
+                { name: "GST Registration", path: "/services/gst-registration" },
+                { name: "GST Lut Form", path: "/services/gst-lut-form" },
+                { name: "GST Amendment", path: "/services/gst-amendment" },
+                { name: "GST Revocation", path: "/services/gst-revocation" },
+                { name: "GST Number Transfer", path: "/services/gst-number-transfer" },
+                { name: "GSTR - 10", path: "/services/gstr-10" },
+                { 
+                    name: "GST Returns", 
+                    nested: [
+                        { name: "GSTR 1", path: "/services/gstr-1-filing" },
+                        { name: "GSTR 3B", path: "/services/gstr-3b-filing" },
+                        { name: "CMP-08", path: "/services/cmp-08-filing" },
+                        { name: "GST Annual Return (R9)", path: "/services/gst-annual-return-r9" },
+                        { name: "GST Audit (9C)", path: "/services/gst-audit-9c" },
+                    ],
+                },
+            ],
+        },
+        {
+            name: "Income Tax",
+            submenu: [
+                { name: "PAN Registration", path: "/services/pan-registration" },
+                { name: "TAN Registration", path: "/services/tan-registration" },
+                { 
+                    name: "Income Tax Returns", 
+                    nested: [
+                        { name: "ITR - 1", path: "/services/itr-1-filing" },
+                        { name: "ITR - 2", path: "/services/itr-2-filing" },
+                        { name: "ITR - 3", path: "/services/itr-3-filing" },
+                        { name: "ITR - 4", path: "/services/itr-4-filing" },
+                        { name: "ITR - 5", path: "/services/itr-5-filing" },
+                        { name: "ITR - 6", path: "/services/itr-6-filing" },
+                        { name: "ITR - 7", path: "/services/itr-7-filing" },
+                    ],
+                },
+                { name: "Form 15CA-CB", path: "/services/form-15ca-cb" },
+                { name: "TDS Return Filing", path: "/services/tds-return-filing" },
+            ],
+        },
+        {
+            name: "Notices",
+            submenu: [
+                { name: "GST Notice", path: "/services/gst-notice-handling" },
+                { name: "Income Tax Notice", path: "/services/income-tax-notice-handling" },
+                { name: "TDS Notice", path: "/services/tds-notice-handling" },
+                { 
+                    name: "Query / Objection", 
+                    nested: [
+                        { name: "Trademark", path: "/services/trademark-objection" },
+                        { name: "Brand Name", path: "/services/brand-name-objection" },
+                        { name: "Logo", path: "/services/logo-objection" },
+                    ],
+                },
+            ],
+        },
+        {
+            name: "Compliance",
+            submenu: [
+                { name: "Company Compliances", path: "/services/company-compliances" },
+                { name: "LLP Compliances", path: "/services/llp-compliances" },
+                { name: "FSSAI Return Filing", path: "/services/fssai-return-filing" },
+                { name: "ESI Return Filing", path: "/services/esi-return-filing" },
+                { name: "PF Return Filing", path: "/services/pf-return-filing" },
+            ],
+        },
+        {
+            name: "Additional Services",
+            submenu: [
+                { name: "Consultancy", path: "/services/consultancy" },
+                { name: "Project Reports", path: "/services/project-reports" },
+                { name: "CMA Data", path: "/services/cma-data" },
+                { name: "Bookkeeping", path: "/services/bookkeeping" },
+                { name: "Partnership Deed Drafting", path: "/services/partnership-deed-drafting" },
+                { name: "Rent Agreement Drafting", path: "/services/rent-agreement-drafting" },
+                { name: "Digital Signature", path: "/services/digital-signature" },
+            ],
+        },
     ];
 
     return (
@@ -209,7 +266,7 @@ export default function Header() {
                                 </>
                             )}
 
-                            <div className="border-t border-gray-100 pt-4">
+                                                        <div className="border-t border-gray-100 pt-4">
                                 <a
                                     href="tel:+919817889933"
                                     className="flex items-center px-4 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
@@ -217,16 +274,6 @@ export default function Header() {
                                     <FaPhoneAlt className="mr-3" />
                                     +91 9817889933
                                 </a>
-                                <Link
-                                    to="/track-order"
-                                    className="flex items-center px-4 py-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                                    onClick={() => setMobileOpen(false)}
-                                >
-                                    <svg className="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                                    </svg>
-                                    Track Order
-                                </Link>
                             </div>
                         </div>
                     </div>
@@ -312,7 +359,6 @@ export default function Header() {
                                 </Link>
                             </>
                         )}
-                        <Link to="/track-order" className="hover:text-indigo-700 transition-colors">Track Order</Link>
                     </div>
                     <Link to="/search" className="hover:text-indigo-700 transition-colors">
                         <FaSearch className="text-lg" />
@@ -353,8 +399,8 @@ export default function Header() {
                                                 className="relative group/sub px-4 py-2 hover:bg-gray-50"
                                                 onClick={(e) => {
                                                     if (isMobile) {
-                                                        e.stopPropagation();
-                                                        setOpenSubMenu(openSubMenu === sub.name ? null : sub.name);
+                                                    e.stopPropagation();
+                                                    setOpenSubMenu(openSubMenu === sub.name ? null : sub.name);
                                                     }
                                                 }}
                                                 onMouseEnter={() => !isMobile && setOpenSubMenu(sub.name)}
@@ -363,7 +409,7 @@ export default function Header() {
                                                 <div className="flex justify-between items-center text-indigo-600 hover:text-indigo-700 transition-colors">
                                                     {sub.name} <MdKeyboardArrowRight className="transition-transform group-hover/sub:translate-x-1" />
                                                 </div>
-
+                                                
                                                 {!isMobile && (
                                                     <ul className="absolute left-full top-0 bg-white text-indigo-600 shadow-xl rounded-lg min-w-[200px] py-2 z-50 hidden group-hover/sub:block border border-gray-100">
                                                         {sub.nested.map((n, j) => (

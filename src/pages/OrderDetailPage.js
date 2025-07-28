@@ -113,22 +113,48 @@ const OrderDetailPage = () => {
                             </div>
 
                             <div className="border-t border-gray-100 pt-6">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">Service Details</h3>
-                                <div className="space-y-4">
-                                    <div className="flex items-center gap-3">
-                                        <FaFileAlt className="text-indigo-600" />
-                                        <div>
-                                            <p className="font-medium text-gray-900">{order.service.name}</p>
-                                            <p className="text-gray-600">{order.service.short_description}</p>
+                                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                                    Service Details ({order.items?.length || 0} service{order.items?.length !== 1 ? 's' : ''})
+                                </h3>
+                                <div className="space-y-6">
+                                    {order.items && order.items.length > 0 ? (
+                                        order.items.map((item, index) => (
+                                            <div key={item.id || index} className="border border-gray-100 rounded-lg p-4">
+                                                <div className="space-y-3">
+                                                    <div className="flex items-start justify-between">
+                                                        <div className="flex items-center gap-3">
+                                                            <FaFileAlt className="text-indigo-600 mt-1" />
+                                                            <div>
+                                                                <p className="font-medium text-gray-900">
+                                                                    {item.service?.name || 'Unknown Service'}
+                                                                </p>
+                                                                <p className="text-gray-600">
+                                                                    {item.service?.short_description || ''}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="text-sm text-gray-500">Price</p>
+                                                            <p className="font-medium text-gray-900">₹{item.price}</p>
+                                                        </div>
+                                                    </div>
+                                                    {item.service?.estimated_delivery_days && (
+                                                        <div className="flex items-center gap-3">
+                                                            <FaClock className="text-indigo-600" />
+                                                            <div>
+                                                                <p className="font-medium text-gray-900">Estimated Delivery</p>
+                                                                <p className="text-gray-600">{item.service.estimated_delivery_days} days</p>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-gray-500 text-center py-4">
+                                            No services found for this order
                                         </div>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <FaClock className="text-indigo-600" />
-                                        <div>
-                                            <p className="font-medium text-gray-900">Estimated Delivery</p>
-                                            <p className="text-gray-600">{order.service.estimated_delivery_days} days</p>
-                                        </div>
-                                    </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

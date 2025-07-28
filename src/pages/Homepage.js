@@ -1,6 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaCheckCircle, FaChartLine, FaArrowRight, FaSpinner, FaHandshake } from 'react-icons/fa';
+import { 
+    FaCheckCircle, 
+    FaChartLine, 
+    FaArrowRight, 
+    FaSpinner, 
+    FaHandshake, 
+    FaStar,
+    FaPlay,
+    FaShieldAlt,
+    FaRocket,
+    FaClock,
+    FaUserTie,
+    FaAward,
+    FaQuoteLeft,
+    FaLightbulb
+} from 'react-icons/fa';
 import CountUp from 'react-countup';
 import { useAuth } from '../context/AuthContext';
 import { getServiceCategories } from '../services/api';
@@ -16,7 +31,45 @@ export default function HomePage() {
     const [isStatsVisible, setIsStatsVisible] = useState(false);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [currentTestimonial, setCurrentTestimonial] = useState(0);
     const statsRef = useRef(null);
+    const heroRef = useRef(null);
+
+    // Floating elements animation
+    useEffect(() => {
+        const handleMouseMove = (e) => {
+            setMousePosition({
+                x: (e.clientX / window.innerWidth) * 100,
+                y: (e.clientY / window.innerHeight) * 100,
+            });
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
+
+    // Parallax effect
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollY = window.scrollY;
+            const hero = heroRef.current;
+            if (hero) {
+                hero.style.transform = `translateY(${scrollY * 0.5}px)`;
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // Auto-rotate testimonials
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+        }, 5000);
+        return () => clearInterval(timer);
+    }, []);
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -59,82 +112,182 @@ export default function HomePage() {
     }, []);
 
     const stats = [
-        { number: 1000, label: "Happy Clients", suffix: "+" },
-        { number: 15, label: "Years Experience", suffix: "+" },
-        { number: 500, label: "Business Registrations", suffix: "+" },
-        { number: 98, label: "Success Rate", suffix: "%" }
+        { number: 1500, label: "Happy Clients", suffix: "+", icon: FaHandshake },
+        { number: 20, label: "Years Experience", suffix: "+", icon: FaAward },
+        { number: 800, label: "Business Registrations", suffix: "+", icon: FaRocket },
+        { number: 99, label: "Success Rate", suffix: "%", icon: FaChartLine }
     ];
 
     const testimonials = [
         {
             name: "Rajesh Kumar",
             company: "Tech Solutions Pvt Ltd",
-            text: "Their expertise in tax planning and compliance has been invaluable. They helped us save significantly on taxes while ensuring complete compliance.",
+            text: "ProtAcc's expertise in tax planning and compliance has been invaluable. They helped us save significantly on taxes while ensuring complete compliance. Their proactive approach is remarkable!",
             role: "CEO",
-            image: testimonial1Image
+            image: testimonial1Image,
+            rating: 5
         },
         {
             name: "Priya Sharma",
             company: "Retail Ventures",
-            text: "The virtual CFO services have transformed our financial management. Their strategic insights helped us improve profitability by 40%.",
+            text: "The virtual CFO services have transformed our financial management. Their strategic insights helped us improve profitability by 40%. Best investment we've made!",
             role: "Director",
-            image: testimonial2Image
+            image: testimonial2Image,
+            rating: 5
         },
         {
             name: "Amit Patel",
             company: "StartUp Innovation Hub",
-            text: "Outstanding support in our company registration and compliance. Their team's proactive approach and deep knowledge made the process seamless.",
+            text: "Outstanding support in our company registration and compliance. ProtAcc's team made the process seamless and their knowledge is unmatched in the industry.",
             role: "Founder",
-            image: testimonial3Image
+            image: testimonial3Image,
+            rating: 5
+        }
+    ];
+
+    const features = [
+        {
+            icon: FaShieldAlt,
+            title: "100% Secure & Compliant",
+            description: "Bank-level security with complete regulatory compliance",
+            color: "from-green-400 to-green-600"
+        },
+        {
+            icon: FaClock,
+            title: "24/7 Expert Support",
+            description: "Round-the-clock assistance from certified professionals",
+            color: "from-blue-400 to-blue-600"
+        },
+        {
+            icon: FaLightbulb,
+            title: "Smart Solutions",
+            description: "AI-powered insights for optimal business decisions",
+            color: "from-purple-400 to-purple-600"
+        },
+        {
+            icon: FaUserTie,
+            title: "Dedicated Account Manager",
+            description: "Personal relationship manager for all your needs",
+            color: "from-orange-400 to-orange-600"
         }
     ];
 
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen overflow-hidden">
+            {/* Floating Background Elements */}
+            <div className="fixed inset-0 pointer-events-none z-0">
+                <div 
+                    className="absolute w-96 h-96 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 rounded-full blur-3xl"
+                    style={{
+                        transform: `translate(${mousePosition.x * 0.05}px, ${mousePosition.y * 0.05}px)`,
+                        top: '10%',
+                        left: '10%',
+                        animation: 'float 6s ease-in-out infinite'
+                    }}
+                />
+                <div 
+                    className="absolute w-80 h-80 bg-gradient-to-r from-pink-400/20 to-red-400/20 rounded-full blur-3xl"
+                    style={{
+                        transform: `translate(${mousePosition.x * -0.03}px, ${mousePosition.y * -0.03}px)`,
+                        top: '60%',
+                        right: '10%',
+                        animation: 'float 8s ease-in-out infinite reverse'
+                    }}
+                />
+            </div>
+
             {/* Hero Section */}
-            <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white py-20 border-t border-indigo-500/20">
-                <div className="container mx-auto px-4">
-                    <div className="max-w-3xl mx-auto text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                            {isAuthenticated 
-                                ? `Welcome Back, ${user?.firstName}!`
-                                : 'Your Trusted Partner in Financial Excellence'
-                            }
-                        </h1>
-                        <p className="text-xl mb-8 text-indigo-100">
-                            {isAuthenticated
-                                ? 'Continue managing your business compliance and registration needs'
-                                : 'Expert guidance in taxation, audit, compliance, and business advisory services to help your business thrive'
-                            }
-                        </p>
-                        <div className="flex flex-wrap justify-center gap-4">
+            <div 
+                ref={heroRef}
+                className="relative bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 text-white py-32 overflow-hidden"
+            >
+                {/* Animated Background Pattern */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute inset-0 bg-grid-pattern animate-pulse"></div>
+                </div>
+                
+                {/* Hero Content */}
+                <div className="container mx-auto px-4 relative z-10">
+                    <div className="max-w-4xl mx-auto text-center">
+                        {/* ProtAcc Brand */}
+                        <div className="mb-8 transform hover:scale-105 transition-all duration-500">
+                            <h1 className="text-7xl md:text-8xl font-black mb-4 bg-gradient-to-r from-white via-indigo-200 to-purple-200 bg-clip-text text-transparent animate-gradient">
+                                ProtAcc
+                            </h1>
+                            <div className="h-1 w-32 bg-gradient-to-r from-indigo-400 to-purple-400 mx-auto rounded-full"></div>
+                        </div>
+
+                        {/* Dynamic Greeting */}
+                        <div className="mb-8 animate-fadeInUp">
+                            {isAuthenticated ? (
+                                <div className="space-y-4">
+                                    <h2 className="text-4xl md:text-5xl font-bold">
+                                        Welcome Back, <span className="text-indigo-300">{user?.firstName}!</span>
+                                    </h2>
+                                    <p className="text-2xl text-indigo-200">
+                                        Your Financial Success Partner
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    <h2 className="text-4xl md:text-6xl font-bold leading-tight">
+                                        Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">Trusted Partner</span> in Financial Excellence
+                                    </h2>
+                                    <p className="text-xl md:text-2xl text-indigo-200 max-w-3xl mx-auto">
+                                        Empowering businesses with expert taxation, compliance, and strategic financial solutions
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Feature Pills */}
+                        <div className="flex flex-wrap justify-center gap-4 mb-12 animate-fadeInUp" style={{animationDelay: '0.3s'}}>
+                            <span className="bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full text-sm font-medium border border-white/30">
+                                ✨ AI-Powered Solutions
+                            </span>
+                            <span className="bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full text-sm font-medium border border-white/30">
+                                🚀 Fast Processing
+                            </span>
+                            <span className="bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full text-sm font-medium border border-white/30">
+                                🔒 100% Secure
+                            </span>
+                        </div>
+
+                        {/* CTA Buttons */}
+                        <div className="flex flex-col sm:flex-row justify-center gap-6 animate-fadeInUp" style={{animationDelay: '0.6s'}}>
                             {isAuthenticated ? (
                                 <>
                                     <Link
-                                        to="/profile"
-                                        className="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition duration-300 flex items-center gap-2"
+                                        to="/services"
+                                        className="group bg-gradient-to-r from-white to-indigo-50 text-indigo-600 px-10 py-4 rounded-2xl font-bold text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
                                     >
-                                        Go to Dashboard <FaArrowRight />
+                                        <FaRocket className="group-hover:animate-bounce" />
+                                        Explore Services
+                                        <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
                                     </Link>
                                     <Link
-                                        to="/consultancy"
-                                        className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition duration-300"
+                                        to="/profile"
+                                        className="group border-2 border-white/50 backdrop-blur-sm text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-white hover:text-indigo-600 transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
                                     >
-                                        Book Consultation
+                                        <FaUserTie />
+                                        My Dashboard
                                     </Link>
                                 </>
                             ) : (
                                 <>
                                     <Link
                                         to="/signup"
-                                        className="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition duration-300"
+                                        className="group bg-gradient-to-r from-white to-indigo-50 text-indigo-600 px-10 py-4 rounded-2xl font-bold text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
                                     >
-                                        Get Started
+                                        <FaPlay className="group-hover:animate-pulse" />
+                                        Get Started Free
+                                        <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
                                     </Link>
                                     <Link
                                         to="/consultancy"
-                                        className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition duration-300"
+                                        className="group border-2 border-white/50 backdrop-blur-sm text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-white hover:text-indigo-600 transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
                                     >
+                                        <FaLightbulb />
                                         Free Consultation
                                     </Link>
                                 </>
@@ -142,201 +295,350 @@ export default function HomePage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Floating Elements */}
+                <div className="absolute top-20 left-10 animate-bounce" style={{animationDelay: '0s', animationDuration: '3s'}}>
+                    <div className="w-4 h-4 bg-white/30 rounded-full"></div>
+                </div>
+                <div className="absolute top-40 right-20 animate-bounce" style={{animationDelay: '1s', animationDuration: '4s'}}>
+                    <div className="w-6 h-6 bg-indigo-400/50 rounded-full"></div>
+                </div>
+                <div className="absolute bottom-20 left-1/4 animate-bounce" style={{animationDelay: '2s', animationDuration: '5s'}}>
+                    <div className="w-3 h-3 bg-purple-400/40 rounded-full"></div>
+                </div>
             </div>
 
-            {/* Why Choose Us Section */}
-            <div className="py-16 bg-gray-50">
+            {/* Features Section */}
+            <div className="py-20 bg-gradient-to-b from-gray-50 to-white relative">
                 <div className="container mx-auto px-4">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose Us?</h2>
-                        <p className="text-gray-600 max-w-2xl mx-auto">
-                            With decades of experience and a commitment to excellence, we provide comprehensive financial solutions tailored to your business needs
+                    <div className="text-center mb-16 animate-fadeInUp">
+                        <h2 className="text-5xl font-bold text-gray-900 mb-6">
+                            Why <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">ProtAcc</span>?
+                        </h2>
+                        <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                            Experience the future of financial services with our cutting-edge technology and expert guidance
                         </p>
                     </div>
-                    <div className="grid md:grid-cols-3 gap-8">
-                        <div className="bg-white p-6 rounded-xl shadow-md text-center">
-                            <div className="h-12 w-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <FaHandshake className="text-2xl text-indigo-600" />
+
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {features.map((feature, index) => (
+                            <div 
+                                key={index}
+                                className="group bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 animate-fadeInUp"
+                                style={{animationDelay: `${index * 0.1}s`}}
+                            >
+                                <div className={`h-16 w-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                                    <feature.icon className="text-2xl text-white" />
+                                </div>
+                                <h3 className="text-xl font-bold mb-4 text-gray-900 group-hover:text-indigo-600 transition-colors">
+                                    {feature.title}
+                                </h3>
+                                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
                             </div>
-                            <h3 className="text-xl font-semibold mb-2">Expert Team</h3>
-                            <p className="text-gray-600">Qualified professionals with extensive experience in taxation and business advisory</p>
-                        </div>
-                        <div className="bg-white p-6 rounded-xl shadow-md text-center">
-                            <div className="h-12 w-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <FaChartLine className="text-2xl text-indigo-600" />
-                            </div>
-                            <h3 className="text-xl font-semibold mb-2">Proactive Approach</h3>
-                            <p className="text-gray-600">We anticipate challenges and provide timely solutions to keep your business ahead</p>
-                        </div>
-                        <div className="bg-white p-6 rounded-xl shadow-md text-center">
-                            <div className="h-12 w-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <FaCheckCircle className="text-2xl text-indigo-600" />
-                            </div>
-                            <h3 className="text-xl font-semibold mb-2">Technology Driven</h3>
-                            <p className="text-gray-600">Leveraging latest technology for efficient and accurate service delivery</p>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>
 
             {/* Services Section */}
-            <div className="py-16 bg-white">
-                <div className="container mx-auto px-4">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Services</h2>
-                        <p className="text-gray-600 max-w-2xl mx-auto">
-                            Comprehensive financial and business solutions delivered with expertise and dedication
+            <div className="py-20 bg-white relative overflow-hidden">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/50 to-purple-50/50"></div>
+                
+                <div className="container mx-auto px-4 relative z-10">
+                    <div className="text-center mb-16 animate-fadeInUp">
+                        <h2 className="text-5xl font-bold text-gray-900 mb-6">Our Services</h2>
+                        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                            Comprehensive financial and business solutions delivered with expertise and innovation
                         </p>
                     </div>
+
                     {loading ? (
-                        <div className="flex justify-center items-center py-12">
-                            <FaSpinner className="animate-spin text-4xl text-indigo-600" />
+                        <div className="flex justify-center items-center py-20">
+                            <div className="relative">
+                                <FaSpinner className="animate-spin text-6xl text-indigo-600" />
+                                <div className="absolute inset-0 rounded-full border-4 border-indigo-200 border-t-transparent animate-spin"></div>
+                            </div>
                         </div>
                     ) : (
-                        <div className="grid md:grid-cols-3 gap-8">
-                            {categories.map((category) => (
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {categories.map((category, index) => (
                                 <Link
                                     key={category.id}
                                     to={`/services?category=${category.id}`}
-                                    className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition duration-300 hover:border-indigo-100 border-2 border-transparent"
+                                    className="group bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-gray-100 animate-fadeInUp"
+                                    style={{animationDelay: `${index * 0.1}s`}}
                                 >
                                     <div className="text-center">
                                         {category.icon && (
-                                            <div className="mb-4">
-                                                <img 
-                                                    src={`${process.env.REACT_APP_PROTACC_API_BASE_URL}${category.icon}`}
-                                                    alt={category.name}
-                                                    className="w-16 h-16 mx-auto object-contain"
-                                                    onError={(e) => {
-                                                        e.target.onerror = null;
-                                                        e.target.src = '/images/default-category.svg';
-                                                    }}
-                                                />
+                                            <div className="mb-6 group-hover:scale-110 transition-transform duration-300">
+                                                <div className="relative">
+                                                    <img 
+                                                        src={`${process.env.REACT_APP_PROTACC_API_BASE_URL}${category.icon}`}
+                                                        alt={category.name}
+                                                        className="w-20 h-20 mx-auto object-contain"
+                                                        onError={(e) => {
+                                                            e.target.onerror = null;
+                                                            e.target.src = '/images/default-category.svg';
+                                                        }}
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                                </div>
                                             </div>
                                         )}
-                                        <h3 className="text-xl font-semibold mb-3 text-gray-900">{category.name}</h3>
-                                        <p className="text-gray-600">{category.description}</p>
+                                        <h3 className="text-2xl font-bold mb-4 text-gray-900 group-hover:text-indigo-600 transition-colors">
+                                            {category.name}
+                                        </h3>
+                                        <p className="text-gray-600 leading-relaxed mb-6">{category.description}</p>
+                                        <div className="flex items-center justify-center text-indigo-600 font-semibold group-hover:text-indigo-700">
+                                            Explore Services 
+                                            <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                                        </div>
                                     </div>
                                 </Link>
                             ))}
                         </div>
                     )}
-                    <div className="text-center mt-8">
-                        <Link
-                            to="/services"
-                            className="inline-flex items-center gap-2 text-indigo-600 font-semibold hover:text-indigo-700 transition-colors"
-                        >
-                            View All Services <FaArrowRight />
-                        </Link>
-                    </div>
                 </div>
             </div>
 
             {/* Stats Section */}
-            <div ref={statsRef} className="bg-indigo-600 text-white py-16">
-                <div className="container mx-auto px-4">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div ref={statsRef} className="relative py-20 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 text-white overflow-hidden">
+                {/* Animated Background */}
+                <div className="absolute inset-0">
+                    <div className="absolute inset-0 bg-black/20"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer"></div>
+                </div>
+
+                <div className="container mx-auto px-4 relative z-10">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl font-bold mb-4">Numbers That Speak</h2>
+                        <p className="text-xl text-indigo-200">Our track record of excellence</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
                         {stats.map((stat, index) => (
-                            <div key={index} className="transform transition-transform hover:scale-105 duration-300">
-                                <div className="text-3xl md:text-4xl font-bold mb-2">
+                            <div 
+                                key={index} 
+                                className="text-center group transform hover:scale-110 transition-all duration-500 animate-fadeInUp"
+                                style={{animationDelay: `${index * 0.2}s`}}
+                            >
+                                <div className="mb-4">
+                                    <stat.icon className="text-4xl mx-auto text-indigo-300 group-hover:text-white transition-colors" />
+                                </div>
+                                <div className="text-4xl md:text-5xl font-black mb-2 bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
                                     {isStatsVisible && (
                                         <CountUp
                                             start={0}
                                             end={stat.number}
-                                            duration={2.5}
+                                            duration={3}
                                             separator=","
                                             suffix={stat.suffix}
                                             useEasing={true}
                                         />
                                     )}
                                 </div>
-                                <div className="text-indigo-100">{stat.label}</div>
+                                <div className="text-indigo-200 font-semibold text-lg">{stat.label}</div>
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
 
-            {/* Testimonials Section */}
-            <div className="py-16 bg-white">
+            {/* Enhanced Testimonials Section */}
+            <div className="py-20 bg-gradient-to-b from-gray-50 to-white relative">
                 <div className="container mx-auto px-4">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-4">Client Success Stories</h2>
-                        <p className="text-gray-600 max-w-2xl mx-auto">
-                            See how we've helped businesses achieve their financial goals
+                    <div className="text-center mb-16 animate-fadeInUp">
+                        <h2 className="text-5xl font-bold text-gray-900 mb-6">Client Success Stories</h2>
+                        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                            Discover how ProtAcc has transformed businesses across industries
                         </p>
                     </div>
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {testimonials.map((testimonial, index) => (
-                            <div key={index} className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition duration-300 border border-gray-100">
-                                <div className="flex items-center mb-4">
-                                    <img 
-                                        src={testimonial.image} 
-                                        alt={testimonial.name} 
-                                        className="w-16 h-16 rounded-full object-cover mr-4 border-2 border-indigo-100"
-                                    />
-                                    <div>
-                                        <p className="font-semibold text-gray-900">{testimonial.name}</p>
-                                        <p className="text-sm text-gray-500">{testimonial.role} at {testimonial.company}</p>
+
+                    {/* Featured Testimonial */}
+                    <div className="max-w-4xl mx-auto mb-16">
+                        <div className="bg-white p-10 rounded-3xl shadow-2xl border border-gray-100 relative overflow-hidden">
+                            <FaQuoteLeft className="absolute top-6 left-6 text-4xl text-indigo-200" />
+                            
+                            <div className="relative z-10">
+                                <div className="flex flex-col md:flex-row items-center gap-8">
+                                    <div className="flex-shrink-0">
+                                        <img 
+                                            src={testimonials[currentTestimonial].image} 
+                                            alt={testimonials[currentTestimonial].name}
+                                            className="w-24 h-24 rounded-full object-cover border-4 border-indigo-100 shadow-lg"
+                                        />
+                                    </div>
+                                    <div className="flex-1 text-center md:text-left">
+                                        <p className="text-xl text-gray-700 italic mb-6 leading-relaxed">
+                                            "{testimonials[currentTestimonial].text}"
+                                        </p>
+                                        <div className="flex items-center justify-center md:justify-start gap-2 mb-4">
+                                            {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
+                                                <FaStar key={i} className="text-yellow-400" />
+                                            ))}
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-gray-900 text-lg">{testimonials[currentTestimonial].name}</p>
+                                            <p className="text-indigo-600 font-medium">{testimonials[currentTestimonial].role}</p>
+                                            <p className="text-gray-500">{testimonials[currentTestimonial].company}</p>
+                                        </div>
                                     </div>
                                 </div>
-                                <p className="text-gray-600 italic">&ldquo;{testimonial.text}&rdquo;</p>
                             </div>
-                        ))}
+
+                            {/* Testimonial Navigation */}
+                            <div className="flex justify-center gap-3 mt-8">
+                                {testimonials.map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setCurrentTestimonial(index)}
+                                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                                            index === currentTestimonial 
+                                                ? 'bg-indigo-600 w-8' 
+                                                : 'bg-gray-300 hover:bg-gray-400'
+                                        }`}
+                                    />
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* CTA Section */}
-            <div className="bg-gradient-to-r from-indigo-800 to-indigo-900 text-white py-16">
-                <div className="container mx-auto px-4 text-center">
-                    <h2 className="text-3xl font-bold mb-4">
-                        {isAuthenticated
-                            ? 'Need Expert Financial Guidance?'
-                            : 'Ready to Transform Your Business?'
-                        }
-                    </h2>
-                    <p className="text-indigo-200 mb-8 max-w-2xl mx-auto">
-                        {isAuthenticated
-                            ? 'Schedule a consultation with our experts to discuss your business needs'
-                            : 'Partner with us for comprehensive financial solutions and business growth'
-                        }
-                    </p>
-                    <div className="flex flex-wrap justify-center gap-4">
-                        {isAuthenticated ? (
-                            <>
-                                <Link
-                                    to="/services"
-                                    className="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition duration-300"
-                                >
-                                    Explore Services
-                                </Link>
-                                <Link
-                                    to="/contact"
-                                    className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition duration-300"
-                                >
-                                    Contact Us
-                                </Link>
-                            </>
-                        ) : (
-                            <>
-                                <Link
-                                    to="/signup"
-                                    className="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition duration-300"
-                                >
-                                    Start Your Journey
-                                </Link>
-                                <Link
-                                    to="/contact"
-                                    className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition duration-300"
-                                >
-                                    Schedule Consultation
-                                </Link>
-                            </>
-                        )}
+            {/* Enhanced CTA Section */}
+            <div className="relative py-20 bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800 text-white overflow-hidden">
+                {/* Animated Background Elements */}
+                <div className="absolute inset-0">
+                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer"></div>
+                </div>
+
+                <div className="container mx-auto px-4 text-center relative z-10">
+                    <div className="max-w-4xl mx-auto">
+                        <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-indigo-200 to-purple-200 bg-clip-text text-transparent">
+                            {isAuthenticated
+                                ? 'Ready to Accelerate Your Growth?'
+                                : 'Ready to Transform Your Business?'
+                            }
+                        </h2>
+                        <p className="text-2xl text-indigo-200 mb-12 max-w-3xl mx-auto leading-relaxed">
+                            {isAuthenticated
+                                ? 'Unlock new opportunities with ProtAcc\'s expert financial guidance and innovative solutions'
+                                : 'Join thousands of successful businesses who trust ProtAcc for their financial excellence'
+                            }
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row justify-center gap-6 mb-16">
+                            {isAuthenticated ? (
+                                <>
+                                    <Link
+                                        to="/services"
+                                        className="group bg-gradient-to-r from-white to-indigo-50 text-indigo-600 px-12 py-4 rounded-2xl font-bold text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
+                                    >
+                                        <FaRocket className="group-hover:animate-bounce" />
+                                        Explore All Services
+                                        <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+                                    </Link>
+                                    <Link
+                                        to="/consultancy"
+                                        className="group border-2 border-white/50 backdrop-blur-sm text-white px-12 py-4 rounded-2xl font-bold text-lg hover:bg-white hover:text-indigo-600 transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
+                                    >
+                                        <FaUserTie />
+                                        Book Consultation
+                                    </Link>
+                                </>
+                            ) : (
+                                <>
+                                    <Link
+                                        to="/signup"
+                                        className="group bg-gradient-to-r from-white to-indigo-50 text-indigo-600 px-12 py-4 rounded-2xl font-bold text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
+                                    >
+                                        <FaPlay className="group-hover:animate-pulse" />
+                                        Start Your Journey
+                                        <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+                                    </Link>
+                                    <Link
+                                        to="/consultancy"
+                                        className="group border-2 border-white/50 backdrop-blur-sm text-white px-12 py-4 rounded-2xl font-bold text-lg hover:bg-white hover:text-indigo-600 transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
+                                    >
+                                        <FaLightbulb />
+                                        Free Consultation
+                                    </Link>
+                                </>
+                            )}
+                        </div>
+
+                        {/* Trust Indicators */}
+                        <div className="flex flex-wrap justify-center items-center gap-8 text-indigo-200">
+                            <div className="flex items-center gap-2">
+                                <FaShieldAlt />
+                                <span>100% Secure</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <FaAward />
+                                <span>Award Winning</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <FaClock />
+                                <span>24/7 Support</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <FaChartLine />
+                                <span>Proven Results</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            {/* Custom CSS for animations */}
+            <style jsx>{`
+                @keyframes float {
+                    0%, 100% { transform: translateY(0px) rotate(0deg); }
+                    50% { transform: translateY(-20px) rotate(180deg); }
+                }
+                
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(50px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                @keyframes shimmer {
+                    0% { transform: translateX(-100%); }
+                    100% { transform: translateX(100%); }
+                }
+                
+                @keyframes gradient {
+                    0%, 100% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                }
+                
+                .animate-fadeInUp {
+                    animation: fadeInUp 0.8s ease-out forwards;
+                }
+                
+                .animate-shimmer {
+                    animation: shimmer 3s ease-in-out infinite;
+                }
+                
+                .animate-gradient {
+                    background-size: 200% 200%;
+                    animation: gradient 3s ease infinite;
+                }
+                
+                .bg-grid-pattern {
+                    background-image: 
+                        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+                    background-size: 50px 50px;
+                }
+            `}</style>
         </div>
     );
 }

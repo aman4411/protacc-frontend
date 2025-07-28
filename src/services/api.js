@@ -203,6 +203,15 @@ export const createOrder = async (serviceId) => {
     }
 };
 
+export const createOrderFromCart = async () => {
+    try {
+        const response = await api.post('/orders');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to create order from cart';
+    }
+};
+
 export const getOrders = async () => {
     try {
         const response = await api.get('/orders');
