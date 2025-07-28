@@ -165,6 +165,17 @@ export const getServiceBySlug = async (slug) => {
     }
 };
 
+export const searchServices = async (query) => {
+    try {
+        const response = await api.get('/services/search', { 
+            params: { q: query }
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to search services';
+    }
+};
+
 // Cart
 export const getCartItems = async () => {
     try {

@@ -15,6 +15,7 @@ import ProfilePage from './pages/ProfilePage';
 import AdminDashboard from './pages/admin/Dashboard';
 import ServicesPage from './pages/ServicesPage';
 import ServiceDetailPage from './pages/ServiceDetailPage';
+import SearchPage from './pages/SearchPage';
 import CartPage from './pages/CartPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailPage from './pages/OrderDetailPage';
@@ -42,6 +43,7 @@ function App() {
                         <Route path="consultancy" element={<ConsultancyPage />} />
                         <Route path="services" element={<ServicesPage />} />
                         <Route path="services/:slug" element={<ServiceDetailPage />} />
+                        <Route path="search" element={<SearchPage />} />
 
                         {/* Protected Routes */}
                         <Route
