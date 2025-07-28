@@ -153,6 +153,24 @@ export const getAdminOrders = async (params = {}) => {
     }
 };
 
+export const updateOrderStatus = async (orderId, status, notes = '') => {
+    try {
+        const response = await api.put(`/admin/orders/${orderId}/status`, { status, notes });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update order status';
+    }
+};
+
+export const getOrderStatusHistory = async (orderId) => {
+    try {
+        const response = await api.get(`/orders/${orderId}/history`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch order history';
+    }
+};
+
 // Admin Service Management
 export const getAdminServices = async (params = {}) => {
     try {
@@ -326,27 +344,9 @@ export const getOrders = async () => {
 
 export const getOrderByNumber = async (orderNumber) => {
     try {
-        const response = await api.get(`/orders/${orderNumber}`);
+        const response = await api.get(`/orders/number/${orderNumber}`);
         return response.data;
     } catch (error) {
         throw error.response?.data?.error || 'Failed to fetch order details';
-    }
-};
-
-export const updateOrderStatus = async (orderId, status, notes) => {
-    try {
-        const response = await api.patch(`/orders/${orderId}/status`, { status, notes });
-        return response.data;
-    } catch (error) {
-        throw error.response?.data?.error || 'Failed to update order status';
-    }
-};
-
-export const getOrderStatusHistory = async (orderId) => {
-    try {
-        const response = await api.get(`/orders/${orderId}/history`);
-        return response.data;
-    } catch (error) {
-        throw error.response?.data?.error || 'Failed to fetch order history';
     }
 }; 
