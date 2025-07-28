@@ -126,12 +126,30 @@ export const getProfile = async () => {
     }
 };
 
-export const getUsers = async () => {
+export const getUsers = async (params = {}) => {
     try {
-        const response = await api.get('/admin/users');
+        const response = await api.get('/admin/users', { params });
         return response.data;
     } catch (error) {
         throw error.response?.data?.error || 'Failed to fetch users';
+    }
+};
+
+export const updateUserRole = async (userId, role) => {
+    try {
+        const response = await api.put(`/admin/users/${userId}/role`, { role });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update user role';
+    }
+};
+
+export const getAdminOrders = async (params = {}) => {
+    try {
+        const response = await api.get('/admin/orders', { params });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch orders';
     }
 };
 

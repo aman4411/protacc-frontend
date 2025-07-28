@@ -26,6 +26,17 @@ function App() {
         <AuthProvider>
             <Router>
                 <Routes>
+                    {/* Admin Routes - Outside Layout to avoid header/footer */}
+                    <Route
+                        path="admin/*"
+                        element={
+                            <ProtectedRoute roles={['admin']}>
+                                <AdminDashboard />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* Main Site Routes - With Layout (header/footer) */}
                     <Route path="/" element={<Layout />}>
                         {/* Public Routes */}
                         <Route index element={<HomePage />} />
@@ -75,16 +86,6 @@ function App() {
                             element={
                                 <ProtectedRoute>
                                     <OrderDetailPage />
-                                </ProtectedRoute>
-                            }
-                        />
-
-                        {/* Admin Routes */}
-                        <Route
-                            path="admin/*"
-                            element={
-                                <ProtectedRoute roles={['admin']}>
-                                    <AdminDashboard />
                                 </ProtectedRoute>
                             }
                         />
