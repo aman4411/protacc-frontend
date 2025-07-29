@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { FaSearch, FaFilter, FaEdit, FaSpinner, FaUserCheck, FaUserTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { getUsers, updateUserRole } from '../../services/api';
+import { FaEdit, FaTrash, FaFilter, FaEye, FaSpinner, FaSearch, FaUserCheck, FaUserTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { getUsers, updateUserRole, deleteUser } from '../../services/api';
+import UserProfile from '../../components/UserProfile';
 import toast from 'react-hot-toast';
 
 const UserManagement = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null);
     const [pagination, setPagination] = useState({
         current_page: 1,
         per_page: 10,
@@ -71,6 +73,14 @@ const UserManagement = () => {
         }
     };
 
+    const handleViewProfile = (user) => {
+        setSelectedUser(user);
+    };
+
+    const closeUserProfile = () => {
+        setSelectedUser(null);
+    };
+
     const clearFilters = () => {
         setFilters({
             search: '',
@@ -79,6 +89,7 @@ const UserManagement = () => {
             page: 1,
             limit: 10
         });
+        setShowFilters(false);
     };
 
     const getRoleBadgeColor = (role) => {
@@ -259,6 +270,14 @@ const UserManagement = () => {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <div className="flex items-center space-x-2">
+                                                    <button
+                                                        onClick={() => handleViewProfile(user)}
+                                                        className="text-indigo-600 hover:text-indigo-900 flex items-center"
+                                                        title="View Profile"
+                                                    >
+                                                        <FaEye className="mr-1" />
+                                                        Profile
+                                                    </button>
                                                     <select
                                                         value={user.role}
                                                         onChange={(e) => handleRoleUpdate(user.id, e.target.value)}
@@ -354,6 +373,22 @@ const UserManagement = () => {
                         <h3 className="text-lg font-medium text-gray-900 mb-2">No users found</h3>
                         <p className="text-gray-500">Try adjusting your search criteria or filters.</p>
                     </div>
+                )}
+
+                {/* User Profile Modal */}
+                {selectedUser && (
+                    <UserProfile 
+                        user={{
+                            id: selectedUser.id,
+                            first_name: selectedUser.firstName,
+                            last_name: selectedUser.lastName,
+                            email: selectedUser.email,
+                            role: selectedUser.role,
+                            email_verified: selectedUser.isEmailVerified,
+                            created_at: selectedUser.createdAt
+                        }}
+                        onClose={closeUserProfile}
+                    />
                 )}
             </div>
         </div>

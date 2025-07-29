@@ -10,7 +10,6 @@ import {
     FaTasks,
     FaServicestack,
     FaClipboardList,
-    FaBell,
     FaUserShield,
     FaSortNumericDown
 } from 'react-icons/fa';
@@ -57,11 +56,6 @@ const AdminLayout = ({ children }) => {
             name: 'Reports & Analytics',
             path: '/admin/reports',
             icon: FaChartBar
-        },
-        {
-            name: 'Notifications',
-            path: '/admin/notifications',
-            icon: FaBell
         }
     ];
 

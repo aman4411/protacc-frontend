@@ -505,4 +505,69 @@ export const updateServicePriority = async (serviceId, priority) => {
     } catch (error) {
         throw error.response?.data?.error || 'Failed to update service priority';
     }
+};
+
+// Analytics APIs
+export const getRevenueAnalytics = async (period = '30') => {
+    try {
+        const response = await api.get(`/admin/analytics/revenue?period=${period}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch revenue analytics';
+    }
+};
+
+export const getOrderAnalytics = async (period = '30') => {
+    try {
+        const response = await api.get(`/admin/analytics/orders?period=${period}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch order analytics';
+    }
+};
+
+export const getUserAnalytics = async (period = '30') => {
+    try {
+        const response = await api.get(`/admin/analytics/users?period=${period}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch user analytics';
+    }
+};
+
+export const getServiceAnalytics = async (period = '30') => {
+    try {
+        const response = await api.get(`/admin/analytics/services?period=${period}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch service analytics';
+    }
+};
+
+export const getOverallMetrics = async (period = '30') => {
+    try {
+        const response = await api.get(`/admin/analytics/metrics?period=${period}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch overall metrics';
+    }
+};
+
+export const getRecentActivity = async (limit = '10') => {
+    try {
+        const response = await api.get(`/admin/analytics/activity?limit=${limit}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch recent activity';
+    }
+};
+
+// User-specific orders
+export const getUserOrders = async (userId) => {
+    try {
+        const response = await api.get(`/admin/users/${userId}/orders`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch user orders';
+    }
 }; 
