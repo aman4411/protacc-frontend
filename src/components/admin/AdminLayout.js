@@ -11,7 +11,12 @@ import {
     FaServicestack,
     FaClipboardList,
     FaUserShield,
-    FaSortNumericDown
+    FaSortNumericDown,
+    FaHome,
+    FaBox,
+    FaSignOutAlt,
+    FaChartLine,
+    FaHandshake
 } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 
@@ -21,42 +26,14 @@ const AdminLayout = ({ children }) => {
     const { user } = useAuth();
 
     const menuItems = [
-        {
-            name: 'Dashboard',
-            path: '/admin',
-            icon: FaChartBar,
-            exact: true
-        },
-        {
-            name: 'User Management',
-            path: '/admin/users',
-            icon: FaUsers
-        },
-        {
-            name: 'Order Management',
-            path: '/admin/orders',
-            icon: FaClipboardList
-        },
-        {
-            name: 'Service Management',
-            path: '/admin/services',
-            icon: FaServicestack
-        },
-        {
-            name: 'Priority Management',
-            path: '/admin/priority',
-            icon: FaSortNumericDown
-        },
-        {
-            name: 'System Settings',
-            path: '/admin/settings',
-            icon: FaCog
-        },
-        {
-            name: 'Reports & Analytics',
-            path: '/admin/reports',
-            icon: FaChartBar
-        }
+        { name: 'Dashboard', path: '/admin', icon: FaHome },
+        { name: 'User Management', path: '/admin/users', icon: FaUsers },
+        { name: 'Service Management', path: '/admin/services', icon: FaBox },
+        { name: 'Order Management', path: '/admin/orders', icon: FaShoppingCart },
+        { name: 'Lead Management', path: '/admin/leads', icon: FaHandshake },
+        { name: 'Priority Management', path: '/admin/priority', icon: FaSortNumericDown },
+        { name: 'Reports & Analytics', path: '/admin/reports', icon: FaChartLine },
+        { name: 'System Settings', path: '/admin/settings', icon: FaCog }
     ];
 
     const isActiveRoute = (item) => {

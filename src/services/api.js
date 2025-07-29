@@ -570,4 +570,64 @@ export const getUserOrders = async (userId) => {
     } catch (error) {
         throw error.response?.data?.error || 'Failed to fetch user orders';
     }
+};
+
+// Lead Management APIs
+export const createLead = async (leadData) => {
+    try {
+        const response = await api.post('/leads', leadData);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to create lead';
+    }
+};
+
+export const getLeads = async (filters = {}) => {
+    try {
+        const params = new URLSearchParams();
+        Object.keys(filters).forEach(key => {
+            if (filters[key]) params.append(key, filters[key]);
+        });
+        
+        const response = await api.get(`/admin/leads?${params.toString()}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch leads';
+    }
+};
+
+export const getLeadById = async (leadId) => {
+    try {
+        const response = await api.get(`/admin/leads/${leadId}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch lead';
+    }
+};
+
+export const updateLead = async (leadId, updates) => {
+    try {
+        const response = await api.put(`/admin/leads/${leadId}`, updates);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update lead';
+    }
+};
+
+export const deleteLead = async (leadId) => {
+    try {
+        const response = await api.delete(`/admin/leads/${leadId}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to delete lead';
+    }
+};
+
+export const getLeadStats = async () => {
+    try {
+        const response = await api.get('/admin/leads/stats');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch lead stats';
+    }
 }; 

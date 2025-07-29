@@ -9,6 +9,7 @@ import SystemSettings from './SystemSettings';
 import DashboardOverview from './DashboardOverview';
 import PriorityManagement from './PriorityManagement';
 import ReportsAnalytics from './ReportsAnalytics';
+import LeadManagement from './LeadManagement';
 
 const AdminDashboard = () => {
     const { user: currentUser } = useAuth();
@@ -36,6 +37,7 @@ const AdminDashboard = () => {
                 <Route path="/priority" element={<PriorityManagement />} />
                 <Route path="/settings" element={<SystemSettings />} />
                 <Route path="/reports" element={<ReportsAnalytics />} />
+                <Route path="/leads" element={<LeadManagement />} />
                 <Route path="*" element={<Navigate to="/admin" replace />} />
             </Routes>
         </AdminLayout>
