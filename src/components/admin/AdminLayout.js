@@ -11,7 +11,8 @@ import {
     FaServicestack,
     FaClipboardList,
     FaBell,
-    FaUserShield
+    FaUserShield,
+    FaSortNumericDown
 } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 
@@ -41,6 +42,11 @@ const AdminLayout = ({ children }) => {
             name: 'Service Management',
             path: '/admin/services',
             icon: FaServicestack
+        },
+        {
+            name: 'Priority Management',
+            path: '/admin/priority',
+            icon: FaSortNumericDown
         },
         {
             name: 'System Settings',

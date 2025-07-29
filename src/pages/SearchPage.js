@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { FaSearch, FaSpinner, FaShoppingCart, FaArrowLeft } from 'react-icons/fa';
+import { FaSearch, FaSpinner, FaShoppingCart, FaArrowLeft, FaCheck } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
 import { searchServices, addToCart } from '../services/api';
 
@@ -13,6 +14,7 @@ const SearchPage = () => {
     const [hasSearched, setHasSearched] = useState(false);
     const [addingToCart, setAddingToCart] = useState(null);
     const { isAuthenticated } = useAuth();
+    const { isInCart, addToCartState } = useCart();
 
     useEffect(() => {
         const queryParam = searchParams.get('q');
@@ -61,9 +63,16 @@ const SearchPage = () => {
             return;
         }
 
+        // If already in cart, navigate to cart page
+        if (isInCart(serviceId)) {
+            window.location.href = '/cart';
+            return;
+        }
+
         setAddingToCart(serviceId);
         try {
             await addToCart(serviceId);
+            addToCartState(serviceId); // Update cart context
             toast.success('Service added to cart!');
         } catch (error) {
             toast.error(error.toString());
@@ -211,14 +220,22 @@ const SearchPage = () => {
                                         <button
                                             onClick={() => handleAddToCart(service.id)}
                                             disabled={addingToCart === service.id}
-                                            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm font-medium"
+                                            className={`px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm font-medium ${
+                                                addingToCart === service.id 
+                                                    ? 'bg-indigo-600 text-white'
+                                                    : isInCart(service.id)
+                                                    ? 'bg-green-600 text-white hover:bg-green-700'
+                                                    : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                                            }`}
                                         >
                                             {addingToCart === service.id ? (
                                                 <FaSpinner className="animate-spin" />
+                                            ) : isInCart(service.id) ? (
+                                                <FaCheck />
                                             ) : (
                                                 <FaShoppingCart />
                                             )}
-                                            Add to Cart
+                                            {isInCart(service.id) ? 'View Cart' : 'Add to Cart'}
                                         </button>
                                     </div>
                                 </div>

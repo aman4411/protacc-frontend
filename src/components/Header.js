@@ -13,9 +13,11 @@ import {
 import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 export default function Header() {
     const { user, logout, isAuthenticated } = useAuth();
+    const { cartCount } = useCart();
     const [openMenu, setOpenMenu] = useState(null);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
@@ -208,10 +210,15 @@ export default function Header() {
                                         <div className="flex items-center gap-4">
                                             <Link
                                                 to="/cart"
-                                                className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                                className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors relative"
                                                 onClick={() => setMobileOpen(false)}
                                             >
                                                 <FaShoppingCart className="text-xl" />
+                                                {cartCount > 0 && (
+                                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                                        {cartCount > 99 ? '99+' : cartCount}
+                                                    </span>
+                                                )}
                                             </Link>
                                             <Link
                                                 to="/orders"
@@ -292,6 +299,11 @@ export default function Header() {
                                     className="flex items-center gap-2 hover:text-indigo-700 transition-colors relative"
                                 >
                                     <FaShoppingCart className="text-xl" />
+                                    {cartCount > 0 && (
+                                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                            {cartCount > 99 ? '99+' : cartCount}
+                                        </span>
+                                    )}
                                     <span className="sr-only">Cart</span>
                                 </Link>
                                 <Link

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaShoppingCart, FaSpinner, FaCheckCircle, FaClock, FaFileAlt } from 'react-icons/fa';
+import { FaShoppingCart, FaSpinner, FaCheckCircle, FaClock, FaFileAlt, FaCheck } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
 import { getServiceBySlug, addToCart } from '../services/api';
 
@@ -12,6 +13,7 @@ const ServiceDetailPage = () => {
     const [loading, setLoading] = useState(true);
     const [addingToCart, setAddingToCart] = useState(false);
     const { isAuthenticated } = useAuth();
+    const { isInCart, addToCartState } = useCart();
 
     useEffect(() => {
         const fetchService = async () => {
@@ -35,15 +37,41 @@ const ServiceDetailPage = () => {
             return;
         }
 
+        // If already in cart, navigate to cart page
+        if (service && isInCart(service.id)) {
+            navigate('/cart');
+            return;
+        }
+
         setAddingToCart(true);
         try {
             await addToCart(service.id);
+            addToCartState(service.id); // Update cart context
             toast.success('Service added to cart');
         } catch (error) {
             toast.error('Failed to add service to cart');
         } finally {
             setAddingToCart(false);
         }
+    };
+
+    // Get button configuration based on cart state
+    const getButtonConfig = () => {
+        if (!service) return { text: 'Add to Cart', icon: FaShoppingCart, variant: 'primary' };
+        
+        if (isInCart(service.id)) {
+            return { 
+                text: 'View Cart', 
+                icon: FaCheck, 
+                variant: 'success' 
+            };
+        }
+        
+        return { 
+            text: 'Add to Cart', 
+            icon: FaShoppingCart, 
+            variant: 'primary' 
+        };
     };
 
     if (loading) {
@@ -148,20 +176,31 @@ const ServiceDetailPage = () => {
                             >
                                 Back to Services
                             </button>
-                            <button
-                                onClick={handleAddToCart}
-                                disabled={addingToCart}
-                                className={`px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 ${
-                                    addingToCart ? 'opacity-70 cursor-not-allowed' : ''
-                                }`}
-                            >
-                                {addingToCart ? (
-                                    <FaSpinner className="animate-spin" />
-                                ) : (
-                                    <FaShoppingCart />
-                                )}
-                                Add to Cart
-                            </button>
+                            {(() => {
+                                const buttonConfig = getButtonConfig();
+                                const ButtonIcon = buttonConfig.icon;
+                                
+                                return (
+                                    <button
+                                        onClick={handleAddToCart}
+                                        disabled={addingToCart}
+                                        className={`px-6 py-3 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                                            addingToCart 
+                                                ? 'opacity-70 cursor-not-allowed' 
+                                                : buttonConfig.variant === 'success'
+                                                ? 'bg-green-600 text-white hover:bg-green-700'
+                                                : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                                        }`}
+                                    >
+                                        {addingToCart ? (
+                                            <FaSpinner className="animate-spin" />
+                                        ) : (
+                                            <ButtonIcon />
+                                        )}
+                                        {buttonConfig.text}
+                                    </button>
+                                );
+                            })()}
                         </div>
                     </div>
                 </div>

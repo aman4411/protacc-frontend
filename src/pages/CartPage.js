@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaSpinner, FaTrash, FaShoppingBag, FaShoppingCart, FaCreditCard } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
 import { getCartItems, removeFromCart, createOrderFromCart, createPaymentOrder, verifyPayment } from '../services/api';
 
@@ -12,11 +13,14 @@ const CartPage = () => {
     const [processingOrder, setProcessingOrder] = useState(false);
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
+    const { removeFromCartState, refreshCart } = useCart();
 
     const fetchCartItems = useCallback(async () => {
         try {
             const items = await getCartItems();
             setCartItems(items || []); // Ensure it's always an array
+            // Refresh global cart context to keep it in sync
+            refreshCart();
         } catch (error) {
             console.error('Failed to fetch cart items:', error);
             toast.error('Failed to load cart items');
@@ -24,7 +28,7 @@ const CartPage = () => {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [refreshCart]);
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -51,6 +55,7 @@ const CartPage = () => {
         try {
             await removeFromCart(serviceId);
             // Refetch the cart data from server to ensure consistency
+            // This will also update the global cart context via fetchCartItems
             await fetchCartItems();
             toast.success('Item removed from cart');
         } catch (error) {
@@ -148,6 +153,8 @@ const CartPage = () => {
             
             // Clear cart since order was successful
             setCartItems([]);
+            // Refresh global cart context
+            refreshCart();
             
             // Initiate payment
             await handlePayment(order);

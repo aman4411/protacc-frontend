@@ -7,6 +7,7 @@ import ServiceManagement from './ServiceManagement';
 import OrderManagement from './OrderManagement';
 import SystemSettings from './SystemSettings';
 import DashboardOverview from './DashboardOverview';
+import PriorityManagement from './PriorityManagement';
 
 const AdminDashboard = () => {
     const { user: currentUser } = useAuth();
@@ -31,6 +32,7 @@ const AdminDashboard = () => {
                 <Route path="/users" element={<UserManagement />} />
                 <Route path="/orders" element={<OrderManagement />} />
                 <Route path="/services" element={<ServiceManagement />} />
+                <Route path="/priority" element={<PriorityManagement />} />
                 <Route path="/settings" element={<SystemSettings />} />
                 <Route path="/reports" element={<div className="p-6"><h2 className="text-2xl font-bold">Reports & Analytics</h2><p className="text-gray-600">Coming soon...</p></div>} />
                 <Route path="/notifications" element={<div className="p-6"><h2 className="text-2xl font-bold">Notifications</h2><p className="text-gray-600">Coming soon...</p></div>} />

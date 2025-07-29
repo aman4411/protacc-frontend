@@ -135,6 +135,15 @@ export const getUsers = async (params = {}) => {
     }
 };
 
+export const getDashboardStats = async () => {
+    try {
+        const response = await api.get('/admin/dashboard/stats');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch dashboard stats';
+    }
+};
+
 export const updateUserRole = async (userId, role) => {
     try {
         const response = await api.put(`/admin/users/${userId}/role`, { role });
@@ -476,5 +485,24 @@ export const getOrderByNumber = async (orderNumber) => {
         return response.data;
     } catch (error) {
         throw error.response?.data?.error || 'Failed to fetch order details';
+    }
+}; 
+
+// Priority Management
+export const updateCategoryPriority = async (categoryId, priority) => {
+    try {
+        const response = await api.put(`/admin/categories/${categoryId}/priority`, { priority });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update category priority';
+    }
+};
+
+export const updateServicePriority = async (serviceId, priority) => {
+    try {
+        const response = await api.put(`/admin/services/${serviceId}/priority`, { priority });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update service priority';
     }
 }; 

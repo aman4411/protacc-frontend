@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { FaUsers, FaClipboardList, FaServicestack, FaDollarSign, FaArrowUp, FaArrowDown } from 'react-icons/fa';
-import { getUsers, getAdminOrders } from '../../services/api';
+import { getDashboardStats } from '../../services/api';
 
 const DashboardOverview = () => {
     const [stats, setStats] = useState({
-        totalUsers: 0,
-        totalOrders: 0,
-        totalRevenue: 0,
-        pendingOrders: 0,
+        total_users: 0,
+        total_orders: 0,
+        total_revenue: 0,
+        pending_orders: 0,
         loading: true
     });
 
@@ -17,32 +17,10 @@ const DashboardOverview = () => {
 
     const fetchDashboardStats = async () => {
         try {
-            const [usersResponse, ordersResponse] = await Promise.all([
-                getUsers({ limit: 1 }),
-                getAdminOrders({ limit: 1 })
-            ]);
-
-            // Get total counts from pagination
-            const totalUsers = usersResponse.pagination?.total || 0;
-            
-            // For orders, we'll need to get all orders to calculate stats
-            const allOrdersResponse = await getAdminOrders({ limit: 100 });
-            const orders = allOrdersResponse || [];
-            
-            const totalOrders = Array.isArray(orders) ? orders.length : 0;
-            const pendingOrders = Array.isArray(orders) ? orders.filter(order => 
-                order.status === 'pending_payment' || order.status === 'processing'
-            ).length : 0;
-            
-            const totalRevenue = Array.isArray(orders) ? orders.reduce((sum, order) => 
-                sum + (order.totalAmount || 0), 0
-            ) : 0;
-
+            const data = await getDashboardStats();
+            console.log('Dashboard stats received:', data);
             setStats({
-                totalUsers,
-                totalOrders,
-                totalRevenue,
-                pendingOrders,
+                ...data,
                 loading: false
             });
         } catch (error) {
@@ -54,35 +32,35 @@ const DashboardOverview = () => {
     const statCards = [
         {
             title: 'Total Users',
-            value: stats.totalUsers,
+            value: stats.total_users,
             icon: FaUsers,
             color: 'bg-blue-500',
-            change: '+12%',
-            changeType: 'positive'
+            change: stats.user_growth || '0%',
+            changeType: stats.user_growth && stats.user_growth.startsWith('+') ? 'positive' : stats.user_growth && stats.user_growth.startsWith('-') ? 'negative' : 'neutral'
         },
         {
             title: 'Total Orders',
-            value: stats.totalOrders,
+            value: stats.total_orders,
             icon: FaClipboardList,
             color: 'bg-green-500',
-            change: '+8%',
-            changeType: 'positive'
+            change: stats.order_growth || '0%',
+            changeType: stats.order_growth && stats.order_growth.startsWith('+') ? 'positive' : stats.order_growth && stats.order_growth.startsWith('-') ? 'negative' : 'neutral'
         },
         {
             title: 'Total Revenue',
-            value: `₹${stats.totalRevenue.toLocaleString()}`,
+            value: `₹${stats.total_revenue.toLocaleString()}`,
             icon: FaDollarSign,
             color: 'bg-yellow-500',
-            change: '+15%',
-            changeType: 'positive'
+            change: stats.revenue_growth || '0%',
+            changeType: stats.revenue_growth && stats.revenue_growth.startsWith('+') ? 'positive' : stats.revenue_growth && stats.revenue_growth.startsWith('-') ? 'negative' : 'neutral'
         },
         {
             title: 'Pending Orders',
-            value: stats.pendingOrders,
+            value: stats.pending_orders,
             icon: FaServicestack,
             color: 'bg-red-500',
-            change: '-5%',
-            changeType: 'negative'
+            change: '0%', // Pending orders don't need growth calculation
+            changeType: 'neutral'
         }
     ];
 
@@ -141,11 +119,17 @@ const DashboardOverview = () => {
                             <div className="mt-4 flex items-center">
                                 {stat.changeType === 'positive' ? (
                                     <FaArrowUp className="text-green-500 text-sm mr-1" />
-                                ) : (
+                                ) : stat.changeType === 'negative' ? (
                                     <FaArrowDown className="text-red-500 text-sm mr-1" />
+                                ) : (
+                                    <div className="w-3 h-3 mr-1"></div>
                                 )}
                                 <span className={`text-sm font-medium ${
-                                    stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+                                    stat.changeType === 'positive' 
+                                        ? 'text-green-600' 
+                                        : stat.changeType === 'negative' 
+                                        ? 'text-red-600'
+                                        : 'text-gray-600'
                                 }`}>
                                     {stat.change}
                                 </span>
@@ -183,12 +167,44 @@ const DashboardOverview = () => {
                             <div className="text-center py-4">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
                             </div>
+                        ) : stats.recent_users && stats.recent_users.length > 0 ? (
+                            <>
+                                {stats.recent_users.map((user, index) => (
+                                    <div key={index} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
+                                        <div className="flex flex-col">
+                                            <span className="font-medium text-gray-900">
+                                                {user.firstName} {user.lastName}
+                                            </span>
+                                            <span className="text-sm text-gray-500">{user.email}</span>
+                                            <span className="text-xs text-gray-400">
+                                                {new Date(user.createdAt).toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                        <div className="flex flex-col items-end">
+                                            <span className={`text-xs px-2 py-1 rounded-full ${
+                                                user.role === 'admin' 
+                                                    ? 'bg-purple-100 text-purple-800' 
+                                                    : 'bg-blue-100 text-blue-800'
+                                            }`}>
+                                                {user.role}
+                                            </span>
+                                            {user.isEmailVerified ? (
+                                                <span className="text-xs text-green-600 mt-1">Verified</span>
+                                            ) : (
+                                                <span className="text-xs text-orange-600 mt-1">Pending</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                                <div className="text-center pt-2">
+                                    <a href="/admin/users" className="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
+                                        View all users →
+                                    </a>
+                                </div>
+                            </>
                         ) : (
                             <div className="text-center py-4 text-gray-500">
-                                <p>User activity will be displayed here</p>
-                                <a href="/admin/users" className="text-indigo-600 hover:text-indigo-800 font-medium">
-                                    View all users →
-                                </a>
+                                <p>No users found</p>
                             </div>
                         )}
                     </div>
@@ -202,12 +218,46 @@ const DashboardOverview = () => {
                             <div className="text-center py-4">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
                             </div>
+                        ) : stats.recent_orders && stats.recent_orders.length > 0 ? (
+                            <>
+                                {stats.recent_orders.map((order, index) => (
+                                    <div key={index} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
+                                        <div className="flex flex-col">
+                                            <span className="font-medium text-gray-900">
+                                                #{order.order_number}
+                                            </span>
+                                            <span className="text-sm text-gray-500">{order.user_name}</span>
+                                            <span className="text-xs text-gray-400">
+                                                {order.created_at}
+                                            </span>
+                                        </div>
+                                        <div className="flex flex-col items-end">
+                                            <span className="font-medium text-gray-900">
+                                                ₹{order.total_amount.toLocaleString()}
+                                            </span>
+                                            <span className={`text-xs px-2 py-1 rounded-full mt-1 ${
+                                                order.status === 'payment_received' 
+                                                    ? 'bg-green-100 text-green-800'
+                                                    : order.status === 'processing'
+                                                    ? 'bg-blue-100 text-blue-800'
+                                                    : order.status === 'pending_payment'
+                                                    ? 'bg-orange-100 text-orange-800'
+                                                    : 'bg-gray-100 text-gray-800'
+                                            }`}>
+                                                {order.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                                <div className="text-center pt-2">
+                                    <a href="/admin/orders" className="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
+                                        View all orders →
+                                    </a>
+                                </div>
+                            </>
                         ) : (
                             <div className="text-center py-4 text-gray-500">
-                                <p>Recent orders will be displayed here</p>
-                                <a href="/admin/orders" className="text-indigo-600 hover:text-indigo-800 font-medium">
-                                    View all orders →
-                                </a>
+                                <p>No orders found</p>
                             </div>
                         )}
                     </div>

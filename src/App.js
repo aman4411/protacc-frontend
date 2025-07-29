@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 import SignupPage from './pages/auth/SignupPage';
 import LoginPage from './pages/auth/LoginPage';
 import Layout from "./components/Layout";
@@ -24,75 +25,77 @@ import OrderDetailPage from './pages/OrderDetailPage';
 function App() {
     return (
         <AuthProvider>
-            <Router>
-                <Routes>
-                    {/* Admin Routes - Outside Layout to avoid header/footer */}
-                    <Route
-                        path="admin/*"
-                        element={
-                            <ProtectedRoute roles={['admin']}>
-                                <AdminDashboard />
-                            </ProtectedRoute>
-                        }
-                    />
+            <CartProvider>
+                <Router>
+                    <Routes>
+                        {/* Admin Routes - Outside Layout to avoid header/footer */}
+                        <Route
+                            path="admin/*"
+                            element={
+                                <ProtectedRoute roles={['admin']}>
+                                    <AdminDashboard />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* Main Site Routes - With Layout (header/footer) */}
-                    <Route path="/" element={<Layout />}>
-                        {/* Public Routes */}
-                        <Route index element={<HomePage />} />
-                        <Route path="signup" element={
-                            <RedirectIfAuthenticated>
-                                <SignupPage />
-                            </RedirectIfAuthenticated>
-                        } />
-                        <Route path="login" element={
-                            <RedirectIfAuthenticated>
-                                <LoginPage />
-                            </RedirectIfAuthenticated>
-                        } />
-                        <Route path="verify-email" element={<OTPVerification />} />
-                        <Route path="consultancy" element={<ConsultancyPage />} />
-                        <Route path="services" element={<ServicesPage />} />
-                        <Route path="services/:slug" element={<ServiceDetailPage />} />
-                        <Route path="search" element={<SearchPage />} />
+                        {/* Main Site Routes - With Layout (header/footer) */}
+                        <Route path="/" element={<Layout />}>
+                            {/* Public Routes */}
+                            <Route index element={<HomePage />} />
+                            <Route path="signup" element={
+                                <RedirectIfAuthenticated>
+                                    <SignupPage />
+                                </RedirectIfAuthenticated>
+                            } />
+                            <Route path="login" element={
+                                <RedirectIfAuthenticated>
+                                    <LoginPage />
+                                </RedirectIfAuthenticated>
+                            } />
+                            <Route path="verify-email" element={<OTPVerification />} />
+                            <Route path="consultancy" element={<ConsultancyPage />} />
+                            <Route path="services" element={<ServicesPage />} />
+                            <Route path="services/:slug" element={<ServiceDetailPage />} />
+                            <Route path="search" element={<SearchPage />} />
 
-                        {/* Protected Routes */}
-                        <Route
-                            path="profile"
-                            element={
-                                <ProtectedRoute>
-                                    <ProfilePage />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="cart"
-                            element={
-                                <ProtectedRoute>
-                                    <CartPage />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="orders"
-                            element={
-                                <ProtectedRoute>
-                                    <OrdersPage />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="orders/:orderNumber"
-                            element={
-                                <ProtectedRoute>
-                                    <OrderDetailPage />
-                                </ProtectedRoute>
-                            }
-                        />
-                    </Route>
-                </Routes>
-                <Toaster position="top-right" />
-            </Router>
+                            {/* Protected Routes */}
+                            <Route
+                                path="profile"
+                                element={
+                                    <ProtectedRoute>
+                                        <ProfilePage />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="cart"
+                                element={
+                                    <ProtectedRoute>
+                                        <CartPage />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="orders"
+                                element={
+                                    <ProtectedRoute>
+                                        <OrdersPage />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="orders/:orderNumber"
+                                element={
+                                    <ProtectedRoute>
+                                        <OrderDetailPage />
+                                    </ProtectedRoute>
+                                }
+                            />
+                        </Route>
+                    </Routes>
+                    <Toaster position="top-right" />
+                </Router>
+            </CartProvider>
         </AuthProvider>
     );
 }

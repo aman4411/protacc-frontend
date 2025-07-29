@@ -10,7 +10,10 @@ import {
     FaTag,
     FaServicestack,
     FaToggleOn,
-    FaToggleOff
+    FaToggleOff,
+    FaArrowUp,
+    FaArrowDown,
+    FaSortNumericDown
 } from 'react-icons/fa';
 import { 
     getAdminServices, 
@@ -20,7 +23,9 @@ import {
     deleteService,
     createCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    updateCategoryPriority,
+    updateServicePriority
 } from '../../services/api';
 import toast from 'react-hot-toast';
 
