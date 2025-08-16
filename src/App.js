@@ -9,6 +9,7 @@ import LoginPage from './pages/auth/LoginPage';
 import Layout from "./components/Layout";
 import HomePage from "./pages/Homepage";
 import ConsultancyPage from "./pages/Consultancy";
+import ContactPage from "./pages/ContactPage";
 import OTPVerification from './components/auth/OTPVerification';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import RedirectIfAuthenticated from './components/auth/RedirectIfAuthenticated';
@@ -20,6 +21,7 @@ import SearchPage from './pages/SearchPage';
 import CartPage from './pages/CartPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailPage from './pages/OrderDetailPage';
+import ScrollToTop from './components/ScrollToTop';
 // import more pages...
 
 function App() {
@@ -27,6 +29,7 @@ function App() {
         <AuthProvider>
             <CartProvider>
                 <Router>
+                    <ScrollToTop />
                     <Routes>
                         {/* Admin Routes - Outside Layout to avoid header/footer */}
                         <Route
@@ -54,6 +57,7 @@ function App() {
                             } />
                             <Route path="verify-email" element={<OTPVerification />} />
                             <Route path="consultancy" element={<ConsultancyPage />} />
+                            <Route path="contact" element={<ContactPage />} />
                             <Route path="services" element={<ServicesPage />} />
                             <Route path="services/:slug" element={<ServiceDetailPage />} />
                             <Route path="search" element={<SearchPage />} />

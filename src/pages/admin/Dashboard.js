@@ -10,13 +10,14 @@ import DashboardOverview from './DashboardOverview';
 import PriorityManagement from './PriorityManagement';
 import ReportsAnalytics from './ReportsAnalytics';
 import LeadManagement from './LeadManagement';
+import ContactManagement from './ContactManagement';
 
 const AdminDashboard = () => {
     const { user: currentUser } = useAuth();
 
     if (!currentUser || currentUser.role !== 'admin') {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-header">
                 <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6">
                     <div className="text-center">
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
@@ -38,6 +39,7 @@ const AdminDashboard = () => {
                 <Route path="/settings" element={<SystemSettings />} />
                 <Route path="/reports" element={<ReportsAnalytics />} />
                 <Route path="/leads" element={<LeadManagement />} />
+                <Route path="/contacts" element={<ContactManagement />} />
                 <Route path="*" element={<Navigate to="/admin" replace />} />
             </Routes>
         </AdminLayout>

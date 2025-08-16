@@ -1,123 +1,313 @@
 import { Link } from "react-router-dom";
-import { FaEnvelope, FaPhoneAlt, FaFacebookF, FaInstagram, FaYoutube, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
+import { 
+    FaEnvelope, 
+    FaPhoneAlt, 
+    FaMapMarkerAlt,
+    FaFacebookF, 
+    FaInstagram, 
+    FaYoutube, 
+    FaLinkedinIn, 
+    FaTwitter,
+    FaWhatsapp,
+    FaArrowUp,
+    FaShieldAlt,
+    FaClock,
+    FaHeadset,
+    FaRocket,
+    FaHeart,
+    FaStar
+} from "react-icons/fa";
+import logo from "../logo.jpeg";
+import { useState, useEffect } from "react";
 
 export default function Footer() {
+    const [showScrollTop, setShowScrollTop] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setShowScrollTop(window.scrollY > 300);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const currentYear = new Date().getFullYear();
+
     return (
-        <footer className="relative bg-indigo-600 text-white">
-            {/* Top Section */}
-            <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-6 py-12">
-                {/* Contact Info & Quick Links */}
-                <div className="space-y-4">
-                    <h3 className="text-lg font-bold mb-6 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-white/30">Contact Us</h3>
-                    <div className="flex items-center gap-3 group">
-                        <FaEnvelope className="text-lg group-hover:text-indigo-300 transition-colors" />
-                        <a href="mailto:info@protacc.in" className="hover:text-indigo-300 transition-colors">
-                            info@protacc.in
-                        </a>
+        <footer className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-indigo-900 text-white overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-5">
+                <div className="absolute top-10 left-10 w-20 h-20 bg-white rounded-full"></div>
+                <div className="absolute top-32 right-20 w-32 h-32 bg-indigo-300 rounded-full"></div>
+                <div className="absolute bottom-20 left-1/4 w-16 h-16 bg-purple-300 rounded-full"></div>
+                <div className="absolute bottom-40 right-1/3 w-24 h-24 bg-blue-300 rounded-full"></div>
+            </div>
+
+            {/* Newsletter Section */}
+            <div className="relative z-10 bg-gradient-to-r from-indigo-600 to-purple-600 py-12">
+                <div className="container mx-auto px-4 text-center">
+                    <h3 className="text-2xl md:text-3xl font-bold mb-4">Stay Updated with Latest Business Insights</h3>
+                    <p className="text-indigo-100 mb-8 max-w-2xl mx-auto">
+                        Get expert tips, regulatory updates, and exclusive offers delivered to your inbox
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                        <input
+                            type="email"
+                            placeholder="Enter your email address"
+                            className="flex-1 px-4 py-3 rounded-lg text-gray-900 border-0 focus:ring-2 focus:ring-white outline-none"
+                        />
+                        <button className="bg-white text-indigo-600 px-6 py-3 rounded-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 font-semibold whitespace-nowrap">
+                            Subscribe Now
+                        </button>
                     </div>
-                    <div className="flex items-center gap-3 group">
-                        <FaPhoneAlt className="text-lg group-hover:text-indigo-300 transition-colors" />
-                        <a href="tel:+919817889933" className="hover:text-indigo-300 transition-colors">
-                            +91 9817889933
-                        </a>
+                </div>
+            </div>
+
+            {/* Main Footer Content */}
+            <div className="relative z-10 container mx-auto px-4 py-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+                    {/* Company Info */}
+                    <div className="lg:col-span-1">
+                        <div className="flex items-center gap-3 mb-6">
+                            <img src={logo} alt="ProtAcc" className="h-12 w-12 rounded-xl" />
+                            <div>
+                                <h3 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                                    ProtAcc
+                                </h3>
+                                <p className="text-gray-400 text-sm">Professional Services</p>
+                            </div>
+                        </div>
+                        
+                        <p className="text-gray-300 mb-6 leading-relaxed">
+                            Your trusted partner for all compliance and business registration needs. 
+                            We simplify complex processes to help your business thrive.
+                        </p>
+
+                        {/* Trust Indicators */}
+                        <div className="space-y-3 mb-6">
+                            <div className="flex items-center gap-3">
+                                <FaShieldAlt className="text-green-400" />
+                                <span className="text-sm text-gray-300">100% Secure & Confidential</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <FaClock className="text-blue-400" />
+                                <span className="text-sm text-gray-300">Fast Processing</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <FaHeadset className="text-purple-400" />
+                                <span className="text-sm text-gray-300">24/7 Expert Support</span>
+                            </div>
+                        </div>
+
+                        {/* Social Media */}
+                        <div className="flex items-center gap-4">
+                            <span className="text-sm text-gray-400">Follow Us:</span>
+                            <div className="flex gap-3">
+                                <a href="#" className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-110">
+                                    <FaFacebookF className="text-sm" />
+                                </a>
+                                <a href="#" className="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-600 rounded-full flex items-center justify-center hover:from-pink-600 hover:to-rose-700 transition-all duration-300 transform hover:scale-110">
+                                    <FaInstagram className="text-sm" />
+                                </a>
+                                <a href="#" className="w-10 h-10 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full flex items-center justify-center hover:from-blue-500 hover:to-cyan-600 transition-all duration-300 transform hover:scale-110">
+                                    <FaTwitter className="text-sm" />
+                                </a>
+                                <a href="#" className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center hover:from-blue-700 hover:to-blue-900 transition-all duration-300 transform hover:scale-110">
+                                    <FaLinkedinIn className="text-sm" />
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    
+
                     {/* Quick Links */}
-                    <div className="pt-4">
-                        <h4 className="text-md font-semibold mb-4 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-8 after:h-0.5 after:bg-white/30">Quick Links</h4>
-                        <ul className="space-y-2 text-sm">
-                            <li><Link to="/" className="hover:text-indigo-300 transition-colors block">Home</Link></li>
-                            <li><Link to="/about" className="hover:text-indigo-300 transition-colors block">About Us</Link></li>
-                            <li><Link to="/contact" className="hover:text-indigo-300 transition-colors block">Contact Us</Link></li>
-                            <li><Link to="/track-order" className="hover:text-indigo-300 transition-colors block">Track Order</Link></li>
-                            <li><Link to="/privacy-policy" className="hover:text-indigo-300 transition-colors block">Privacy Policy</Link></li>
+                    <div>
+                        <h4 className="text-lg font-bold mb-6 relative">
+                            Quick Links
+                            <div className="absolute bottom-0 left-0 w-12 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+                        </h4>
+                        <ul className="space-y-3">
+                            <li>
+                                <Link to="/" className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2 group">
+                                    <span className="w-1 h-1 bg-indigo-500 rounded-full group-hover:w-2 transition-all duration-300"></span>
+                                    Home
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/services" className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2 group">
+                                    <span className="w-1 h-1 bg-indigo-500 rounded-full group-hover:w-2 transition-all duration-300"></span>
+                                    All Services
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/consultancy" className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2 group">
+                                    <span className="w-1 h-1 bg-indigo-500 rounded-full group-hover:w-2 transition-all duration-300"></span>
+                                    Free Consultation
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/orders" className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2 group">
+                                    <span className="w-1 h-1 bg-indigo-500 rounded-full group-hover:w-2 transition-all duration-300"></span>
+                                    My Orders
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/cart" className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2 group">
+                                    <span className="w-1 h-1 bg-indigo-500 rounded-full group-hover:w-2 transition-all duration-300"></span>
+                                    Cart
+                                </Link>
+                            </li>
                         </ul>
                     </div>
-                </div>
 
-                {/* Business & Registration Services */}
-                <div className="space-y-4">
-                    <h3 className="text-lg font-bold mb-6 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-white/30">Business & Registration</h3>
-                    <ul className="space-y-2 text-sm">
-                        <li><Link to="/services/proprietorship-registration" className="hover:text-indigo-300 transition-colors block">Proprietorship Registration</Link></li>
-                        <li><Link to="/services/partnership-registration" className="hover:text-indigo-300 transition-colors block">Partnership Registration</Link></li>
-                        <li><Link to="/services/private-limited-company" className="hover:text-indigo-300 transition-colors block">Private Limited Company</Link></li>
-                        <li><Link to="/services/llp-registration" className="hover:text-indigo-300 transition-colors block">LLP Registration</Link></li>
-                        <li><Link to="/services/fssai-registration" className="hover:text-indigo-300 transition-colors block">FSSAI Registration</Link></li>
-                        <li><Link to="/services/trademark-registration" className="hover:text-indigo-300 transition-colors block">Trademark Registration</Link></li>
-                        <li><Link to="/services/import-export-code" className="hover:text-indigo-300 transition-colors block">Import Export Code</Link></li>
-                        <li><Link to="/services/udyam-msme-registration" className="hover:text-indigo-300 transition-colors block">MSME Registration</Link></li>
-                        <li><Link to="/services/digital-signature" className="hover:text-indigo-300 transition-colors block">Digital Signature</Link></li>
-                    </ul>
-                </div>
+                    {/* Popular Services */}
+                    <div>
+                        <h4 className="text-lg font-bold mb-6 relative">
+                            Popular Services
+                            <div className="absolute bottom-0 left-0 w-12 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+                        </h4>
+                        <ul className="space-y-3">
+                            <li>
+                                <Link to="/services?category=1" className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2 group">
+                                    <span className="w-1 h-1 bg-purple-500 rounded-full group-hover:w-2 transition-all duration-300"></span>
+                                    Business Registration
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/services?category=2" className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2 group">
+                                    <span className="w-1 h-1 bg-purple-500 rounded-full group-hover:w-2 transition-all duration-300"></span>
+                                    GST Registration
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/services?category=3" className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2 group">
+                                    <span className="w-1 h-1 bg-purple-500 rounded-full group-hover:w-2 transition-all duration-300"></span>
+                                    Income Tax Filing
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/services?category=4" className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2 group">
+                                    <span className="w-1 h-1 bg-purple-500 rounded-full group-hover:w-2 transition-all duration-300"></span>
+                                    Trademark Registration
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/services" className="text-indigo-400 hover:text-indigo-300 transition-colors duration-300 flex items-center gap-2 group font-medium">
+                                    <FaRocket className="text-sm group-hover:translate-x-1 transition-transform duration-300" />
+                                    View All Services
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
 
-                {/* Tax Services */}
-                <div className="space-y-4">
-                    <h3 className="text-lg font-bold mb-6 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-white/30">Tax Services</h3>
-                    <ul className="space-y-2 text-sm">
-                        <li><Link to="/services/gst-registration" className="hover:text-indigo-300 transition-colors block">GST Registration</Link></li>
-                        <li><Link to="/services/gstr-1-filing" className="hover:text-indigo-300 transition-colors block">GSTR 1 Filing</Link></li>
-                        <li><Link to="/services/gstr-3b-filing" className="hover:text-indigo-300 transition-colors block">GSTR 3B Filing</Link></li>
-                        <li><Link to="/services/pan-registration" className="hover:text-indigo-300 transition-colors block">PAN Registration</Link></li>
-                        <li><Link to="/services/itr-1-filing" className="hover:text-indigo-300 transition-colors block">ITR 1 Filing</Link></li>
-                        <li><Link to="/services/itr-2-filing" className="hover:text-indigo-300 transition-colors block">ITR 2 Filing</Link></li>
-                        <li><Link to="/services/itr-3-filing" className="hover:text-indigo-300 transition-colors block">ITR 3 Filing</Link></li>
-                        <li><Link to="/services/tds-return-filing" className="hover:text-indigo-300 transition-colors block">TDS Return Filing</Link></li>
-                        <li><Link to="/services/gst-notice-handling" className="hover:text-indigo-300 transition-colors block">Tax Notice Handling</Link></li>
-                    </ul>
-                </div>
+                    {/* Contact Info */}
+                    <div>
+                        <h4 className="text-lg font-bold mb-6 relative">
+                            Get in Touch
+                            <div className="absolute bottom-0 left-0 w-12 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+                        </h4>
+                        
+                        <div className="space-y-4">
+                            <div className="group">
+                                <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
+                                    <FaMapMarkerAlt className="text-indigo-400 mt-1 group-hover:text-indigo-300 transition-colors" />
+                                    <div>
+                                        <p className="text-gray-300 text-sm leading-relaxed">
+                                            123 Business District,<br />
+                                            New Delhi - 110001<br />
+                                            India
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
 
-                {/* Compliance & Additional Services */}
-                <div className="space-y-4">
-                    <h3 className="text-lg font-bold mb-6 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-white/30">Compliance & Services</h3>
-                    <ul className="space-y-2 text-sm">
-                        <li><Link to="/services/company-compliances" className="hover:text-indigo-300 transition-colors block">Company Compliances</Link></li>
-                        <li><Link to="/services/llp-compliances" className="hover:text-indigo-300 transition-colors block">LLP Compliances</Link></li>
-                        <li><Link to="/services/fssai-return-filing" className="hover:text-indigo-300 transition-colors block">FSSAI Return Filing</Link></li>
-                        <li><Link to="/services/consultancy" className="hover:text-indigo-300 transition-colors block">Business Consultancy</Link></li>
-                        <li><Link to="/services/project-reports" className="hover:text-indigo-300 transition-colors block">Project Reports</Link></li>
-                        <li><Link to="/services/bookkeeping" className="hover:text-indigo-300 transition-colors block">Bookkeeping Services</Link></li>
-                        <li><Link to="/services/cma-data" className="hover:text-indigo-300 transition-colors block">CMA Data Preparation</Link></li>
-                    </ul>
-                </div>
-            </div>
+                            <div className="group">
+                                <a href="tel:+919876543210" className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
+                                    <FaPhoneAlt className="text-green-400 group-hover:text-green-300 transition-colors" />
+                                    <div>
+                                        <p className="text-white font-medium">+91 9876543210</p>
+                                        <p className="text-gray-400 text-sm">Mon - Sat, 9 AM to 6 PM</p>
+                                    </div>
+                                </a>
+                            </div>
 
-            {/* Bottom Section */}
-            <div className="bg-indigo-700 py-6 px-6">
-                <div className="container mx-auto">
-                    <p className="text-center text-sm md:text-base text-white/90 mb-4">
-                        © 2024 Protacc All Rights Reserved | Protacc employs/hires CAs/CS/other professionals but not a licensed CA/CS/other kind of professional firm.
-                    </p>
-                    <div className="flex justify-center items-center space-x-6">
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" 
-                           className="text-white/90 hover:text-indigo-300 transition-colors transform hover:scale-110">
-                            <FaFacebookF className="text-xl" />
-                        </a>
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" 
-                           className="text-white/90 hover:text-indigo-300 transition-colors transform hover:scale-110">
-                            <FaInstagram className="text-xl" />
-                        </a>
-                        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" 
-                           className="text-white/90 hover:text-indigo-300 transition-colors transform hover:scale-110">
-                            <FaYoutube className="text-xl" />
-                        </a>
-                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" 
-                           className="text-white/90 hover:text-indigo-300 transition-colors transform hover:scale-110">
-                            <FaLinkedinIn className="text-xl" />
-                        </a>
+                            <div className="group">
+                                <a href="mailto:info@protacc.com" className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
+                                    <FaEnvelope className="text-blue-400 group-hover:text-blue-300 transition-colors" />
+                                    <div>
+                                        <p className="text-white font-medium">info@protacc.com</p>
+                                        <p className="text-gray-400 text-sm">24/7 Email Support</p>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div className="group">
+                                <a href="https://wa.me/919876543210" className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
+                                    <FaWhatsapp className="text-green-500 group-hover:text-green-400 transition-colors" />
+                                    <div>
+                                        <p className="text-white font-medium">WhatsApp Chat</p>
+                                        <p className="text-gray-400 text-sm">Quick responses</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* WhatsApp Floating Button */}
-            <a
-                href="https://wa.me/919817889933"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 hover:scale-110 z-50"
-            >
-                <FaWhatsapp className="text-2xl" />
-            </a>
+            {/* Bottom Bar */}
+            <div className="relative z-10 border-t border-gray-700">
+                <div className="container mx-auto px-4 py-6">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div className="flex items-center gap-6 text-sm text-gray-400">
+                            <p>© {currentYear} ProtAcc. All rights reserved.</p>
+                            <div className="hidden md:flex items-center gap-4">
+                                <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                                <span>•</span>
+                                <Link to="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
+                                <span>•</span>
+                                <Link to="/refund-policy" className="hover:text-white transition-colors">Refund Policy</Link>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2 text-sm text-gray-400">
+                                <span>Made with</span>
+                                <FaHeart className="text-red-500 animate-pulse" />
+                                <span>in India</span>
+                            </div>
+                            
+                            <div className="flex items-center gap-1">
+                                {[...Array(5)].map((_, i) => (
+                                    <FaStar key={i} className="text-yellow-400 text-sm" />
+                                ))}
+                                <span className="text-sm text-gray-400 ml-2">4.8/5 Rating</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Mobile Legal Links */}
+                    <div className="md:hidden flex flex-wrap justify-center gap-4 mt-4 pt-4 border-t border-gray-700 text-sm text-gray-400">
+                        <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                        <Link to="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
+                        <Link to="/refund-policy" className="hover:text-white transition-colors">Refund Policy</Link>
+                    </div>
+                </div>
+            </div>
+
+            {/* Scroll to Top Button */}
+            {showScrollTop && (
+                <button
+                    onClick={scrollToTop}
+                    className="fixed bottom-8 right-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-3 rounded-full shadow-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-110 z-50"
+                    aria-label="Scroll to top"
+                >
+                    <FaArrowUp />
+                </button>
+            )}
         </footer>
     );
 }

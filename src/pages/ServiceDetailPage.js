@@ -53,6 +53,8 @@ const ServiceDetailPage = () => {
             }
         };
 
+        // Scroll to top when page loads
+        window.scrollTo(0, 0);
         fetchService();
     }, [slug, navigate]);
 
@@ -112,7 +114,7 @@ const ServiceDetailPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-header">
             {/* Hero Section */}
             <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-700 text-white py-20 relative overflow-hidden">
                 <div className="absolute inset-0 bg-black opacity-10"></div>
@@ -210,8 +212,8 @@ const ServiceDetailPage = () => {
                                             addingToCart
                                                 ? 'bg-gray-400 text-white cursor-not-allowed'
                                                 : isAuthenticated && isInCart(service.id)
-                                                ? 'bg-green-600 text-white hover:bg-green-700'
-                                                : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg hover:shadow-xl'
+                                                ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl'
+                                                : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl'
                                         }`}
                                     >
                                         {addingToCart ? (

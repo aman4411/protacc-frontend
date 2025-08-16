@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CSS Variables for consistent spacing */
+:root {
+  --header-height: 116px; /* Conservative height to ensure no cropping */
+}
+
+/* Custom utility for header spacing */
+.pt-header {
+  padding-top: var(--header-height);
+}
+
+/* Extra safe spacing for pages that might still get cropped */
+.pt-header-safe {
+  padding-top: calc(var(--header-height) + 16px);
+}
+
+/* Alternative utility to pull content up if there's still a gap */
+.mt-header-negative {
+  margin-top: calc(var(--header-height) * -1);
+}
+
+/* Utility to adjust header spacing by small increments */
+.pt-header-tight {
+  padding-top: calc(var(--header-height) - 4px);
+}
+
+.pt-header-loose {
+  padding-top: calc(var(--header-height) + 4px);
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaSpinner, FaClipboardList, FaExclamationTriangle } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaSpinner, FaClipboardList, FaExclamationTriangle, FaSyncAlt, FaShoppingBag } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { getOrders } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -45,6 +45,7 @@ const OrdersPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { user, token } = useAuth();
+    const navigate = useNavigate();
 
     const fetchOrders = async () => {
         try {
@@ -106,6 +107,8 @@ const OrdersPage = () => {
     };
 
     useEffect(() => {
+        // Scroll to top when page loads
+        window.scrollTo(0, 0);
         fetchOrders();
     }, []);
 
@@ -115,10 +118,10 @@ const OrdersPage = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center pt-header-safe">
                 <div className="text-center">
                     <FaSpinner className="animate-spin text-4xl text-indigo-600 mx-auto mb-4" />
-                    <p className="text-gray-600">Loading your orders...</p>
+                    <p className="text-lg text-gray-600">Loading your orders...</p>
                 </div>
             </div>
         );
@@ -126,16 +129,17 @@ const OrdersPage = () => {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gray-50 py-12">
+            <div className="min-h-screen bg-gray-50 pt-header-safe pb-12">
                 <div className="container mx-auto px-4">
-                    <div className="bg-white rounded-xl shadow-lg p-8 text-center">
-                        <FaExclamationTriangle className="text-6xl text-red-300 mx-auto mb-4" />
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Error Loading Orders</h2>
-                        <p className="text-gray-600 mb-6">{error}</p>
+                    <div className="text-center py-20">
+                        <FaExclamationTriangle className="text-6xl text-red-500 mx-auto mb-6" />
+                        <h2 className="text-3xl font-bold text-gray-800 mb-4">Something went wrong</h2>
+                        <p className="text-gray-600 mb-8 max-w-2xl mx-auto">{error}</p>
                         <button
                             onClick={handleRetry}
-                            className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors inline-block"
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg transition-colors inline-flex items-center gap-2"
                         >
+                            <FaSyncAlt />
                             Try Again
                         </button>
                     </div>
@@ -146,18 +150,18 @@ const OrdersPage = () => {
 
     if (!orders || orders.length === 0) {
         return (
-            <div className="min-h-screen bg-gray-50 py-12">
+            <div className="min-h-screen bg-gray-50 pt-header-safe pb-12">
                 <div className="container mx-auto px-4">
-                    <div className="bg-white rounded-xl shadow-lg p-8 text-center">
-                        <FaClipboardList className="text-6xl text-gray-300 mx-auto mb-4" />
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">No Orders Yet</h2>
-                        <p className="text-gray-600 mb-6">Browse our services and place your first order</p>
-                        <Link
-                            to="/services"
-                            className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors inline-block"
+                    <div className="text-center py-20">
+                        <FaShoppingBag className="text-6xl text-gray-400 mx-auto mb-6" />
+                        <h2 className="text-3xl font-bold text-gray-800 mb-4">No orders found</h2>
+                        <p className="text-gray-600 mb-8">Looks like you haven't placed any orders yet.</p>
+                        <button
+                            onClick={() => navigate('/services')}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg transition-colors"
                         >
-                            Browse Services
-                        </Link>
+                            Explore Services
+                        </button>
                     </div>
                 </div>
             </div>
@@ -165,7 +169,7 @@ const OrdersPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-12">
+        <div className="min-h-screen bg-gray-50 pt-header-safe pb-12">
             <div className="container mx-auto px-4">
                 <h1 className="text-3xl font-bold text-gray-900 mb-8">My Orders</h1>
 

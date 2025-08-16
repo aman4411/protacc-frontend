@@ -88,7 +88,7 @@ const OrderDetailPage = () => {
                 console.log('Payment order created:', paymentOrder);
             } catch (paymentOrderError) {
                 console.error('Failed to create payment order:', paymentOrderError);
-                toast.error('Failed to create payment order: ' + paymentOrderError);
+                toast.error('Failed to create payment order: ' + (paymentOrderError.message || paymentOrderError.toString()));
                 return;
             }
             
@@ -142,7 +142,7 @@ const OrderDetailPage = () => {
                         window.location.reload();
                     } catch (error) {
                         console.error('Payment verification failed:', error);
-                        toast.error('Payment verification failed: ' + error);
+                        toast.error('Payment verification failed: ' + (error.message || error.toString()));
                     }
                 },
                 prefill: {
@@ -206,7 +206,7 @@ const OrderDetailPage = () => {
             }
         } catch (error) {
             console.error('Failed to initiate payment:', error);
-            toast.error('Failed to initiate payment: ' + error);
+            toast.error('Failed to initiate payment: ' + (error.message || error.toString()));
         } finally {
             setProcessingPayment(false);
         }
@@ -258,22 +258,33 @@ const OrderDetailPage = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <FaSpinner className="animate-spin text-4xl text-indigo-600" />
+            <div className="min-h-screen flex items-center justify-center pt-header-safe">
+                <div className="text-center">
+                    <div className="spinner mb-4"></div>
+                    <p className="text-lg text-gray-600">Loading order details...</p>
+                </div>
             </div>
         );
     }
 
     if (!order) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <p className="text-gray-600">Order not found</p>
+            <div className="min-h-screen flex items-center justify-center pt-header-safe">
+                <div className="text-center">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Order not found</h2>
+                    <button 
+                        onClick={() => navigate('/orders')}
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition-colors"
+                    >
+                        Back to Orders
+                    </button>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-12">
+        <div className="min-h-screen bg-gray-50 pt-header-safe pb-12">
             <div className="container mx-auto px-4">
                 {/* Header */}
                 <div className="flex items-center gap-4 mb-8">

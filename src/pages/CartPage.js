@@ -18,7 +18,9 @@ import {
     FaMinus,
     FaTags,
     FaClock,
-    FaHeart
+    FaHeart,
+    FaSearch,
+    FaAward
 } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -52,11 +54,17 @@ const CartPage = () => {
         }
     }, [refreshCart]);
 
+    // Scroll to top only once when component mounts
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []); // Empty dependency array - runs only once
+
     useEffect(() => {
         if (!isAuthenticated) {
             navigate('/login');
             return;
         }
+        
         fetchCartItems();
     }, [isAuthenticated, navigate, fetchCartItems]);
 
@@ -202,56 +210,59 @@ const CartPage = () => {
 
     if (!cartItems || cartItems.length === 0) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-                {/* Hero Section for Empty Cart */}
-                <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-700 text-white py-20">
-                    <div className="container mx-auto px-4 text-center">
-                        <div className={`transform transition-all duration-1000 ${
-                            animateIn ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-                        }`}>
-                            <div className="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <FaShoppingCart className="text-4xl" />
-                            </div>
-                            <h1 className="text-4xl md:text-5xl font-bold mb-6">Your Cart is Empty</h1>
-                            <p className="text-xl text-indigo-100 mb-8">
-                                Discover our amazing services and add them to your cart
-                            </p>
-                            <Link
-                                to="/services"
-                                className="inline-flex items-center gap-3 bg-white text-indigo-600 px-8 py-4 rounded-xl hover:bg-indigo-50 transition-all duration-300 transform hover:scale-105 font-semibold text-lg"
-                            >
-                                <FaShoppingBag />
-                                Browse Services
-                            </Link>
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-header">
+                {/* Empty Cart Hero Section */}
+                <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-700 text-white py-20 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-black/20"></div>
+                    <div className="container mx-auto px-4 text-center relative z-10">
+                        <div className="animate-bounce mb-6">
+                            <FaShoppingCart className="text-6xl mx-auto mb-4 opacity-80" />
                         </div>
+                        <h1 className="text-4xl md:text-5xl font-bold mb-6">Your Cart is Empty</h1>
+                        <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+                            Start building your professional services package by exploring our comprehensive offerings
+                        </p>
+                        <button
+                            onClick={() => navigate('/services')}
+                            className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center gap-2"
+                        >
+                            <FaSearch />
+                            Explore Services
+                        </button>
                     </div>
                 </section>
 
                 {/* Features Section */}
-                <section className="py-16">
+                <section className="py-20 bg-white">
                     <div className="container mx-auto px-4">
-                        <div className="grid md:grid-cols-3 gap-8">
-                            <div className="text-center p-6">
-                                <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <FaShieldAlt className="text-2xl text-indigo-600" />
+                        <div className="text-center mb-16">
+                            <h2 className="text-3xl font-bold text-gray-800 mb-4">Why Choose ProtAcc?</h2>
+                            <p className="text-gray-600 max-w-2xl mx-auto">Discover the benefits of our professional services</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {[
+                                {
+                                    icon: <FaAward className="text-4xl text-indigo-600" />,
+                                    title: "Expert Professionals",
+                                    description: "Certified experts with years of experience"
+                                },
+                                {
+                                    icon: <FaClock className="text-4xl text-green-600" />,
+                                    title: "Quick Turnaround",
+                                    description: "Fast and efficient service delivery"
+                                },
+                                {
+                                    icon: <FaShieldAlt className="text-4xl text-blue-600" />,
+                                    title: "100% Secure",
+                                    description: "Your data and payments are completely secure"
+                                }
+                            ].map((feature, index) => (
+                                <div key={index} className="text-center p-6 rounded-xl hover:bg-gray-50 transition-colors">
+                                    <div className="mb-4">{feature.icon}</div>
+                                    <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                                    <p className="text-gray-600">{feature.description}</p>
                                 </div>
-                                <h3 className="text-xl font-semibold mb-2">Secure Payments</h3>
-                                <p className="text-gray-600">Your transactions are protected with bank-level security</p>
-                            </div>
-                            <div className="text-center p-6">
-                                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <FaTruck className="text-2xl text-green-600" />
-                                </div>
-                                <h3 className="text-xl font-semibold mb-2">Fast Delivery</h3>
-                                <p className="text-gray-600">Quick turnaround times for all our services</p>
-                            </div>
-                            <div className="text-center p-6">
-                                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <FaHeadset className="text-2xl text-purple-600" />
-                                </div>
-                                <h3 className="text-xl font-semibold mb-2">24/7 Support</h3>
-                                <p className="text-gray-600">Get help whenever you need it from our expert team</p>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </section>
@@ -262,7 +273,7 @@ const CartPage = () => {
     const totals = calculateTotal();
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-header">
             {/* Hero Section */}
             <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-700 text-white py-16">
                 <div className="container mx-auto px-4">
@@ -275,7 +286,7 @@ const CartPage = () => {
                                 Continue Shopping
                             </Link>
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-bold mb-4">Shopping Cart</h1>
+                        <h1 className="text-4xl md:text-5xl font-bold mb-4">Cart</h1>
                         <p className="text-xl text-indigo-100">
                             {cartItems.length} item{cartItems.length !== 1 ? 's' : ''} in your cart
                         </p>

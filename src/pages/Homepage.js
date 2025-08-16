@@ -173,7 +173,7 @@ export default function HomePage() {
     ];
 
     return (
-        <div className="min-h-screen overflow-hidden">
+        <div className="min-h-screen bg-gray-50 pt-header">
             {/* Floating Background Elements */}
             <div className="fixed inset-0 pointer-events-none z-0">
                 <div 
@@ -270,7 +270,7 @@ export default function HomePage() {
                                         className="group border-2 border-white/50 backdrop-blur-sm text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-white hover:text-indigo-600 transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
                                     >
                                         <FaUserTie />
-                                        My Dashboard
+                                        My Profile
                                     </Link>
                                 </>
                             ) : (

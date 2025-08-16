@@ -8,12 +8,8 @@ import {
     FaFilter,
     FaStar,
     FaArrowRight,
-    FaTags,
     FaClock,
-    FaRupeeSign,
-    FaBoxOpen,
-    FaHeart,
-    FaEye
+    FaBoxOpen
 } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -37,6 +33,9 @@ const ServicesPage = () => {
     const { isInCart, addToCartState } = useCart();
 
     useEffect(() => {
+        // Scroll to top when page loads or category changes
+        window.scrollTo(0, 0);
+        
         // Get category from URL params
         const categoryParam = searchParams.get('category');
         if (categoryParam) {
@@ -146,14 +145,6 @@ const ServicesPage = () => {
         }
     };
 
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            minimumFractionDigits: 0
-        }).format(price);
-    };
-
     const getSelectedCategoryName = () => {
         if (!selectedCategory) return 'All Services';
         const category = categories.find(cat => cat.id === selectedCategory);
@@ -172,7 +163,7 @@ const ServicesPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-header">
             {/* Hero Section */}
             <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-700 text-white py-20 relative overflow-hidden">
                 <div className="absolute inset-0 bg-black opacity-10"></div>
@@ -231,7 +222,7 @@ const ServicesPage = () => {
                         {/* Filter Toggle */}
                         <button
                             onClick={() => setShowFilters(!showFilters)}
-                            className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all duration-300 transform hover:scale-105"
+                            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                         >
                             <FaFilter />
                             Filters
@@ -342,7 +333,7 @@ const ServicesPage = () => {
                                 setSelectedCategory(null);
                                 setSearchParams({});
                             }}
-                            className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+                            className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                         >
                             Clear All Filters
                         </button>
@@ -382,7 +373,7 @@ const ServiceCard = ({ service, onAddToCart, isAdding, isInCart, isAuthenticated
 
     return (
         <div 
-            className={`bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden group ${
+            className={`bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden group h-full flex flex-col ${
                 animateIn ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`}
             style={{ 
@@ -394,27 +385,15 @@ const ServiceCard = ({ service, onAddToCart, isAdding, isInCart, isAuthenticated
         >
             {/* Card Header */}
             <div className="relative p-6 bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
-                <div className="absolute top-4 right-4">
-                    <div className="flex space-x-2">
-                        <button className="p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all duration-300">
-                            <FaHeart className="text-sm" />
-                        </button>
-                        <Link
-                            to={`/services/${service.slug}`}
-                            className="p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition-all duration-300"
-                        >
-                            <FaEye className="text-sm" />
-                        </Link>
+                <div className="absolute top-2 right-2">
+                    <div className="bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full">
+                        <span className="text-xs font-medium">{service.category?.name}</span>
                     </div>
                 </div>
-                
-                <div className="mb-4">
-                    <div className="flex items-center gap-2 mb-2">
-                        <FaTags className="text-white opacity-80" />
-                        <span className="text-sm opacity-90">{service.category?.name}</span>
-                    </div>
-                    <h3 className="text-xl font-bold leading-tight">{service.name}</h3>
-                </div>
+
+                <h3 className="text-lg font-bold mb-3 pr-36 line-clamp-2 leading-tight">
+                    {service.name}
+                </h3>
 
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
@@ -430,8 +409,8 @@ const ServiceCard = ({ service, onAddToCart, isAdding, isInCart, isAuthenticated
                 </div>
             </div>
 
-            {/* Card Content */}
-            <div className="p-6">
+            {/* Card Content - Flexible area */}
+            <div className="p-6 flex-grow flex flex-col">
                 <p className="text-gray-600 mb-4 line-clamp-3 leading-relaxed">
                     {service.short_description}
                 </p>
@@ -451,6 +430,9 @@ const ServiceCard = ({ service, onAddToCart, isAdding, isInCart, isAuthenticated
                     </div>
                 )}
 
+                {/* Spacer to push pricing and actions to bottom */}
+                <div className="flex-grow"></div>
+
                 {/* Pricing */}
                 <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
@@ -467,40 +449,43 @@ const ServiceCard = ({ service, onAddToCart, isAdding, isInCart, isAuthenticated
                     </div>
                 </div>
 
-                {/* Actions */}
+                {/* Actions - Always at bottom */}
                 <div className="flex gap-3">
-                    <button
-                        onClick={() => onAddToCart(service.id)}
-                        disabled={isAdding || (isAuthenticated && isInCart)}
-                        className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 ${
-                            isAuthenticated && isInCart
-                                ? 'bg-green-100 text-green-700 cursor-not-allowed'
-                                : isAdding
-                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg hover:shadow-xl'
-                        }`}
-                    >
-                        {isAdding ? (
-                            <>
-                                <FaSpinner className="animate-spin" />
-                                Adding...
-                            </>
-                        ) : isAuthenticated && isInCart ? (
-                            <>
-                                <FaCheck />
-                                In Cart
-                            </>
-                        ) : (
-                            <>
-                                <FaShoppingCart />
-                                Add to Cart
-                            </>
-                        )}
-                    </button>
+                    {isAuthenticated && isInCart ? (
+                        <Link
+                            to="/cart"
+                            className="flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl"
+                        >
+                            <FaShoppingCart />
+                            View Cart
+                        </Link>
+                    ) : (
+                        <button
+                            onClick={() => onAddToCart(service.id)}
+                            disabled={isAdding}
+                            className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 ${
+                                isAdding
+                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                    : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl'
+                            }`}
+                        >
+                            {isAdding ? (
+                                <>
+                                    <FaSpinner className="animate-spin" />
+                                    Adding...
+                                </>
+                            ) : (
+                                <>
+                                    <FaShoppingCart />
+                                    Add to Cart
+                                </>
+                            )}
+                        </button>
+                    )}
 
                     <Link
                         to={`/services/${service.slug}`}
-                        className="px-4 py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
+                        className="px-4 py-3 border-2 border-transparent bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
                     >
                         <FaArrowRight />
                     </Link>

@@ -572,16 +572,13 @@ export const getUserOrders = async (userId) => {
     }
 };
 
-// Lead Management APIs
-export const createLead = async (leadData) => {
-    try {
-        const response = await api.post('/leads', leadData);
-        return response.data;
-    } catch (error) {
-        throw error.response?.data?.error || 'Failed to create lead';
-    }
-};
+// Lead Management APIs (Public)
+export const createLead = (leadData) => api.post('/leads', leadData);
 
+// Contact APIs (Public)
+export const createContact = (contactData) => api.post('/contact', contactData);
+
+// Lead Management APIs (Admin)
 export const getLeads = async (filters = {}) => {
     try {
         const params = new URLSearchParams();
@@ -629,5 +626,56 @@ export const getLeadStats = async () => {
         return response.data;
     } catch (error) {
         throw error.response?.data?.error || 'Failed to fetch lead stats';
+    }
+};
+
+// Contact Management APIs (Admin)
+export const getContacts = async (filters = {}) => {
+    try {
+        const params = new URLSearchParams();
+        Object.keys(filters).forEach(key => {
+            if (filters[key]) params.append(key, filters[key]);
+        });
+        
+        const response = await api.get(`/admin/contacts?${params.toString()}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch contacts';
+    }
+};
+
+export const getContactById = async (contactId) => {
+    try {
+        const response = await api.get(`/admin/contacts/${contactId}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch contact';
+    }
+};
+
+export const updateContactStatus = async (contactId, updates) => {
+    try {
+        const response = await api.put(`/admin/contacts/${contactId}`, updates);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update contact status';
+    }
+};
+
+export const deleteContact = async (contactId) => {
+    try {
+        const response = await api.delete(`/admin/contacts/${contactId}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to delete contact';
+    }
+};
+
+export const getContactStats = async () => {
+    try {
+        const response = await api.get('/admin/contacts/stats');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch contact stats';
     }
 }; 
