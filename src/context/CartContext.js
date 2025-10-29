@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { getCartItems } from '../services/api';
 import { useAuth } from './AuthContext';
 
@@ -17,6 +17,7 @@ export const CartProvider = ({ children }) => {
     const [cartCount, setCartCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const { isAuthenticated } = useAuth();
+    const fetchingRef = useRef(false); // Prevent concurrent API calls
 
     // Fetch cart items
     const fetchCartItems = async () => {
@@ -27,6 +28,13 @@ export const CartProvider = ({ children }) => {
             return;
         }
 
+        // Prevent concurrent API calls
+        if (fetchingRef.current) {
+            return;
+        }
+
+        fetchingRef.current = true;
+        
         try {
             const items = await getCartItems();
             setCartItems(items || []);
@@ -37,6 +45,7 @@ export const CartProvider = ({ children }) => {
             setCartCount(0);
         } finally {
             setLoading(false);
+            fetchingRef.current = false;
         }
     };
 
@@ -51,8 +60,9 @@ export const CartProvider = ({ children }) => {
 
     // Add item to cart state
     const addToCartState = (serviceId) => {
-        // Don't add to local state - let refetch handle it for consistency
-        fetchCartItems();
+        // Optimistically update local state instead of refetching
+        setCartCount(prevCount => prevCount + 1);
+        // The actual cart items will be updated when the page refreshes or user navigates to cart
     };
 
     // Remove item from cart state  
@@ -66,13 +76,21 @@ export const CartProvider = ({ children }) => {
         setCartCount(prevCount => Math.max(0, prevCount - 1));
     };
 
-    // Refresh cart data
+    // Refresh cart data (only when explicitly needed)
     const refreshCart = () => {
         fetchCartItems();
     };
 
     useEffect(() => {
-        fetchCartItems();
+        // Only fetch if user is actually authenticated, not on initial undefined->false transition
+        if (isAuthenticated === true) {
+            fetchCartItems();
+        } else if (isAuthenticated === false) {
+            // Clear cart data when user logs out
+            setCartItems([]);
+            setCartCount(0);
+            setLoading(false);
+        }
     }, [isAuthenticated]);
 
     const value = {

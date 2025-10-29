@@ -392,8 +392,7 @@ export const searchServices = async (query) => {
 // Cart
 export const getCartItems = async () => {
     try {
-        // Add cache-busting parameter to ensure fresh data
-        const response = await api.get(`/cart?_t=${Date.now()}`);
+        const response = await api.get('/cart');
         return response.data;
     } catch (error) {
         throw error.response?.data?.error || 'Failed to fetch cart items';

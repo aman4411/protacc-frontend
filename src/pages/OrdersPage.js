@@ -8,22 +8,31 @@ import { useAuth } from '../context/AuthContext';
 const OrderStatusBadge = ({ status }) => {
     const getStatusColor = (status) => {
         switch (status) {
-            case 'pending_payment':
+            case 'pending_booking_payment':
                 return 'bg-yellow-100 text-yellow-800';
-            case 'payment_received':
-                return 'bg-green-100 text-green-800';
-            case 'processing':
+            case 'booking_amount_received':
                 return 'bg-blue-100 text-blue-800';
+            case 'processing':
+                return 'bg-purple-100 text-purple-800';
             case 'documents_required':
                 return 'bg-orange-100 text-orange-800';
             case 'documents_received':
-                return 'bg-purple-100 text-purple-800';
-            case 'in_progress':
                 return 'bg-indigo-100 text-indigo-800';
+            case 'in_progress':
+                return 'bg-cyan-100 text-cyan-800';
+            case 'pending_final_payment':
+                return 'bg-amber-100 text-amber-800';
+            case 'full_payment_received':
+                return 'bg-emerald-100 text-emerald-800';
             case 'completed':
                 return 'bg-green-100 text-green-800';
             case 'cancelled':
                 return 'bg-red-100 text-red-800';
+            // Legacy status support
+            case 'pending_payment':
+                return 'bg-yellow-100 text-yellow-800';
+            case 'payment_received':
+                return 'bg-blue-100 text-blue-800';
             default:
                 return 'bg-gray-100 text-gray-800';
         }

@@ -85,15 +85,21 @@ const ProfilePage = () => {
 
     const getStatusBadge = (status) => {
         const statusConfig = {
-            pending: { color: 'bg-yellow-100 text-yellow-800', icon: FaClock },
-            pending_payment: { color: 'bg-yellow-100 text-yellow-800', icon: FaClock },
-            payment_received: { color: 'bg-green-100 text-green-800', icon: FaCheckCircle },
-            processing: { color: 'bg-blue-100 text-blue-800', icon: FaCreditCard },
+            // New two-stage payment statuses
+            pending_booking_payment: { color: 'bg-yellow-100 text-yellow-800', icon: FaClock },
+            booking_amount_received: { color: 'bg-blue-100 text-blue-800', icon: FaCheckCircle },
+            processing: { color: 'bg-purple-100 text-purple-800', icon: FaCreditCard },
             documents_required: { color: 'bg-orange-100 text-orange-800', icon: FaExclamationTriangle },
-            documents_received: { color: 'bg-purple-100 text-purple-800', icon: FaCheckCircle },
-            in_progress: { color: 'bg-indigo-100 text-indigo-800', icon: FaClock },
+            documents_received: { color: 'bg-indigo-100 text-indigo-800', icon: FaCheckCircle },
+            in_progress: { color: 'bg-cyan-100 text-cyan-800', icon: FaClock },
+            pending_final_payment: { color: 'bg-amber-100 text-amber-800', icon: FaClock },
+            full_payment_received: { color: 'bg-emerald-100 text-emerald-800', icon: FaCheckCircle },
             completed: { color: 'bg-green-100 text-green-800', icon: FaCheckCircle },
             cancelled: { color: 'bg-red-100 text-red-800', icon: FaExclamationTriangle },
+            // Legacy status support
+            pending: { color: 'bg-yellow-100 text-yellow-800', icon: FaClock },
+            pending_payment: { color: 'bg-yellow-100 text-yellow-800', icon: FaClock },
+            payment_received: { color: 'bg-blue-100 text-blue-800', icon: FaCheckCircle },
             paid: { color: 'bg-blue-100 text-blue-800', icon: FaCreditCard }
         };
         

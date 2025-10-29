@@ -25,11 +25,9 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
-import { getCartItems, removeFromCart, createOrderFromCart, createPaymentOrder, verifyPayment } from '../services/api';
+import { removeFromCart, createOrderFromCart, createPaymentOrder, verifyPayment } from '../services/api';
 
 const CartPage = () => {
-    const [cartItems, setCartItems] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [removingItem, setRemovingItem] = useState(null);
     const [processingOrder, setProcessingOrder] = useState(false);
     const [animateIn, setAnimateIn] = useState(false);
@@ -37,54 +35,28 @@ const CartPage = () => {
     const [promoApplied, setPromoApplied] = useState(false);
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
-    const { removeFromCartState, refreshCart } = useCart();
+    const { cartItems, loading, removeFromCartState, refreshCart } = useCart();
 
-    const fetchCartItems = useCallback(async () => {
-        try {
-            const items = await getCartItems();
-            setCartItems(items || []);
-            refreshCart();
-        } catch (error) {
-            console.error('Failed to fetch cart items:', error);
-            toast.error('Failed to load cart items');
-            setCartItems([]);
-        } finally {
-            setLoading(false);
-            setTimeout(() => setAnimateIn(true), 100);
-        }
-    }, [refreshCart]);
+    // Remove fetchCartItems - use CartContext data instead
 
-    // Scroll to top only once when component mounts
+    // Scroll to top and animate in when component mounts
     useEffect(() => {
         window.scrollTo(0, 0);
+        setTimeout(() => setAnimateIn(true), 100);
     }, []); // Empty dependency array - runs only once
 
+    // Redirect to login if not authenticated
     useEffect(() => {
         if (!isAuthenticated) {
             navigate('/login');
-            return;
         }
-        
-        fetchCartItems();
-    }, [isAuthenticated, navigate, fetchCartItems]);
-
-    useEffect(() => {
-        const handleVisibilityChange = () => {
-            if (!document.hidden && isAuthenticated) {
-                fetchCartItems();
-            }
-        };
-
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-        return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-    }, [fetchCartItems, isAuthenticated]);
+    }, [isAuthenticated, navigate]);
 
     const handleRemoveItem = async (serviceId) => {
         try {
             setRemovingItem(serviceId);
             await removeFromCart(serviceId);
             removeFromCartState(serviceId);
-            await fetchCartItems();
             toast.success('Item removed from cart');
         } catch (error) {
             toast.error('Failed to remove item');

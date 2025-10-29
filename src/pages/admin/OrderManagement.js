@@ -54,12 +54,14 @@ const OrderManagement = () => {
     });
 
     const orderStatuses = [
-        { value: 'pending_payment', label: 'Pending Payment', color: 'bg-yellow-100 text-yellow-800', icon: FaClock },
-        { value: 'payment_received', label: 'Payment Received', color: 'bg-blue-100 text-blue-800', icon: FaDollarSign },
+        { value: 'pending_booking_payment', label: 'Pending Booking Payment', color: 'bg-yellow-100 text-yellow-800', icon: FaClock },
+        { value: 'booking_amount_received', label: 'Booking Amount Received', color: 'bg-blue-100 text-blue-800', icon: FaDollarSign },
         { value: 'processing', label: 'Processing', color: 'bg-purple-100 text-purple-800', icon: FaSpinner },
         { value: 'documents_required', label: 'Documents Required', color: 'bg-orange-100 text-orange-800', icon: FaExclamationTriangle },
         { value: 'documents_received', label: 'Documents Received', color: 'bg-indigo-100 text-indigo-800', icon: FaClipboardList },
         { value: 'in_progress', label: 'In Progress', color: 'bg-cyan-100 text-cyan-800', icon: FaClock },
+        { value: 'pending_final_payment', label: 'Pending Final Payment', color: 'bg-amber-100 text-amber-800', icon: FaDollarSign },
+        { value: 'full_payment_received', label: 'Full Payment Received', color: 'bg-emerald-100 text-emerald-800', icon: FaCheckCircle },
         { value: 'completed', label: 'Completed', color: 'bg-green-100 text-green-800', icon: FaCheckCircle },
         { value: 'cancelled', label: 'Cancelled', color: 'bg-red-100 text-red-800', icon: FaTimesCircle }
     ];

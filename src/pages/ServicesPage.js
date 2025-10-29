@@ -98,20 +98,33 @@ const ServicesPage = () => {
         }
 
         // Sort services
+        // Use priority sorting by default when no filters are applied
+        const hasActiveFilters = searchTerm || priceFilter || selectedCategory;
+        const effectiveSortBy = hasActiveFilters ? sortBy : 'priority';
+        
         filtered.sort((a, b) => {
-            switch (sortBy) {
+            switch (effectiveSortBy) {
                 case 'price-low':
                     return a.price - b.price;
                 case 'price-high':
                     return b.price - a.price;
                 case 'name':
+                    return a.name.localeCompare(b.name);
+                case 'priority':
                 default:
+                    // Sort by service priority first, then category priority, then name
+                    if (a.priority !== b.priority) {
+                        return (a.priority || 999) - (b.priority || 999);
+                    }
+                    if (a.category?.priority !== b.category?.priority) {
+                        return (a.category?.priority || 999) - (b.category?.priority || 999);
+                    }
                     return a.name.localeCompare(b.name);
             }
         });
 
         setFilteredServices(filtered);
-    }, [services, searchTerm, priceFilter, sortBy]);
+    }, [services, searchTerm, priceFilter, sortBy, selectedCategory]);
 
     const handleCategoryChange = (categoryId) => {
         setSelectedCategory(categoryId);

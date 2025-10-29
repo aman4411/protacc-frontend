@@ -7,22 +7,31 @@ import { getOrderByNumber, getOrderStatusHistory, createPaymentOrder, verifyPaym
 const OrderStatusBadge = ({ status }) => {
     const getStatusColor = (orderStatus) => {
         switch (orderStatus) {
-            case 'pending_payment':
+            case 'pending_booking_payment':
                 return 'bg-yellow-100 text-yellow-800';
-            case 'payment_received':
-                return 'bg-green-100 text-green-800';
-            case 'processing':
+            case 'booking_amount_received':
                 return 'bg-blue-100 text-blue-800';
+            case 'processing':
+                return 'bg-purple-100 text-purple-800';
             case 'documents_required':
                 return 'bg-orange-100 text-orange-800';
             case 'documents_received':
-                return 'bg-purple-100 text-purple-800';
-            case 'in_progress':
                 return 'bg-indigo-100 text-indigo-800';
+            case 'in_progress':
+                return 'bg-cyan-100 text-cyan-800';
+            case 'pending_final_payment':
+                return 'bg-amber-100 text-amber-800';
+            case 'full_payment_received':
+                return 'bg-emerald-100 text-emerald-800';
             case 'completed':
                 return 'bg-green-100 text-green-800';
             case 'cancelled':
                 return 'bg-red-100 text-red-800';
+            // Legacy status support
+            case 'pending_payment':
+                return 'bg-yellow-100 text-yellow-800';
+            case 'payment_received':
+                return 'bg-blue-100 text-blue-800';
             default:
                 return 'bg-gray-100 text-gray-800';
         }
@@ -428,14 +437,19 @@ const OrderDetailPage = () => {
                             </div>
                         </div>
 
-                        {!order.payment_status && (
+                        {(order.status === 'pending_booking_payment' || order.status === 'pending_final_payment') && (
                             <div className="bg-white rounded-xl shadow-lg p-6">
                                 <div className="flex items-center gap-3 text-yellow-600 mb-4">
                                     <FaMoneyBillWave className="text-xl" />
-                                    <h3 className="text-lg font-semibold">Payment Required</h3>
+                                    <h3 className="text-lg font-semibold">
+                                        {order.status === 'pending_booking_payment' ? 'Booking Payment Required' : 'Final Payment Required'}
+                                    </h3>
                                 </div>
                                 <p className="text-gray-600 mb-6">
-                                    Please complete the payment to proceed with your order.
+                                    {order.status === 'pending_booking_payment' 
+                                        ? 'Please pay the booking amount to start processing your order.'
+                                        : 'Please pay the remaining amount to complete your order.'
+                                    }
                                 </p>
                                 <button
                                     onClick={handlePayment}
@@ -450,7 +464,10 @@ const OrderDetailPage = () => {
                                     ) : (
                                         <>
                                             <FaMoneyBillWave className="mr-2" />
-                                            Pay Now (₹{order.booking_amount})
+                                            {order.status === 'pending_booking_payment' 
+                                                ? `Pay Booking Amount (₹${order.booking_amount})`
+                                                : `Pay Remaining Amount (₹${order.remaining_amount})`
+                                            }
                                         </>
                                     )}
                                 </button>
