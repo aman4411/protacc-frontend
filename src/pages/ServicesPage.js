@@ -160,10 +160,13 @@ const ServicesPage = () => {
             return;
         }
 
+        // Find the service data to pass to cart context
+        const serviceData = services.find(s => s.id === serviceId);
+
         try {
             setAddingToCart(serviceId);
             await addToCart(serviceId, 1);
-            addToCartSmart(serviceId);
+            addToCartSmart(serviceId, serviceData);
             toast.success('Service added to cart');
         } catch (error) {
             toast.error(error || 'Failed to add to cart');

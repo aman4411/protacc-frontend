@@ -348,7 +348,7 @@ const OrderDetailPage = () => {
                                                             <p className="font-medium text-gray-900">₹{item.price}</p>
                                                         </div>
                                                     </div>
-                                                    {item.service?.estimated_delivery_days && (
+                                                    {item.service.estimated_delivery_days > 0 && (
                                                         <div className="flex items-center gap-3">
                                                             <FaClock className="text-indigo-600" />
                                                             <div>

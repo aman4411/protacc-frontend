@@ -86,8 +86,7 @@ const CartPage = () => {
 
             // Create order first
             const orderData = await createOrderFromCart();
-            toast.success('Order created successfully');
-
+            
             // Load Razorpay script
             const razorpayLoaded = await loadRazorpay();
             if (!razorpayLoaded) {
@@ -96,28 +95,41 @@ const CartPage = () => {
             }
 
             // Create payment order
-            const paymentOrder = await createPaymentOrder(orderData.order.id);
+            const paymentOrder = await createPaymentOrder(orderData.id);
+            
+            // Show payment initiation message
+            toast.loading('Initiating payment...', { id: 'payment-process' });
 
             const options = {
                 key: process.env.REACT_APP_RAZORPAY_KEY_ID,
                 amount: paymentOrder.amount,
                 currency: paymentOrder.currency,
                 name: 'ProtAcc Services',
-                description: `Payment for Order #${orderData.order.order_number}`,
-                order_id: paymentOrder.id,
+                description: `Payment for Order #${orderData.order_number}`,
+                order_id: paymentOrder.razorpay_order_id, // Use razorpay_order_id from backend response
                 handler: async function (response) {
                     try {
+                        // Dismiss the loading toast
+                        toast.dismiss('payment-process');
+                        
+                        // Show verification in progress
+                        toast.loading('Verifying payment...', { id: 'payment-verify' });
+                        
                         await verifyPayment({
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_order_id: response.razorpay_order_id,
-                            razorpay_signature: response.razorpay_signature,
-                            order_id: orderData.order.id
+                            razorpay_signature: response.razorpay_signature
+                            // Remove the extra order_id field - backend doesn't expect it
                         });
                         
-                        toast.success('Payment successful!');
-                        navigate(`/orders/${orderData.order.order_number}`);
+                        // Dismiss verification toast and show success
+                        toast.dismiss('payment-verify');
+                        toast.success('🎉 Order placed and payment successful!');
+                        navigate(`/orders/${orderData.order_number}`);
                     } catch (error) {
-                        toast.error('Payment verification failed');
+                        console.error('Payment verification error:', error);
+                        toast.dismiss('payment-verify');
+                        toast.error('Payment verification failed: ' + (error.message || error.toString()));
                     }
                 },
                 prefill: {
@@ -131,10 +143,18 @@ const CartPage = () => {
             };
 
             const paymentWindow = new window.Razorpay(options);
+            
+            // Add modal close handler for payment failures
+            paymentWindow.on('payment.failed', function (response) {
+                toast.dismiss('payment-process');
+                toast.error('Payment failed: ' + response.error.description);
+            });
+            
             paymentWindow.open();
 
         } catch (error) {
             console.error('Order placement failed:', error);
+            toast.dismiss('payment-process');
             toast.error(error || 'Failed to place order');
         } finally {
             setProcessingOrder(false);

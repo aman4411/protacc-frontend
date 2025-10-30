@@ -70,7 +70,7 @@ export const CartProvider = ({ children }) => {
     };
 
     // Add item to cart state
-    const addToCartState = (serviceId) => {
+    const addToCartState = (serviceId, serviceData = null) => {
         // Optimistically update local state
         setCartCount(prevCount => prevCount + 1);
         
@@ -84,12 +84,25 @@ export const CartProvider = ({ children }) => {
             );
             
             if (!exists) {
-                // Add placeholder item
+                // Create placeholder item with available service data
                 const placeholderItem = {
+                    id: `temp-${serviceId}-${Date.now()}`, // Temporary ID
                     service_id: serviceId,
-                    service: { id: serviceId },
                     quantity: 1,
-                    isPlaceholder: true // Mark as placeholder for identification
+                    isPlaceholder: true, // Mark as placeholder for identification
+                    service: serviceData ? {
+                        id: serviceId,
+                        name: serviceData.name || 'Loading...',
+                        price: serviceData.price || 0,
+                        booking_amount: serviceData.booking_amount || 0,
+                        category: serviceData.category || null,
+                        ...serviceData
+                    } : {
+                        id: serviceId,
+                        name: 'Loading...',
+                        price: 0,
+                        booking_amount: 0
+                    }
                 };
                 return [...prevItems, placeholderItem];
             }
@@ -113,13 +126,16 @@ export const CartProvider = ({ children }) => {
         fetchCartItems(true); // Force refresh
     }, []);
 
-    // Smart add to cart - only refresh if needed
-    const addToCartSmart = (serviceId) => {
-        // Update optimistically
-        addToCartState(serviceId);
+    // Smart add to cart - optimistic update with delayed refresh
+    const addToCartSmart = (serviceId, serviceData = null) => {
+        // Update optimistically with service data if available
+        addToCartState(serviceId, serviceData);
         
-        // No immediate refresh - let the optimistic update work
-        // Real data will be fetched when user navigates to cart or after some time
+        // Schedule a refresh after a short delay to get real data
+        // This ensures the cart page has proper data when user navigates to it
+        setTimeout(() => {
+            fetchCartItems(true);
+        }, 500); // 500ms delay to allow API call to complete
     };
 
     useEffect(() => {
