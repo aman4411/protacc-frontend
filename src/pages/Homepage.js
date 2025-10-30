@@ -72,18 +72,31 @@ export default function HomePage() {
     }, []);
 
     useEffect(() => {
+        let isMounted = true; // Flag to prevent state updates if component unmounts
+        
         const fetchCategories = async () => {
             try {
                 const data = await getServiceCategories();
-                setCategories(data);
+                if (isMounted) { // Only update state if component is still mounted
+                    setCategories(data);
+                }
             } catch (error) {
-                toast.error('Failed to load service categories');
+                if (isMounted) {
+                    toast.error('Failed to load service categories');
+                }
             } finally {
-                setLoading(false);
+                if (isMounted) {
+                    setLoading(false);
+                }
             }
         };
 
         fetchCategories();
+        
+        // Cleanup function
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     useEffect(() => {

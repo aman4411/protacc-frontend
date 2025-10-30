@@ -37,7 +37,7 @@ const ServiceDetailPage = () => {
     const [activeTab, setActiveTab] = useState('overview');
     const [animateIn, setAnimateIn] = useState(false);
     const { isAuthenticated } = useAuth();
-    const { isInCart, addToCartState } = useCart();
+    const { isInCart, addToCartSmart } = useCart();
 
     useEffect(() => {
         const fetchService = async () => {
@@ -72,7 +72,7 @@ const ServiceDetailPage = () => {
         setAddingToCart(true);
         try {
             await addToCart(service.id);
-            addToCartState(service.id);
+            addToCartSmart(service.id);
             toast.success('Service added to cart');
         } catch (error) {
             toast.error('Failed to add service to cart');

@@ -19,7 +19,7 @@ import toast from 'react-hot-toast';
 import { searchServices, addToCart } from '../services/api';
 
 // ServiceCard Component
-const ServiceCard = ({ service, addingToCart, handleAddToCart, isInCart, addToCartState, isAuthenticated, index }) => {
+const ServiceCard = ({ service, addingToCart, handleAddToCart, isInCart, isAuthenticated, index }) => {
     const [cardAnimated, setCardAnimated] = useState(false);
 
     useEffect(() => {
@@ -140,7 +140,7 @@ const SearchPage = () => {
     const [addingToCart, setAddingToCart] = useState(null);
     const [animateIn, setAnimateIn] = useState(false);
     const { isAuthenticated } = useAuth();
-    const { isInCart, addToCartState } = useCart();
+    const { isInCart, addToCartSmart } = useCart();
 
     useEffect(() => {
         // Scroll to top when page loads
@@ -204,7 +204,7 @@ const SearchPage = () => {
         setAddingToCart(serviceId);
         try {
             await addToCart(serviceId);
-            addToCartState(serviceId); // Update cart context
+            addToCartSmart(serviceId); // Update cart context optimistically
             toast.success('Service added to cart!');
         } catch (error) {
             toast.error(error.toString());
@@ -384,13 +384,12 @@ const SearchPage = () => {
                             {/* Services Grid */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {services.map((service, index) => (
-                                    <ServiceCard 
-                                        key={service.id} 
-                                        service={service} 
+                                    <ServiceCard
+                                        key={service.id}
+                                        service={service}
                                         addingToCart={addingToCart}
                                         handleAddToCart={handleAddToCart}
                                         isInCart={isInCart}
-                                        addToCartState={addToCartState}
                                         isAuthenticated={isAuthenticated}
                                         index={index}
                                     />

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { getCartItems } from '../services/api';
 import { useAuth } from './AuthContext';
 
@@ -18,9 +18,10 @@ export const CartProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const { isAuthenticated } = useAuth();
     const fetchingRef = useRef(false); // Prevent concurrent API calls
+    const lastFetchTimeRef = useRef(0); // Track last fetch time for debouncing
 
-    // Fetch cart items
-    const fetchCartItems = async () => {
+    // Fetch cart items with debouncing
+    const fetchCartItems = async (force = false) => {
         if (!isAuthenticated) {
             setCartItems([]);
             setCartCount(0);
@@ -33,7 +34,14 @@ export const CartProvider = ({ children }) => {
             return;
         }
 
+        // Debounce: Don't fetch if we fetched recently (unless forced)
+        const now = Date.now();
+        if (!force && (now - lastFetchTimeRef.current) < 1000) { // 1 second debounce
+            return;
+        }
+
         fetchingRef.current = true;
+        lastFetchTimeRef.current = now;
         
         try {
             const items = await getCartItems();
@@ -41,8 +49,11 @@ export const CartProvider = ({ children }) => {
             setCartCount(items ? items.length : 0);
         } catch (error) {
             console.error('Failed to fetch cart items:', error);
-            setCartItems([]);
-            setCartCount(0);
+            // Don't clear existing items on error, just log it
+            if (cartItems.length === 0) {
+                setCartItems([]);
+                setCartCount(0);
+            }
         } finally {
             setLoading(false);
             fetchingRef.current = false;
@@ -60,9 +71,30 @@ export const CartProvider = ({ children }) => {
 
     // Add item to cart state
     const addToCartState = (serviceId) => {
-        // Optimistically update local state instead of refetching
+        // Optimistically update local state
         setCartCount(prevCount => prevCount + 1);
-        // The actual cart items will be updated when the page refreshes or user navigates to cart
+        
+        // Add a placeholder item to cartItems so isInCart works immediately
+        setCartItems(prevItems => {
+            // Check if item already exists
+            const exists = prevItems.some(item => 
+                item.service_id === serviceId || 
+                item.service?.id === serviceId ||
+                (item.service && item.service.id === serviceId)
+            );
+            
+            if (!exists) {
+                // Add placeholder item
+                const placeholderItem = {
+                    service_id: serviceId,
+                    service: { id: serviceId },
+                    quantity: 1,
+                    isPlaceholder: true // Mark as placeholder for identification
+                };
+                return [...prevItems, placeholderItem];
+            }
+            return prevItems;
+        });
     };
 
     // Remove item from cart state  
@@ -77,8 +109,17 @@ export const CartProvider = ({ children }) => {
     };
 
     // Refresh cart data (only when explicitly needed)
-    const refreshCart = () => {
-        fetchCartItems();
+    const refreshCart = useCallback(() => {
+        fetchCartItems(true); // Force refresh
+    }, []);
+
+    // Smart add to cart - only refresh if needed
+    const addToCartSmart = (serviceId) => {
+        // Update optimistically
+        addToCartState(serviceId);
+        
+        // No immediate refresh - let the optimistic update work
+        // Real data will be fetched when user navigates to cart or after some time
     };
 
     useEffect(() => {
@@ -101,7 +142,8 @@ export const CartProvider = ({ children }) => {
         addToCartState,
         removeFromCartState,
         refreshCart,
-        fetchCartItems
+        fetchCartItems,
+        addToCartSmart
     };
 
     return (

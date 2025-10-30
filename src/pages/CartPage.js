@@ -43,7 +43,12 @@ const CartPage = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
         setTimeout(() => setAnimateIn(true), 100);
-    }, []); // Empty dependency array - runs only once
+        
+        // Refresh cart data when cart page is visited (to replace any placeholder items)
+        if (isAuthenticated) {
+            refreshCart();
+        }
+    }, []); // Only run once on mount
 
     // Redirect to login if not authenticated
     useEffect(() => {

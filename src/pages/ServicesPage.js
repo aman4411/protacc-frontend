@@ -30,7 +30,7 @@ const ServicesPage = () => {
     const [showFilters, setShowFilters] = useState(false);
     const [animateIn, setAnimateIn] = useState(false);
     const { isAuthenticated } = useAuth();
-    const { isInCart, addToCartState } = useCart();
+    const { isInCart, addToCartSmart } = useCart();
 
     useEffect(() => {
         // Scroll to top when page loads or category changes
@@ -47,23 +47,37 @@ const ServicesPage = () => {
     }, [searchParams]);
 
     useEffect(() => {
+        let isMounted = true; // Flag to prevent state updates if component unmounts
+        
         const fetchData = async () => {
             try {
                 const [servicesData, categoriesData] = await Promise.all([
                     getServices(selectedCategory),
                     getServiceCategories()
                 ]);
-                setServices(servicesData);
-                setCategories(categoriesData);
-                setFilteredServices(servicesData);
+                
+                if (isMounted) { // Only update state if component is still mounted
+                    setServices(servicesData);
+                    setCategories(categoriesData);
+                    setFilteredServices(servicesData);
+                }
             } catch (error) {
-                toast.error('Failed to load services');
+                if (isMounted) {
+                    toast.error('Failed to load services');
+                }
             } finally {
-                setLoading(false);
+                if (isMounted) {
+                    setLoading(false);
+                }
             }
         };
 
         fetchData();
+        
+        // Cleanup function
+        return () => {
+            isMounted = false;
+        };
     }, [selectedCategory]);
 
     // Filter and sort services
@@ -149,7 +163,7 @@ const ServicesPage = () => {
         try {
             setAddingToCart(serviceId);
             await addToCart(serviceId, 1);
-            addToCartState(serviceId);
+            addToCartSmart(serviceId);
             toast.success('Service added to cart');
         } catch (error) {
             toast.error(error || 'Failed to add to cart');
