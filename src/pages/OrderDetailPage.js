@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FaSpinner, FaArrowLeft, FaClock, FaFileAlt, FaMoneyBillWave } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { getOrderByNumber, getOrderStatusHistory, createPaymentOrder, verifyPayment } from '../services/api';
+import OrderDocumentsSection from '../components/orders/OrderDocumentsSection';
 
 const OrderStatusBadge = ({ status }) => {
     const getStatusColor = (orderStatus) => {
@@ -367,6 +368,22 @@ const OrderDetailPage = () => {
                                     )}
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Documents */}
+                        <div className="bg-white rounded-xl shadow-lg p-6">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-6">Documents</h3>
+                            <OrderDocumentsSection
+                                orderId={order.id}
+                                orderStatus={order.status}
+                                isAdmin={false}
+                                onDocumentsChange={async () => {
+                                    const orderData = await getOrderByNumber(orderNumber);
+                                    setOrder(orderData);
+                                    const historyData = await getOrderStatusHistory(orderData.id);
+                                    setStatusHistory(Array.isArray(historyData) ? historyData : []);
+                                }}
+                            />
                         </div>
 
                         {/* Status History */}

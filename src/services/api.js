@@ -227,6 +227,42 @@ export const getOrderStatusHistory = async (orderId) => {
     }
 };
 
+export const getOrderDocuments = async (orderId, isAdmin = false) => {
+    try {
+        const base = isAdmin ? '/admin/orders' : '/orders';
+        const response = await api.get(`${base}/${orderId}/documents`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch order documents';
+    }
+};
+
+export const addOrderDocument = async (orderId, data) => {
+    try {
+        const response = await api.post(`/orders/${orderId}/documents`, {
+            title: data.title,
+            driveUrl: data.driveUrl,
+            notes: data.notes || '',
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to submit document';
+    }
+};
+
+export const addAdminOrderDocument = async (orderId, data) => {
+    try {
+        const response = await api.post(`/admin/orders/${orderId}/documents`, {
+            title: data.title,
+            driveUrl: data.driveUrl,
+            notes: data.notes || '',
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to share document';
+    }
+};
+
 // Admin Service Management
 export const getAdminServices = async (params = {}) => {
     try {

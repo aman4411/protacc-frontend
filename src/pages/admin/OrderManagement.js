@@ -15,8 +15,10 @@ import {
     FaDollarSign,
     FaClipboardList,
     FaHistory,
-    FaSync
+    FaSync,
+    FaGoogleDrive
 } from 'react-icons/fa';
+import OrderDocumentsSection from '../../components/orders/OrderDocumentsSection';
 import { 
     getAdminOrders, 
     updateOrderStatus,
@@ -29,7 +31,7 @@ const OrderManagement = () => {
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(null);
     const [showModal, setShowModal] = useState(false);
-    const [modalType, setModalType] = useState('view'); // 'view', 'status', 'history'
+    const [modalType, setModalType] = useState('view'); // 'view', 'status', 'history', 'documents'
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [statusHistory, setStatusHistory] = useState([]);
     
@@ -347,6 +349,13 @@ const OrderManagement = () => {
                                                         >
                                                             <FaHistory />
                                                         </button>
+                                                        <button
+                                                            onClick={() => handleOpenModal('documents', order)}
+                                                            className="text-blue-600 hover:text-blue-900"
+                                                            title="Manage Documents"
+                                                        >
+                                                            <FaGoogleDrive />
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -482,6 +491,7 @@ const OrderModal = ({
             case 'view': return 'Order Details';
             case 'status': return 'Update Order Status';
             case 'history': return 'Order Status History';
+            case 'documents': return 'Order Documents';
             default: return 'Order';
         }
     };
@@ -512,6 +522,13 @@ const OrderModal = ({
                         />
                     )}
                     {type === 'history' && <OrderHistoryView history={statusHistory} />}
+                    {type === 'documents' && (
+                        <OrderDocumentsSection
+                            orderId={order.id}
+                            orderStatus={order.status}
+                            isAdmin={true}
+                        />
+                    )}
                 </div>
             </div>
         </div>
@@ -653,6 +670,15 @@ const OrderDetailsView = ({ order }) => {
                     </div>
                 </div>
             )}
+
+            <div>
+                <h4 className="text-lg font-medium text-gray-900 mb-3">Documents</h4>
+                <OrderDocumentsSection
+                    orderId={order.id}
+                    orderStatus={order.status}
+                    isAdmin={true}
+                />
+            </div>
         </div>
     );
 };
