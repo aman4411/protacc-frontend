@@ -6,6 +6,8 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import SignupPage from './pages/auth/SignupPage';
 import LoginPage from './pages/auth/LoginPage';
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import Layout from "./components/Layout";
 import HomePage from "./pages/Homepage";
 import ConsultancyPage from "./pages/Consultancy";
@@ -55,6 +57,12 @@ function App() {
                                     <LoginPage />
                                 </RedirectIfAuthenticated>
                             } />
+                            <Route path="forgot-password" element={
+                                <RedirectIfAuthenticated>
+                                    <ForgotPasswordPage />
+                                </RedirectIfAuthenticated>
+                            } />
+                            <Route path="reset-password" element={<ResetPasswordPage />} />
                             <Route path="verify-email" element={<OTPVerification />} />
                             <Route path="consultancy" element={<ConsultancyPage />} />
                             <Route path="contact" element={<ContactPage />} />

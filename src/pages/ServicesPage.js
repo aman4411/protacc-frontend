@@ -166,7 +166,7 @@ const ServicesPage = () => {
         try {
             setAddingToCart(serviceId);
             await addToCart(serviceId, 1);
-            addToCartSmart(serviceId, serviceData);
+            await addToCartSmart(serviceId, serviceData);
             toast.success('Service added to cart');
         } catch (error) {
             toast.error(error || 'Failed to add to cart');

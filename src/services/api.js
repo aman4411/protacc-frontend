@@ -126,6 +126,53 @@ export const getProfile = async () => {
     }
 };
 
+export const updateProfile = async (profileData) => {
+    try {
+        const response = await api.put('/user/profile', profileData);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update profile';
+    }
+};
+
+export const requestPasswordReset = async () => {
+    try {
+        const response = await api.post('/user/change-password-request');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to send password reset email';
+    }
+};
+
+export const forgotPassword = async (email) => {
+    try {
+        const response = await api.post('/auth/forgot-password', { email });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to send password reset email';
+    }
+};
+
+export const validateResetToken = async (token) => {
+    try {
+        const response = await api.get('/auth/reset-password/validate', {
+            params: { token },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Invalid or expired reset link';
+    }
+};
+
+export const resetPassword = async (data) => {
+    try {
+        const response = await api.post('/auth/reset-password', data);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to reset password';
+    }
+};
+
 export const getUsers = async (params = {}) => {
     try {
         const response = await api.get('/admin/users', { params });
@@ -393,7 +440,8 @@ export const searchServices = async (query) => {
 export const getCartItems = async () => {
     try {
         const response = await api.get('/cart');
-        return response.data;
+        const data = response.data;
+        return Array.isArray(data) ? data : [];
     } catch (error) {
         throw error.response?.data?.error || 'Failed to fetch cart items';
     }

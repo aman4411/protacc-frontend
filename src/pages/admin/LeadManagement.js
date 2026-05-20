@@ -22,7 +22,8 @@ import {
     FaClock,
     FaExclamationTriangle,
     FaCheckCircle,
-    FaBan
+    FaBan,
+    FaSync
 } from 'react-icons/fa';
 import {
     getLeads,
@@ -38,6 +39,7 @@ const LeadManagement = () => {
     const [leads, setLeads] = useState([]);
     const [stats, setStats] = useState({});
     const [users, setUsers] = useState([]);
+    const [assignableUsers, setAssignableUsers] = useState([]); // Only admin and staff users
     const [loading, setLoading] = useState(true);
     const [selectedLead, setSelectedLead] = useState(null);
     const [showLeadModal, setShowLeadModal] = useState(false);
@@ -106,12 +108,67 @@ const LeadManagement = () => {
         }
     };
 
+    // Helper function to fetch all users of a specific role (handles pagination)
+    const fetchAllUsersByRole = async (role) => {
+        let allUsers = [];
+        let page = 1;
+        let hasMore = true;
+        
+        while (hasMore) {
+            try {
+                const response = await getUsers({ 
+                    limit: 100, 
+                    role: role, 
+                    page: page 
+                });
+                
+                const users = response.users || [];
+                allUsers = [...allUsers, ...users];
+                
+                // Check if there are more pages
+                const totalPages = response.pagination?.total_pages || 1;
+                hasMore = page < totalPages;
+                page++;
+                
+            } catch (error) {
+                console.error(`Error fetching ${role} users on page ${page}:`, error);
+                hasMore = false; // Stop on error
+            }
+        }
+        
+        return allUsers;
+    };
+
     const fetchUsers = async () => {
         try {
-            const data = await getUsers({ limit: 100 });
-            setUsers(data.users || []);
+            // Fetch all users for display purposes (if needed elsewhere)
+            const allUsersData = await getUsers({ limit: 100 });
+            setUsers(allUsersData.users || []);
+            
+            // Fetch ALL admin and staff users across all pages
+            const [adminUsers, staffUsers] = await Promise.all([
+                fetchAllUsersByRole('admin'),
+                fetchAllUsersByRole('staff')
+            ]);
+            
+            // Combine admin and staff users
+            const assignableUsersList = [...adminUsers, ...staffUsers];
+            
+            // Sort by role (admin first) then by name for better UX
+            assignableUsersList.sort((a, b) => {
+                if (a.role !== b.role) {
+                    return a.role === 'admin' ? -1 : 1; // Admin users first
+                }
+                return `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`);
+            });
+            
+            setAssignableUsers(assignableUsersList);
+            
+            console.log(`Fetched ${adminUsers.length} admin users and ${staffUsers.length} staff users for lead assignment`);
+            
         } catch (error) {
             console.error('Error fetching users:', error);
+            toast.error('Failed to fetch assignable users');
         }
     };
 
@@ -290,6 +347,17 @@ const LeadManagement = () => {
                     <h1 className="text-2xl font-bold text-gray-900 mb-4 lg:mb-0">Lead Management</h1>
                     
                     <div className="flex items-center space-x-4">
+                        <button
+                            onClick={() => {
+                                toast.loading('Refreshing leads...', { id: 'refresh-leads' });
+                                Promise.all([fetchLeads(), fetchStats(), fetchUsers()]).finally(() => toast.dismiss('refresh-leads'));
+                            }}
+                            disabled={loading}
+                            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            <FaSync className={loading ? 'animate-spin' : ''} />
+                            Refresh
+                        </button>
                         <div className="relative">
                             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                             <input
@@ -360,11 +428,11 @@ const LeadManagement = () => {
                                 onChange={(e) => handleFilterChange('assigned_to', e.target.value)}
                                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             >
-                                <option value="">All Users</option>
+                                <option value="">All Assignees</option>
                                 <option value="unassigned">Unassigned</option>
-                                {users.map(user => (
+                                {assignableUsers.map(user => (
                                     <option key={user.id} value={user.id}>
-                                        {user.first_name} {user.last_name}
+                                        {user.firstName} {user.lastName}
                                     </option>
                                 ))}
                             </select>
@@ -605,7 +673,7 @@ const LeadManagement = () => {
                     onUpdate={(updates) => handleUpdateLead(selectedLead.id, updates)}
                     onDelete={() => handleDeleteLead(selectedLead.id)}
                     updating={updating}
-                    users={users}
+                    users={assignableUsers}
                     statusOptions={statusOptions}
                     priorityOptions={priorityOptions}
                 />
@@ -856,7 +924,7 @@ const LeadModal = ({
                                         <option value="">Unassigned</option>
                                         {users.map(user => (
                                             <option key={user.id} value={user.id}>
-                                                {user.first_name} {user.last_name}
+                                                {user.firstName} {user.lastName}
                                             </option>
                                         ))}
                                     </select>

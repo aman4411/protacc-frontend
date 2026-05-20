@@ -415,22 +415,56 @@ const OrderDetailPage = () => {
                             <h3 className="text-lg font-semibold text-gray-900 mb-6">Payment Details</h3>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-gray-600">Total Amount</span>
+                                    <span className="text-gray-600">Total Service Amount</span>
                                     <span className="text-gray-900 font-medium">₹{order.total_amount}</span>
                                 </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-gray-600">Booking Amount</span>
-                                    <span className="text-green-600 font-medium">₹{order.booking_amount}</span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-gray-600">Remaining Amount</span>
-                                    <span className="text-gray-900 font-medium">₹{order.remaining_amount}</span>
-                                </div>
+                                
+                                {/* Show different payment breakdown based on status */}
+                                {order.status === 'full_payment_received' || order.remaining_amount === 0 ? (
+                                    // Full payment completed
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-gray-600">Amount Paid</span>
+                                        <span className="text-green-600 font-medium">₹{order.total_amount}</span>
+                                    </div>
+                                ) : order.status === 'pending_booking_payment' ? (
+                                    // No payment made yet
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-gray-600">Amount Due</span>
+                                        <span className="text-orange-600 font-medium">₹{order.total_amount}</span>
+                                    </div>
+                                ) : (
+                                    // Partial payment made (booking amount received)
+                                    <>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-gray-600">Amount Paid</span>
+                                            <span className="text-green-600 font-medium">₹{order.booking_amount}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-gray-600">Remaining Amount</span>
+                                            <span className="text-orange-600 font-medium">₹{order.remaining_amount}</span>
+                                        </div>
+                                    </>
+                                )}
+                                
                                 <div className="pt-4 border-t border-gray-100">
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Payment Status</span>
-                                        <span className={`font-medium ${order.payment_status ? 'text-green-600' : 'text-yellow-600'}`}>
-                                            {order.payment_status ? 'Paid' : 'Pending'}
+                                        <span className={`font-medium ${
+                                            order.status === 'full_payment_received' || order.remaining_amount === 0 
+                                                ? 'text-green-600' 
+                                                : order.status === 'booking_amount_received' 
+                                                ? 'text-blue-600' 
+                                                : order.status === 'pending_booking_payment'
+                                                ? 'text-red-600'
+                                                : 'text-yellow-600'
+                                        }`}>
+                                            {order.status === 'full_payment_received' || order.remaining_amount === 0 
+                                                ? 'Fully Paid' 
+                                                : order.status === 'booking_amount_received' 
+                                                ? 'Partially Paid' 
+                                                : order.status === 'pending_booking_payment'
+                                                ? 'Payment Required'
+                                                : 'Pending Payment'}
                                         </span>
                                     </div>
                                 </div>

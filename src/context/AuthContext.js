@@ -33,17 +33,20 @@ export const AuthProvider = ({ children }) => {
     }, [token]);
 
     const login = (authResponse) => {
+        // Persist before React state updates so API calls (e.g. cart fetch) see the token immediately
+        localStorage.setItem(TOKEN_KEY, authResponse.token);
+        localStorage.setItem(USER_KEY, JSON.stringify(authResponse.user));
         setToken(authResponse.token);
         setUser(authResponse.user);
     };
 
     const logout = () => {
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(USER_KEY);
         setToken(null);
         setUser(null);
         setIsVerifying(false);
         setVerificationEmail('');
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem(USER_KEY);
     };
 
     const startVerification = (email) => {
@@ -56,6 +59,11 @@ export const AuthProvider = ({ children }) => {
         setVerificationEmail('');
     };
 
+    const updateUser = (updatedUser) => {
+        localStorage.setItem(USER_KEY, JSON.stringify(updatedUser));
+        setUser(updatedUser);
+    };
+
     const value = {
         user,
         token,
@@ -65,6 +73,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         startVerification,
         completeVerification,
+        updateUser,
         isAuthenticated: !!token && !!user,
     };
 

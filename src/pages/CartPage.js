@@ -35,20 +35,12 @@ const CartPage = () => {
     const [promoApplied, setPromoApplied] = useState(false);
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
-    const { cartItems, loading, removeFromCartState, refreshCart } = useCart();
+    const { cartItems, loading, removeFromCartState } = useCart();
 
-    // Remove fetchCartItems - use CartContext data instead
-
-    // Scroll to top and animate in when component mounts
     useEffect(() => {
         window.scrollTo(0, 0);
         setTimeout(() => setAnimateIn(true), 100);
-        
-        // Refresh cart data when cart page is visited (to replace any placeholder items)
-        if (isAuthenticated) {
-            refreshCart();
-        }
-    }, []); // Only run once on mount
+    }, []);
 
     // Redirect to login if not authenticated
     useEffect(() => {

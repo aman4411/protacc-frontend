@@ -211,6 +211,9 @@ const UserManagement = () => {
                                             Email
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Phone
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Role
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -247,6 +250,9 @@ const UserManagement = () => {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="text-sm text-gray-900">{user.email}</div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm text-gray-900">{user.phone && user.phone.trim() !== '' ? user.phone : 'N/A'}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getRoleBadgeColor(user.role)}`}>
@@ -383,6 +389,7 @@ const UserManagement = () => {
                             first_name: selectedUser.firstName,
                             last_name: selectedUser.lastName,
                             email: selectedUser.email,
+                            phone: selectedUser.phone,
                             role: selectedUser.role,
                             email_verified: selectedUser.isEmailVerified,
                             created_at: selectedUser.createdAt

@@ -14,12 +14,17 @@ import {
     FaExclamationTriangle,
     FaArrowRight,
     FaFileInvoiceDollar,
-    FaClock
+    FaClock,
+    FaLock
 } from 'react-icons/fa';
-import { getOrders } from '../services/api';
+import { getOrders, requestPasswordReset } from '../services/api';
+import EditProfileModal from '../components/profile/EditProfileModal';
+import toast from 'react-hot-toast';
 
 const ProfilePage = () => {
     const { user } = useAuth();
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [passwordResetSending, setPasswordResetSending] = useState(false);
     const [recentOrders, setRecentOrders] = useState([]);
     const [orderStats, setOrderStats] = useState({
         total: 0,
@@ -73,6 +78,24 @@ const ProfilePage = () => {
             setOrderStats({ total: 0, completed: 0, pending: 0 });
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleChangePassword = async () => {
+        if (!window.confirm(
+            `A password reset link will be sent to ${user?.email}. You will need to log in again after resetting your password. Continue?`
+        )) {
+            return;
+        }
+
+        try {
+            setPasswordResetSending(true);
+            await requestPasswordReset();
+            toast.success('Password reset link sent to your email');
+        } catch (error) {
+            toast.error(error.toString());
+        } finally {
+            setPasswordResetSending(false);
         }
     };
 
@@ -329,13 +352,22 @@ const ProfilePage = () => {
                                 </div>
                                 
                                 <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                                    <button className="flex-1 flex items-center justify-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                    <button
+                                        type="button"
+                                        onClick={() => setEditModalOpen(true)}
+                                        className="flex-1 flex items-center justify-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                                    >
                                         <FaEdit className="mr-2" />
                                         Edit Profile
                                     </button>
-                                    <button className="flex-1 flex items-center justify-center px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl font-medium hover:from-gray-700 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 shadow-lg">
-                                        <FaCreditCard className="mr-2" />
-                                        Change Password
+                                    <button
+                                        type="button"
+                                        onClick={handleChangePassword}
+                                        disabled={passwordResetSending}
+                                        className="flex-1 flex items-center justify-center px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl font-medium hover:from-gray-700 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                                    >
+                                        <FaLock className="mr-2" />
+                                        {passwordResetSending ? 'Sending...' : 'Change Password'}
                                     </button>
                                 </div>
                             </div>
@@ -437,6 +469,11 @@ const ProfilePage = () => {
                     </div>
                 </div>
             </div>
+
+            <EditProfileModal
+                isOpen={editModalOpen}
+                onClose={() => setEditModalOpen(false)}
+            />
         </div>
     );
 };

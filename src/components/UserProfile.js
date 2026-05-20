@@ -3,6 +3,7 @@ import {
     FaTimes,
     FaUser,
     FaEnvelope,
+    FaPhone,
     FaCalendarAlt,
     FaShoppingCart,
     FaDollarSign,
@@ -150,6 +151,11 @@ const UserProfile = ({ user, onClose }) => {
                                         <FaEnvelope className="text-gray-400 mr-3" />
                                         <span className="text-gray-600">Email:</span>
                                         <span className="ml-2 font-medium">{user.email}</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <FaPhone className="text-gray-400 mr-3" />
+                                        <span className="text-gray-600">Phone:</span>
+                                        <span className="ml-2 font-medium">{user.phone && user.phone.trim() !== '' ? user.phone : 'N/A'}</span>
                                     </div>
                                     <div className="flex items-center">
                                         <FaUserShield className="text-gray-400 mr-3" />
