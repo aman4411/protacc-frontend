@@ -20,6 +20,9 @@ import CountUp from 'react-countup';
 import { useAuth } from '../context/AuthContext';
 import { getServiceCategories } from '../services/api';
 import toast from 'react-hot-toast';
+import Seo from '../components/Seo';
+import { PAGE_SEO } from '../config/seo';
+import { organizationSchema } from '../utils/structuredData';
 
 // Import only testimonial images
 import testimonial1Image from '../assets/images/testimonial-1.jpg';
@@ -185,8 +188,16 @@ export default function HomePage() {
         }
     ];
 
+    const homeSeo = PAGE_SEO.home;
+
     return (
         <div className="min-h-screen bg-gray-50 pt-header">
+            <Seo
+                title={homeSeo.title}
+                description={homeSeo.description}
+                path={homeSeo.path}
+                jsonLd={organizationSchema()}
+            />
             {/* Floating Background Elements */}
             <div className="fixed inset-0 pointer-events-none z-0">
                 <div 

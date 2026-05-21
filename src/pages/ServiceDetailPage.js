@@ -28,6 +28,9 @@ import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
 import { getServiceBySlug, addToCart } from '../services/api';
 import { SITE_CONTACT } from '../config/siteContact';
+import Seo from '../components/Seo';
+import { getCanonicalUrl } from '../config/seo';
+import { serviceSchema, breadcrumbSchema } from '../utils/structuredData';
 
 const ServiceDetailPage = () => {
     const { slug } = useParams();
@@ -114,8 +117,27 @@ const ServiceDetailPage = () => {
         );
     }
 
+    const serviceDescription =
+        service.short_description ||
+        (service.description ? String(service.description).slice(0, 160) : undefined);
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-header">
+            <Seo
+                title={`${service.title} | Protacc`}
+                description={serviceDescription}
+                path={`/services/${service.slug}`}
+                type="product"
+                jsonLd={[
+                    serviceSchema(service),
+                    breadcrumbSchema([
+                        { name: 'Home', url: getCanonicalUrl('/') },
+                        { name: 'Services', url: getCanonicalUrl('/services') },
+                        { name: service.title, url: getCanonicalUrl(`/services/${service.slug}`) },
+                    ]),
+                ]}
+                jsonLdId="protacc-service-jsonld"
+            />
             {/* Hero Section */}
             <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-700 text-white py-20 relative overflow-hidden">
                 <div className="absolute inset-0 bg-black opacity-10"></div>

@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Protacc",
+  "name": "Protacc – Tax & Compliance Services",
+  "description": "ITR filing, GST registration, company registration, and business compliance services in India.",
   "icons": [
     {
       "src": "favicon.ico",
@@ -18,8 +19,9 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#4f46e5",
+  "background_color": "#ffffff",
+  "lang": "en-IN"
 }

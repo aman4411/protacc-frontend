@@ -27,6 +27,7 @@ import CartPage from './pages/CartPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailPage from './pages/OrderDetailPage';
 import ScrollToTop from './components/ScrollToTop';
+import GoogleAnalytics from './components/GoogleAnalytics';
 // import more pages...
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
             <CartProvider>
                 <Router>
                     <ScrollToTop />
+                    <GoogleAnalytics />
                     <Routes>
                         {/* Admin Routes - Outside Layout to avoid header/footer */}
                         <Route

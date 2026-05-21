@@ -19,6 +19,8 @@ import {
 import { createLead } from '../services/api';
 import toast from 'react-hot-toast';
 import { SITE_CONTACT } from '../config/siteContact';
+import Seo from '../components/Seo';
+import { PAGE_SEO } from '../config/seo';
 
 const Consultancy = () => {
     const [formData, setFormData] = useState({
@@ -151,8 +153,11 @@ const Consultancy = () => {
         );
     }
 
+    const consultancySeo = PAGE_SEO.consultancy;
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-header">
+            <Seo title={consultancySeo.title} description={consultancySeo.description} path={consultancySeo.path} />
             {/* Hero Section */}
             <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-700 text-white py-20 relative overflow-hidden">
                 {/* Decorative Background Elements */}

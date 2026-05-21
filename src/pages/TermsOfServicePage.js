@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaFileContract, FaEnvelope } from 'react-icons/fa';
 import { SITE_CONTACT } from '../config/siteContact';
+import Seo from '../components/Seo';
+import { PAGE_SEO } from '../config/seo';
 
 const SectionDivider = () => (
     <hr className="my-8 border-gray-200" aria-hidden="true" />
@@ -12,8 +14,11 @@ const TermsOfServicePage = () => {
         window.scrollTo(0, 0);
     }, []);
 
+    const seo = PAGE_SEO.terms;
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-header pb-16">
+            <Seo title={seo.title} description={seo.description} path={seo.path} />
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="text-center mb-10">
                     <div className="inline-flex items-center px-4 py-2 bg-indigo-100 rounded-full mb-4">

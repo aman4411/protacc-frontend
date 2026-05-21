@@ -1,3 +1,16 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+
+# Private / low-value pages for crawlers
+Disallow: /admin
+Disallow: /login
+Disallow: /signup
+Disallow: /cart
+Disallow: /orders
+Disallow: /profile
+Disallow: /verify-email
+Disallow: /forgot-password
+Disallow: /reset-password
+
+Sitemap: https://protacc.in/sitemap.xml

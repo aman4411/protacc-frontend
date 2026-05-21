@@ -15,6 +15,8 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
 import { getServices, getServiceCategories, addToCart } from '../services/api';
+import Seo from '../components/Seo';
+import { PAGE_SEO } from '../config/seo';
 
 const ServicesPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -192,8 +194,11 @@ const ServicesPage = () => {
         );
     }
 
+    const servicesSeo = PAGE_SEO.services;
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-header">
+            <Seo title={servicesSeo.title} description={servicesSeo.description} path={servicesSeo.path} />
             {/* Hero Section */}
             <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-700 text-white py-20 relative overflow-hidden">
                 <div className="absolute inset-0 bg-black opacity-10"></div>

@@ -21,6 +21,8 @@ import {
 import toast from 'react-hot-toast';
 import { createContact } from '../services/api';
 import { SITE_CONTACT } from '../config/siteContact';
+import Seo from '../components/Seo';
+import { PAGE_SEO } from '../config/seo';
 
 const ContactPage = () => {
     const [formData, setFormData] = useState({
@@ -143,8 +145,11 @@ const ContactPage = () => {
         'Other'
     ];
 
+    const contactSeo = PAGE_SEO.contact;
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-header">
+            <Seo title={contactSeo.title} description={contactSeo.description} path={contactSeo.path} />
             {/* Hero Section */}
             <section className="relative py-20 overflow-hidden">
                 {/* Background Elements */}
