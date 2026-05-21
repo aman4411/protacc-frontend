@@ -4,6 +4,7 @@ import { FaSpinner, FaArrowLeft, FaClock, FaFileAlt, FaMoneyBillWave } from 'rea
 import toast from 'react-hot-toast';
 import { getOrderByNumber, getOrderStatusHistory, createPaymentOrder, verifyPayment } from '../services/api';
 import OrderDocumentsSection from '../components/orders/OrderDocumentsSection';
+import { isOrderFullyPaid, isOrderPendingBookingPayment } from '../utils/orderPayment';
 
 const OrderStatusBadge = ({ status }) => {
     const getStatusColor = (orderStatus) => {
@@ -437,13 +438,13 @@ const OrderDetailPage = () => {
                                 </div>
                                 
                                 {/* Show different payment breakdown based on status */}
-                                {order.status === 'full_payment_received' || order.remaining_amount === 0 ? (
+                                {isOrderFullyPaid(order) ? (
                                     // Full payment completed
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Amount Paid</span>
                                         <span className="text-green-600 font-medium">₹{order.total_amount}</span>
                                     </div>
-                                ) : order.status === 'pending_booking_payment' ? (
+                                ) : isOrderPendingBookingPayment(order) ? (
                                     // No payment made yet
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Amount Due</span>
@@ -467,19 +468,19 @@ const OrderDetailPage = () => {
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-600">Payment Status</span>
                                         <span className={`font-medium ${
-                                            order.status === 'full_payment_received' || order.remaining_amount === 0 
+                                            isOrderFullyPaid(order)
                                                 ? 'text-green-600' 
                                                 : order.status === 'booking_amount_received' 
                                                 ? 'text-blue-600' 
-                                                : order.status === 'pending_booking_payment'
+                                                : isOrderPendingBookingPayment(order)
                                                 ? 'text-red-600'
                                                 : 'text-yellow-600'
                                         }`}>
-                                            {order.status === 'full_payment_received' || order.remaining_amount === 0 
+                                            {isOrderFullyPaid(order)
                                                 ? 'Fully Paid' 
                                                 : order.status === 'booking_amount_received' 
                                                 ? 'Partially Paid' 
-                                                : order.status === 'pending_booking_payment'
+                                                : isOrderPendingBookingPayment(order)
                                                 ? 'Payment Required'
                                                 : 'Pending Payment'}
                                         </span>

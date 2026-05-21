@@ -1,0 +1,38 @@
+/**
+ * Central contact & social details for ProtAcc website.
+ * Update here to reflect changes across header, footer, contact pages, etc.
+ */
+
+export const SITE_CONTACT = {
+    phone: '9034819324',
+    phoneDisplay: '+91 9034819324',
+    phoneTel: '+919034819324',
+    whatsappUrl: 'https://wa.me/919034819324',
+
+    email: 'info@protacc.in',
+    emailMailto: 'mailto:info@protacc.in',
+
+    address: {
+        line1: '1st floor, above RS Collection,',
+        line2: 'Gali No. 4, Rishi Nagar, Dhand Road,',
+        line3: 'Kaithal - 136027',
+        full: '1st floor, above RS Collection, Gali No. 4, Rishi Nagar, Dhand Road, Kaithal - 136027',
+        short: 'Kaithal, Haryana 136027',
+    },
+
+    mapsSearchUrl:
+        'https://www.google.com/maps/search/?api=1&query=1st+floor+above+RS+Collection+Gali+No+4+Rishi+Nagar+Dhand+Road+Kaithal+136027',
+
+    social: {
+        instagram: 'https://www.instagram.com/protacc.in',
+        facebook: 'https://www.facebook.com/protacc',
+    },
+
+    businessHours: {
+        weekdays: 'Mon - Sat, 9 AM to 6 PM',
+        weekdayDetail: '9:00 AM - 7:00 PM',
+        saturday: '10:00 AM - 5:00 PM',
+    },
+};
+
+export default SITE_CONTACT;

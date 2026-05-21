@@ -12,6 +12,9 @@ import Layout from "./components/Layout";
 import HomePage from "./pages/Homepage";
 import ConsultancyPage from "./pages/Consultancy";
 import ContactPage from "./pages/ContactPage";
+import RefundPolicyPage from "./pages/RefundPolicyPage";
+import TermsOfServicePage from "./pages/TermsOfServicePage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import OTPVerification from './components/auth/OTPVerification';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import RedirectIfAuthenticated from './components/auth/RedirectIfAuthenticated';
@@ -66,6 +69,9 @@ function App() {
                             <Route path="verify-email" element={<OTPVerification />} />
                             <Route path="consultancy" element={<ConsultancyPage />} />
                             <Route path="contact" element={<ContactPage />} />
+                            <Route path="refund-policy" element={<RefundPolicyPage />} />
+                            <Route path="terms-of-service" element={<TermsOfServicePage />} />
+                            <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
                             <Route path="services" element={<ServicesPage />} />
                             <Route path="services/:slug" element={<ServiceDetailPage />} />
                             <Route path="search" element={<SearchPage />} />

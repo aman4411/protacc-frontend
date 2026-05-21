@@ -18,6 +18,7 @@ import {
 } from 'react-icons/fa';
 import { createLead } from '../services/api';
 import toast from 'react-hot-toast';
+import { SITE_CONTACT } from '../config/siteContact';
 
 const Consultancy = () => {
     const [formData, setFormData] = useState({
@@ -375,7 +376,7 @@ const Consultancy = () => {
                                                 onChange={handleInputChange}
                                                 required
                                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                                placeholder="+91 9876543210"
+                                                placeholder={SITE_CONTACT.phoneDisplay}
                                             />
                                         </div>
                                     </div>

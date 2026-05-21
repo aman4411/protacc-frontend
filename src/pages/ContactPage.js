@@ -5,9 +5,8 @@ import {
     FaMapMarkerAlt, 
     FaClock, 
     FaWhatsapp,
-    FaLinkedin,
-    FaTwitter,
     FaFacebook,
+    FaInstagram,
     FaCheckCircle,
     FaArrowRight,
     FaUser,
@@ -21,6 +20,7 @@ import {
 } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { createContact } from '../services/api';
+import { SITE_CONTACT } from '../config/siteContact';
 
 const ContactPage = () => {
     const [formData, setFormData] = useState({
@@ -79,33 +79,33 @@ const ContactPage = () => {
         {
             icon: FaPhone,
             title: 'Phone',
-            content: '+91 9876543210',
-            description: 'Mon-Sat 9AM-7PM',
-            action: 'tel:+919876543210',
+            content: SITE_CONTACT.phoneDisplay,
+            description: SITE_CONTACT.businessHours.weekdays,
+            action: `tel:${SITE_CONTACT.phoneTel}`,
             gradient: 'from-blue-500 to-blue-600'
         },
         {
             icon: FaEnvelope,
             title: 'Email',
-            content: 'contact@protacc.com',
+            content: SITE_CONTACT.email,
             description: 'We reply within 24 hours',
-            action: 'mailto:contact@protacc.com',
+            action: SITE_CONTACT.emailMailto,
             gradient: 'from-purple-500 to-purple-600'
         },
         {
             icon: FaWhatsapp,
             title: 'WhatsApp',
-            content: '+91 9876543210',
+            content: SITE_CONTACT.phoneDisplay,
             description: 'Quick response available',
-            action: 'https://wa.me/919876543210',
+            action: SITE_CONTACT.whatsappUrl,
             gradient: 'from-green-500 to-green-600'
         },
         {
             icon: FaMapMarkerAlt,
             title: 'Office',
-            content: 'Business Hub, Sector 18',
-            description: 'Gurugram, Haryana 122015',
-            action: 'https://maps.google.com',
+            content: SITE_CONTACT.address.line1,
+            description: SITE_CONTACT.address.short,
+            action: SITE_CONTACT.mapsSearchUrl,
             gradient: 'from-red-500 to-red-600'
         }
     ];
@@ -184,7 +184,7 @@ const ContactPage = () => {
                             </a>
                             
                             <a
-                                href="tel:+919876543210"
+                                href={`tel:${SITE_CONTACT.phoneTel}`}
                                 className="inline-flex items-center px-8 py-4 bg-white text-indigo-600 font-semibold rounded-2xl border-2 border-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group"
                             >
                                 <FaPhoneAlt className="mr-2 group-hover:rotate-12 transition-transform" />
@@ -306,7 +306,7 @@ const ContactPage = () => {
                                                     onChange={handleInputChange}
                                                     required
                                                     className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
-                                                    placeholder="+91 9876543210"
+                                                    placeholder={SITE_CONTACT.phoneDisplay}
                                                 />
                                             </div>
                                         </div>
@@ -507,14 +507,16 @@ const ContactPage = () => {
                                 <h3 className="text-lg font-bold text-gray-900 mb-4">Follow Us</h3>
                                 <div className="flex gap-4">
                                     {[
-                                        { icon: FaLinkedin, href: '#', color: 'from-blue-600 to-blue-700' },
-                                        { icon: FaTwitter, href: '#', color: 'from-sky-500 to-sky-600' },
-                                        { icon: FaFacebook, href: '#', color: 'from-blue-500 to-blue-600' },
-                                        { icon: FaWhatsapp, href: '#', color: 'from-green-500 to-green-600' }
+                                        { icon: FaFacebook, href: SITE_CONTACT.social.facebook, color: 'from-blue-500 to-blue-600', label: 'Facebook' },
+                                        { icon: FaInstagram, href: SITE_CONTACT.social.instagram, color: 'from-pink-500 to-rose-600', label: 'Instagram' },
+                                        { icon: FaWhatsapp, href: SITE_CONTACT.whatsappUrl, color: 'from-green-500 to-green-600', label: 'WhatsApp' }
                                     ].map((social, index) => (
                                         <a
                                             key={index}
                                             href={social.href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            aria-label={social.label}
                                             className={`w-12 h-12 bg-gradient-to-r ${social.color} rounded-xl flex items-center justify-center text-white hover:scale-110 transition-transform duration-300 shadow-lg hover:shadow-xl`}
                                         >
                                             <social.icon className="text-lg" />
@@ -533,8 +535,8 @@ const ContactPage = () => {
                     <div className="text-center mb-12">
                         <h2 className="text-3xl font-bold text-gray-900 mb-4">Visit Our Office</h2>
                         <p className="text-gray-600 max-w-2xl mx-auto">
-                            Located in the heart of Gurugram's business district, our office is easily accessible 
-                            with ample parking and public transport connectivity.
+                            Visit us at our Kaithal office. We are easily accessible from Dhand Road 
+                            with parking available nearby.
                         </p>
                     </div>
 
@@ -544,10 +546,12 @@ const ContactPage = () => {
                                 <FaMapMarkerAlt className="text-6xl text-indigo-600 mx-auto mb-4" />
                                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Interactive Map</h3>
                                 <p className="text-gray-600 mb-6">
-                                    Business Hub, Sector 18, Gurugram, Haryana 122015
+                                    {SITE_CONTACT.address.line1}<br />
+                                    {SITE_CONTACT.address.line2}<br />
+                                    {SITE_CONTACT.address.line3}
                                 </p>
                                 <a
-                                    href="https://maps.google.com"
+                                    href={SITE_CONTACT.mapsSearchUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
@@ -586,7 +590,7 @@ const ContactPage = () => {
                                 answer: "The required documents vary by service. During our initial consultation, we'll provide you with a comprehensive list of documents specific to your requirements."
                             },
                             {
-                                question: "Do you serve clients outside of Gurugram?",
+                                question: "Do you serve clients outside of Kaithal?",
                                 answer: "Absolutely! We serve clients across India and have experience with regulations in all major states. Many of our services can be handled remotely."
                             }
                         ].map((faq, index) => (

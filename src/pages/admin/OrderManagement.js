@@ -19,6 +19,7 @@ import {
     FaGoogleDrive
 } from 'react-icons/fa';
 import OrderDocumentsSection from '../../components/orders/OrderDocumentsSection';
+import { isOrderFullyPaid, isOrderPendingBookingPayment } from '../../utils/orderPayment';
 import { 
     getAdminOrders, 
     updateOrderStatus,
@@ -306,9 +307,9 @@ const OrderManagement = () => {
                                                         <span className="font-medium">₹{order.total_amount}</span>
                                                     </div>
                                                     <div className="text-xs text-gray-500">
-                                                        {order.status === 'full_payment_received' || order.remaining_amount === 0 ? (
+                                                        {isOrderFullyPaid(order) ? (
                                                             <span className="text-green-600">Fully Paid: ₹{order.total_amount}</span>
-                                                        ) : order.status === 'pending_booking_payment' ? (
+                                                        ) : isOrderPendingBookingPayment(order) ? (
                                                             <span className="text-red-600">Payment Required: ₹{order.total_amount}</span>
                                                         ) : (
                                                             <>Paid: ₹{order.booking_amount} | Pending: ₹{order.remaining_amount}</>
@@ -611,13 +612,13 @@ const OrderDetailsView = ({ order }) => {
                         </div>
                         
                         {/* Show different payment breakdown based on status */}
-                        {order.status === 'full_payment_received' || order.remaining_amount === 0 ? (
+                        {isOrderFullyPaid(order) ? (
                             // Full payment completed
                             <div className="flex justify-between border-t pt-2">
                                 <span>Amount Paid:</span>
                                 <span className="font-medium text-green-600">₹{order.total_amount}</span>
                             </div>
-                        ) : order.status === 'pending_booking_payment' ? (
+                        ) : isOrderPendingBookingPayment(order) ? (
                             // No payment made yet
                             <div className="flex justify-between border-t pt-2">
                                 <span>Amount Due:</span>
@@ -640,19 +641,19 @@ const OrderDetailsView = ({ order }) => {
                         <div className="flex justify-between border-t pt-2 mt-2">
                             <span>Payment Status:</span>
                             <span className={`font-medium ${
-                                order.status === 'full_payment_received' || order.remaining_amount === 0 
+                                isOrderFullyPaid(order)
                                     ? 'text-green-600' 
                                     : order.status === 'booking_amount_received' 
                                     ? 'text-blue-600' 
-                                    : order.status === 'pending_booking_payment'
+                                    : isOrderPendingBookingPayment(order)
                                     ? 'text-red-600'
                                     : 'text-yellow-600'
                             }`}>
-                                {order.status === 'full_payment_received' || order.remaining_amount === 0 
+                                {isOrderFullyPaid(order)
                                     ? 'Fully Paid' 
                                     : order.status === 'booking_amount_received' 
                                     ? 'Partially Paid' 
-                                    : order.status === 'pending_booking_payment'
+                                    : isOrderPendingBookingPayment(order)
                                     ? 'Payment Required'
                                     : 'Pending Payment'}
                             </span>

@@ -5,9 +5,6 @@ import {
     FaMapMarkerAlt,
     FaFacebookF, 
     FaInstagram, 
-    FaYoutube, 
-    FaLinkedinIn, 
-    FaTwitter,
     FaWhatsapp,
     FaArrowUp,
     FaShieldAlt,
@@ -19,6 +16,7 @@ import {
 } from "react-icons/fa";
 import logo from "../logo.jpeg";
 import { useState, useEffect } from "react";
+import { SITE_CONTACT } from "../config/siteContact";
 
 export default function Footer() {
     const [showScrollTop, setShowScrollTop] = useState(false);
@@ -107,17 +105,11 @@ export default function Footer() {
                         <div className="flex items-center gap-4">
                             <span className="text-sm text-gray-400">Follow Us:</span>
                             <div className="flex gap-3">
-                                <a href="#" className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-110">
+                                <a href={SITE_CONTACT.social.facebook} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-110" aria-label="Facebook">
                                     <FaFacebookF className="text-sm" />
                                 </a>
-                                <a href="#" className="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-600 rounded-full flex items-center justify-center hover:from-pink-600 hover:to-rose-700 transition-all duration-300 transform hover:scale-110">
+                                <a href={SITE_CONTACT.social.instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-600 rounded-full flex items-center justify-center hover:from-pink-600 hover:to-rose-700 transition-all duration-300 transform hover:scale-110" aria-label="Instagram">
                                     <FaInstagram className="text-sm" />
-                                </a>
-                                <a href="#" className="w-10 h-10 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full flex items-center justify-center hover:from-blue-500 hover:to-cyan-600 transition-all duration-300 transform hover:scale-110">
-                                    <FaTwitter className="text-sm" />
-                                </a>
-                                <a href="#" className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center hover:from-blue-700 hover:to-blue-900 transition-all duration-300 transform hover:scale-110">
-                                    <FaLinkedinIn className="text-sm" />
                                 </a>
                             </div>
                         </div>
@@ -216,36 +208,36 @@ export default function Footer() {
                                     <FaMapMarkerAlt className="text-indigo-400 mt-1 group-hover:text-indigo-300 transition-colors" />
                                     <div>
                                         <p className="text-gray-300 text-sm leading-relaxed">
-                                            123 Business District,<br />
-                                            New Delhi - 110001<br />
-                                            India
+                                            {SITE_CONTACT.address.line1}<br />
+                                            {SITE_CONTACT.address.line2}<br />
+                                            {SITE_CONTACT.address.line3}
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="group">
-                                <a href="tel:+919876543210" className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
+                                <a href={`tel:${SITE_CONTACT.phoneTel}`} className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
                                     <FaPhoneAlt className="text-green-400 group-hover:text-green-300 transition-colors" />
                                     <div>
-                                        <p className="text-white font-medium">+91 9876543210</p>
-                                        <p className="text-gray-400 text-sm">Mon - Sat, 9 AM to 6 PM</p>
+                                        <p className="text-white font-medium">{SITE_CONTACT.phoneDisplay}</p>
+                                        <p className="text-gray-400 text-sm">{SITE_CONTACT.businessHours.weekdays}</p>
                                     </div>
                                 </a>
                             </div>
 
                             <div className="group">
-                                <a href="mailto:info@protacc.com" className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
+                                <a href={SITE_CONTACT.emailMailto} className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
                                     <FaEnvelope className="text-blue-400 group-hover:text-blue-300 transition-colors" />
                                     <div>
-                                        <p className="text-white font-medium">info@protacc.com</p>
+                                        <p className="text-white font-medium">{SITE_CONTACT.email}</p>
                                         <p className="text-gray-400 text-sm">24/7 Email Support</p>
                                     </div>
                                 </a>
                             </div>
 
                             <div className="group">
-                                <a href="https://wa.me/919876543210" className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
+                                <a href={SITE_CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition-all duration-300">
                                     <FaWhatsapp className="text-green-500 group-hover:text-green-400 transition-colors" />
                                     <div>
                                         <p className="text-white font-medium">WhatsApp Chat</p>

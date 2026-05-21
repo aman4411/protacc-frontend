@@ -21,6 +21,7 @@ import { useCart } from '../context/CartContext';
 import { searchServices } from '../services/api';
 import toast from 'react-hot-toast';
 import logo from '../logo.jpeg';
+import { SITE_CONTACT } from '../config/siteContact';
 
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -158,11 +159,11 @@ export default function Header() {
                         <div className="flex items-center gap-6">
                             <div className="flex items-center gap-2">
                                 <FaPhoneAlt className="text-xs" />
-                                <span>+91 9876543210</span>
+                                <span>{SITE_CONTACT.phoneDisplay}</span>
                             </div>
                             <div className="hidden md:flex items-center gap-2">
                                 <FaEnvelope className="text-xs" />
-                                <span>info@protacc.com</span>
+                                <span>{SITE_CONTACT.email}</span>
                             </div>
                         </div>
                         <div className="flex items-center gap-4">

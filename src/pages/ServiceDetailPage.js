@@ -27,6 +27,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
 import { getServiceBySlug, addToCart } from '../services/api';
+import { SITE_CONTACT } from '../config/siteContact';
 
 const ServiceDetailPage = () => {
     const { slug } = useParams();
@@ -481,14 +482,20 @@ const ServiceDetailPage = () => {
                         <h3 className="text-2xl font-bold mb-4">Have Questions?</h3>
                         <p className="text-indigo-100 mb-8">Our experts are here to help you make the right choice</p>
                         <div className="flex flex-wrap justify-center gap-4">
-                            <button className="flex items-center gap-2 bg-white text-indigo-600 px-6 py-3 rounded-xl hover:bg-indigo-50 transition-colors">
+                            <a
+                                href={`tel:${SITE_CONTACT.phoneTel}`}
+                                className="flex items-center gap-2 bg-white text-indigo-600 px-6 py-3 rounded-xl hover:bg-indigo-50 transition-colors"
+                            >
                                 <FaPhone />
                                 Call Us
-                            </button>
-                            <button className="flex items-center gap-2 bg-white bg-opacity-20 border border-white text-white px-6 py-3 rounded-xl hover:bg-opacity-30 transition-colors">
+                            </a>
+                            <a
+                                href={SITE_CONTACT.emailMailto}
+                                className="flex items-center gap-2 bg-white bg-opacity-20 border border-white text-white px-6 py-3 rounded-xl hover:bg-opacity-30 transition-colors"
+                            >
                                 <FaEnvelope />
                                 Email Support
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
