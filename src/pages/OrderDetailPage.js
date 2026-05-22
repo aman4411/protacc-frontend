@@ -436,6 +436,18 @@ const OrderDetailPage = () => {
                                     <span className="text-gray-600">Total Service Amount</span>
                                     <span className="text-gray-900 font-medium">₹{order.total_amount}</span>
                                 </div>
+
+                                {order.promo_code && order.booking_discount > 0 && (
+                                    <div className="bg-green-50 border border-green-100 rounded-lg p-3 text-sm">
+                                        <p className="text-green-800 font-medium">
+                                            Promo {order.promo_code} applied
+                                        </p>
+                                        <p className="text-green-700 mt-1">
+                                            Booking reduced from ₹{order.original_booking_amount} to ₹{order.booking_amount}
+                                            {' '}(saved ₹{order.booking_discount})
+                                        </p>
+                                    </div>
+                                )}
                                 
                                 {/* Show different payment breakdown based on status */}
                                 {isOrderFullyPaid(order) ? (

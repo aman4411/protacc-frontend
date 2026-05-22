@@ -37,7 +37,11 @@ const LoginForm = () => {
                 // Redirect to the intended page or home
                 navigate(from, { replace: true });
             } catch (error) {
-                toast.error(error.toString());
+                const message =
+                    typeof error === 'string'
+                        ? error
+                        : error?.message || 'Invalid email or password';
+                toast.error(message);
             } finally {
                 setSubmitting(false);
             }

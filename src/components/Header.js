@@ -36,6 +36,7 @@ export default function Header() {
     const navigate = useNavigate();
     const { isAuthenticated, user, logout } = useAuth();
     const { cartCount } = useCart();
+    const headerRef = useRef(null);
     const servicesRef = useRef(null);
     const searchRef = useRef(null);
     const profileRef = useRef(null);
@@ -80,7 +81,24 @@ export default function Header() {
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, [toggleSearch]);
 
-    // Handle click outside for services dropdown
+    // Close mobile menu on route change
+    useEffect(() => {
+        setMobileMenuOpen(false);
+    }, [location.pathname]);
+
+    // Lock body scroll when mobile menu is open
+    useEffect(() => {
+        if (mobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [mobileMenuOpen]);
+
+    // Handle click outside for dropdowns and mobile menu
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (servicesRef.current && !servicesRef.current.contains(event.target)) {
@@ -92,11 +110,18 @@ export default function Header() {
             if (profileRef.current && !profileRef.current.contains(event.target)) {
                 setProfileOpen(false);
             }
+            if (
+                mobileMenuOpen &&
+                headerRef.current &&
+                !headerRef.current.contains(event.target)
+            ) {
+                setMobileMenuOpen(false);
+            }
         };
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+    }, [mobileMenuOpen]);
 
     // Search functionality
     const handleSearchSubmit = async (e) => {
@@ -147,7 +172,18 @@ export default function Header() {
     };
 
     return (
-        <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        <>
+            {/* Backdrop for mobile menu — tap outside header to close */}
+            {mobileMenuOpen && (
+                <div
+                    className="fixed inset-0 z-40 bg-black/30 lg:hidden"
+                    onClick={() => setMobileMenuOpen(false)}
+                    aria-hidden="true"
+                />
+            )}
+        <header
+            ref={headerRef}
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
             scrolled 
                 ? 'bg-white/95 backdrop-blur-lg shadow-lg' 
                 : 'bg-white/90 backdrop-blur-sm shadow-md'
@@ -513,5 +549,6 @@ export default function Header() {
                 </div>
             )}
         </header>
+        </>
     );
 }

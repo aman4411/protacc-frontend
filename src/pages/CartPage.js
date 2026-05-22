@@ -25,7 +25,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
-import { removeFromCart, createOrderFromCart, createPaymentOrder, verifyPayment } from '../services/api';
+import { removeFromCart, createOrderFromCart, createPaymentOrder, verifyPayment, validatePromoCode } from '../services/api';
 
 const CartPage = () => {
     const [removingItem, setRemovingItem] = useState(null);
@@ -33,6 +33,9 @@ const CartPage = () => {
     const [animateIn, setAnimateIn] = useState(false);
     const [promoCode, setPromoCode] = useState('');
     const [promoApplied, setPromoApplied] = useState(false);
+    const [promoLoading, setPromoLoading] = useState(false);
+    const [appliedPromoCode, setAppliedPromoCode] = useState('');
+    const [promoDetails, setPromoDetails] = useState(null);
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
     const { cartItems, loading, removeFromCartState } = useCart();
@@ -76,8 +79,8 @@ const CartPage = () => {
         try {
             setProcessingOrder(true);
 
-            // Create order first
-            const orderData = await createOrderFromCart();
+            // Create order first (with promo if applied)
+            const orderData = await createOrderFromCart(promoApplied ? appliedPromoCode : '');
             
             // Load Razorpay script
             const razorpayLoaded = await loadRazorpay();
@@ -153,13 +156,57 @@ const CartPage = () => {
         }
     };
 
-    const applyPromoCode = () => {
-        if (promoCode.toLowerCase() === 'save10') {
-            setPromoApplied(true);
-            toast.success('Promo code applied! 10% discount added.');
-        } else {
-            toast.error('Invalid promo code');
+    const getCartTotals = useCallback(() => {
+        const subtotal = cartItems.reduce((sum, item) => sum + (item.service?.price || 0), 0);
+        const bookingTotal = cartItems.reduce((sum, item) => sum + (item.service?.booking_amount || 0), 0);
+        return { subtotal, bookingTotal };
+    }, [cartItems]);
+
+    const applyPromoCode = async () => {
+        const code = promoCode.trim();
+        if (!code) {
+            toast.error('Enter a promo code');
+            return;
         }
+
+        const { subtotal, bookingTotal } = getCartTotals();
+        if (bookingTotal <= 0) {
+            toast.error('Add services to cart before applying a promo');
+            return;
+        }
+
+        try {
+            setPromoLoading(true);
+            const result = await validatePromoCode({
+                code,
+                bookingAmount: bookingTotal,
+                totalAmount: subtotal,
+            });
+
+            if (!result.valid) {
+                toast.error(result.message || 'Invalid promo code');
+                return;
+            }
+
+            setPromoApplied(true);
+            setAppliedPromoCode(result.code || code.toUpperCase());
+            setPromoDetails(result);
+            toast.success(result.message || 'Promo code applied!');
+        } catch (error) {
+            toast.error(typeof error === 'string' ? error : 'Invalid promo code');
+            setPromoApplied(false);
+            setAppliedPromoCode('');
+            setPromoDetails(null);
+        } finally {
+            setPromoLoading(false);
+        }
+    };
+
+    const removePromoCode = () => {
+        setPromoCode('');
+        setPromoApplied(false);
+        setAppliedPromoCode('');
+        setPromoDetails(null);
     };
 
     const formatPrice = (price) => {
@@ -171,19 +218,35 @@ const CartPage = () => {
     };
 
     const calculateTotal = () => {
-        const subtotal = cartItems.reduce((sum, item) => sum + (item.service?.price || 0), 0);
-        const discount = promoApplied ? subtotal * 0.1 : 0;
+        const { subtotal } = getCartTotals();
         return {
             subtotal,
-            discount,
-            total: subtotal - discount
+            discount: 0,
+            total: subtotal,
         };
     };
 
     const calculateBookingTotal = () => {
-        const bookingTotal = cartItems.reduce((sum, item) => sum + (item.service?.booking_amount || 0), 0);
-        const discount = promoApplied ? bookingTotal * 0.1 : 0;
-        return bookingTotal - discount;
+        const { bookingTotal } = getCartTotals();
+        if (promoApplied && promoDetails?.final_booking_amount != null) {
+            return promoDetails.final_booking_amount;
+        }
+        return bookingTotal;
+    };
+
+    const getBookingDiscount = () => {
+        if (promoApplied && promoDetails?.booking_discount) {
+            return promoDetails.booking_discount;
+        }
+        return 0;
+    };
+
+    const getOriginalBookingTotal = () => {
+        const { bookingTotal } = getCartTotals();
+        if (promoApplied && promoDetails?.original_booking_amount != null) {
+            return promoDetails.original_booking_amount;
+        }
+        return bookingTotal;
     };
 
     if (loading) {
@@ -340,19 +403,30 @@ const CartPage = () => {
                                             disabled={promoApplied}
                                         />
                                         <button
-                                            onClick={applyPromoCode}
-                                            disabled={promoApplied || !promoCode}
+                                            onClick={promoApplied ? removePromoCode : applyPromoCode}
+                                            disabled={promoLoading || (!promoApplied && !promoCode)}
                                             className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                         >
-                                            Apply
+                                            {promoLoading ? (
+                                                <FaSpinner className="animate-spin" />
+                                            ) : promoApplied ? (
+                                                'Remove'
+                                            ) : (
+                                                'Apply'
+                                            )}
                                         </button>
                                     </div>
                                     {promoApplied && (
                                         <div className="flex items-center gap-2 mt-2 text-green-600 text-sm">
                                             <FaCheckCircle />
-                                            <span>10% discount applied</span>
+                                            <span>
+                                                {appliedPromoCode} applied – booking amount reduced by {formatPrice(getBookingDiscount())}
+                                            </span>
                                         </div>
                                     )}
+                                    <p className="text-xs text-gray-500 mt-2">
+                                        First-time customers: use code <strong>FIRST9</strong> to pay only ₹9 booking amount.
+                                    </p>
                                 </div>
 
                                 {/* Price Breakdown */}
@@ -361,16 +435,23 @@ const CartPage = () => {
                                         <span className="text-gray-600">Subtotal</span>
                                         <span className="font-medium">{formatPrice(totals.subtotal)}</span>
                                     </div>
-                                    {promoApplied && (
-                                        <div className="flex justify-between text-green-600">
-                                            <span>Discount (10%)</span>
-                                            <span>-{formatPrice(totals.discount)}</span>
-                                        </div>
-                                    )}
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Booking Amount (Pay Now)</span>
-                                        <span className="font-medium text-indigo-600">{formatPrice(calculateBookingTotal())}</span>
+                                        <div className="text-right">
+                                            {promoApplied && getBookingDiscount() > 0 && (
+                                                <span className="block text-sm text-gray-400 line-through">
+                                                    {formatPrice(getOriginalBookingTotal())}
+                                                </span>
+                                            )}
+                                            <span className="font-medium text-indigo-600">{formatPrice(calculateBookingTotal())}</span>
+                                        </div>
                                     </div>
+                                    {promoApplied && getBookingDiscount() > 0 && (
+                                        <div className="flex justify-between text-green-600">
+                                            <span>Promo discount ({appliedPromoCode})</span>
+                                            <span>-{formatPrice(getBookingDiscount())}</span>
+                                        </div>
+                                    )}
                                     <hr />
                                     <div className="flex justify-between text-lg font-bold">
                                         <span>Total Service Value</span>

@@ -64,13 +64,30 @@ if (process.env.REACT_APP_ENABLE_LOGS === 'true') {
     );
 }
 
+// Auth endpoints that may legitimately return 401 (wrong credentials, etc.)
+const AUTH_ENDPOINTS_NO_REDIRECT = [
+    '/auth/login',
+    '/auth/signup',
+    '/auth/forgot-password',
+    '/auth/reset-password',
+    '/auth/verify-email',
+];
+
+const isAuthEndpointWithoutRedirect = (config) => {
+    const url = config?.url || '';
+    return AUTH_ENDPOINTS_NO_REDIRECT.some((path) => url.includes(path));
+};
+
 // Add response interceptor to handle errors
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
+        if (error.response?.status === 401 && !isAuthEndpointWithoutRedirect(error.config)) {
             localStorage.removeItem('protacc_auth_token');
-            window.location.href = '/login';
+            const isOnLoginPage = window.location.pathname === '/login';
+            if (!isOnLoginPage) {
+                window.location.href = '/login';
+            }
         }
         return Promise.reject(error);
     }
@@ -511,12 +528,30 @@ export const createOrder = async (serviceId) => {
     }
 };
 
-export const createOrderFromCart = async () => {
+export const createOrderFromCart = async (promoCode = '') => {
     try {
-        const response = await api.post('/orders');
+        const body = promoCode ? { promo_code: promoCode } : {};
+        const response = await api.post('/orders', body);
         return response.data;
     } catch (error) {
         throw error.response?.data?.error || 'Failed to create order from cart';
+    }
+};
+
+export const validatePromoCode = async ({ code, bookingAmount, totalAmount }) => {
+    try {
+        const response = await api.post('/promo/validate', {
+            code,
+            booking_amount: bookingAmount,
+            total_amount: totalAmount,
+        });
+        return response.data;
+    } catch (error) {
+        const data = error.response?.data;
+        if (data?.message) {
+            throw data.message;
+        }
+        throw error.response?.data?.error || 'Failed to validate promo code';
     }
 };
 

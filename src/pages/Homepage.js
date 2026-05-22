@@ -431,7 +431,7 @@ export default function HomePage() {
                 {/* Animated Background */}
                 <div className="absolute inset-0">
                     <div className="absolute inset-0 bg-black/20"></div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-hero-shimmer"></div>
                 </div>
 
                 <div className="container mx-auto px-4 relative z-10">
@@ -534,7 +534,7 @@ export default function HomePage() {
             <div className="relative py-20 bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800 text-white overflow-hidden">
                 {/* Animated Background Elements */}
                 <div className="absolute inset-0">
-                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer"></div>
+                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent animate-hero-shimmer"></div>
                 </div>
 
                 <div className="container mx-auto px-4 text-center relative z-10">
@@ -615,54 +615,6 @@ export default function HomePage() {
                 </div>
             </div>
 
-            {/* Custom CSS for animations */}
-            <style jsx>{`
-                @keyframes float {
-                    0%, 100% { transform: translateY(0px) rotate(0deg); }
-                    50% { transform: translateY(-20px) rotate(180deg); }
-                }
-                
-                @keyframes fadeInUp {
-                    from {
-                        opacity: 0;
-                        transform: translateY(50px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-                
-                @keyframes shimmer {
-                    0% { transform: translateX(-100%); }
-                    100% { transform: translateX(100%); }
-                }
-                
-                @keyframes gradient {
-                    0%, 100% { background-position: 0% 50%; }
-                    50% { background-position: 100% 50%; }
-                }
-                
-                .animate-fadeInUp {
-                    animation: fadeInUp 0.8s ease-out forwards;
-                }
-                
-                .animate-shimmer {
-                    animation: shimmer 3s ease-in-out infinite;
-                }
-                
-                .animate-gradient {
-                    background-size: 200% 200%;
-                    animation: gradient 3s ease infinite;
-                }
-                
-                .bg-grid-pattern {
-                    background-image: 
-                        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
-                    background-size: 50px 50px;
-                }
-            `}</style>
         </div>
     );
 }
