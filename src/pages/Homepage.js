@@ -22,12 +22,35 @@ import { getServiceCategories } from '../services/api';
 import toast from 'react-hot-toast';
 import Seo from '../components/Seo';
 import { PAGE_SEO } from '../config/seo';
-import { organizationSchema } from '../utils/structuredData';
+import { organizationSchema, faqSchema } from '../utils/structuredData';
 
 // Import only testimonial images
 import testimonial1Image from '../assets/images/testimonial-1.jpg';
 import testimonial2Image from '../assets/images/testimonial-2.jpg';
 import testimonial3Image from '../assets/images/testimonial-3.jpg';
+
+const HOME_FAQS = [
+    {
+        question: 'Who is the best Chartered Accountant (CA) in Kaithal?',
+        answer: 'Protacc is a trusted CA firm in Kaithal, Haryana offering GST registration, ITR filing, company registration, TDS returns, accounting and business compliance. You can book a free consultation by calling +91 9034819324.',
+    },
+    {
+        question: 'What services does Protacc offer in Kaithal?',
+        answer: 'Protacc provides GST registration & return filing, GST notice reply, income tax (ITR) filing, TDS return filing, private limited company / LLP / MSME registration, ROC & MCA compliance, accounting, bookkeeping, payroll, audit and tax planning services.',
+    },
+    {
+        question: 'Can I file my GST return or ITR online with Protacc?',
+        answer: 'Yes. Protacc offers online CA services across India. You can file GST returns, register for GST, and file your income tax return (ITR) online with expert support, without visiting the office.',
+    },
+    {
+        question: 'How much does GST registration or ITR filing cost?',
+        answer: 'Pricing depends on your business type and turnover. Browse our services page for transparent pricing, or book a free consultation and our tax consultants will share a quote tailored to your needs.',
+    },
+    {
+        question: 'Does Protacc serve areas outside Kaithal?',
+        answer: 'Yes. Besides Kaithal, Protacc serves clients across Haryana including Chandigarh and Gurgaon, and offers online CA services to businesses and individuals throughout India.',
+    },
+];
 
 export default function HomePage() {
     const { isAuthenticated, user } = useAuth();
@@ -196,7 +219,7 @@ export default function HomePage() {
                 title={homeSeo.title}
                 description={homeSeo.description}
                 path={homeSeo.path}
-                jsonLd={organizationSchema()}
+                jsonLd={[organizationSchema(), faqSchema(HOME_FAQS)]}
             />
             {/* Floating Background Elements */}
             <div className="fixed inset-0 pointer-events-none z-0">
@@ -235,9 +258,9 @@ export default function HomePage() {
                     <div className="max-w-4xl mx-auto text-center">
                         {/* ProtAcc Brand */}
                         <div className="mb-8 transform hover:scale-105 transition-all duration-500">
-                            <h1 className="text-7xl md:text-8xl font-black mb-4 bg-gradient-to-r from-white via-indigo-200 to-purple-200 bg-clip-text text-transparent animate-gradient">
+                            <div className="text-7xl md:text-8xl font-black mb-4 bg-gradient-to-r from-white via-indigo-200 to-purple-200 bg-clip-text text-transparent animate-gradient">
                                 ProtAcc
-                            </h1>
+                            </div>
                             <div className="h-1 w-32 bg-gradient-to-r from-indigo-400 to-purple-400 mx-auto rounded-full"></div>
                         </div>
 
@@ -254,11 +277,11 @@ export default function HomePage() {
                                 </div>
                             ) : (
                                 <div className="space-y-4">
-                                    <h2 className="text-4xl md:text-6xl font-bold leading-tight">
-                                        Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">Trusted Partner</span> in Financial Excellence
-                                    </h2>
+                                    <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">Chartered Accountant</span> &amp; Tax Consultant in Kaithal
+                                    </h1>
                                     <p className="text-xl md:text-2xl text-indigo-200 max-w-3xl mx-auto">
-                                        Empowering businesses with expert taxation, compliance, and strategic financial solutions
+                                        Protacc is your trusted CA firm in Kaithal, Haryana for GST registration, ITR filing, company registration, TDS &amp; business compliance — online across India.
                                     </p>
                                 </div>
                             )}
@@ -611,6 +634,34 @@ export default function HomePage() {
                                 <span>Proven Results</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* FAQ Section */}
+            <div className="py-20 bg-gradient-to-b from-white to-gray-50">
+                <div className="container mx-auto px-4">
+                    <div className="text-center mb-12">
+                        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                            Frequently Asked Questions
+                        </h2>
+                        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                            Common questions about our CA, GST and tax services in Kaithal
+                        </p>
+                    </div>
+                    <div className="max-w-3xl mx-auto space-y-4">
+                        {HOME_FAQS.map((faq, index) => (
+                            <details
+                                key={index}
+                                className="group bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+                            >
+                                <summary className="flex cursor-pointer list-none items-center justify-between text-lg font-semibold text-gray-900">
+                                    {faq.question}
+                                    <span className="ml-4 text-indigo-600 transition-transform group-open:rotate-45">+</span>
+                                </summary>
+                                <p className="mt-4 text-gray-600 leading-relaxed">{faq.answer}</p>
+                            </details>
+                        ))}
                     </div>
                 </div>
             </div>

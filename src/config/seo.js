@@ -7,11 +7,11 @@ export const SITE_URL = (process.env.REACT_APP_SITE_URL || 'https://protacc.in')
 export const SITE_NAME = 'Protacc';
 
 export const DEFAULT_SEO = {
-    title: 'Protacc | Tax, GST, ITR Filing & Business Compliance Services in India',
+    title: 'Chartered Accountant in Kaithal | CA Firm, GST & ITR Filing – Protacc',
     description:
-        'Protacc offers professional tax filing, GST registration, ITR filing, company registration, accounting, and compliance services across India. Expert support in Kaithal & pan-India.',
+        'Protacc is a leading CA firm in Kaithal, Haryana for GST registration, ITR filing, company registration, TDS returns, accounting & business compliance. Trusted Chartered Accountant & tax consultant serving Kaithal and all of India.',
     keywords:
-        'Protacc, ITR filing, GST registration, tax consultant, company registration, TDS filing, accounting services, compliance, Kaithal, Haryana, India',
+        'Chartered Accountant in Kaithal, CA firm in Kaithal, best CA in Kaithal, GST consultant Kaithal, income tax consultant Kaithal, GST registration, ITR filing, company registration, TDS return filing, accounting services, ROC compliance, tax consultant Haryana, online CA services India',
     image: `${SITE_URL}/logo512.png`,
     locale: 'en_IN',
     twitterHandle: '@protacc',
@@ -19,26 +19,34 @@ export const DEFAULT_SEO = {
 
 export const PAGE_SEO = {
     home: {
-        title: 'Protacc | Tax, GST, ITR & Business Compliance Services',
-        description: DEFAULT_SEO.description,
+        title: 'Chartered Accountant in Kaithal | CA Firm – Protacc',
+        description:
+            'Protacc — trusted Chartered Accountant & CA firm in Kaithal, Haryana. GST registration & return filing, ITR filing, company registration, TDS, accounting and ROC compliance. Online CA services across India.',
+        keywords: DEFAULT_SEO.keywords,
         path: '/',
     },
     services: {
-        title: 'Our Services | Protacc – Tax, GST & Compliance',
+        title: 'CA Services in Kaithal | GST, ITR & Company Registration',
         description:
-            'Browse Protacc services: ITR filing, GST registration & returns, TDS, company/LLP registration, bookkeeping, and tax consultancy.',
+            'Explore Protacc CA services in Kaithal: GST registration & return filing, GST notice reply, ITR filing, TDS returns, private limited / LLP / MSME registration, bookkeeping, payroll, audit and ROC compliance.',
+        keywords:
+            'CA services Kaithal, GST return filing, GST registration online, ITR filing online, company registration, LLP registration, MSME registration, TDS return filing, ROC compliance, audit services, payroll services, bookkeeping',
         path: '/services',
     },
     consultancy: {
-        title: 'Free Business Consultation | Protacc',
+        title: 'Free CA Consultation in Kaithal | Tax & GST Advisory',
         description:
-            'Book a free consultation with Protacc experts for tax planning, GST compliance, business registration, and financial advisory.',
+            'Book a free consultation with Protacc Chartered Accountants in Kaithal for tax planning, GST compliance, business & company registration, and financial advisory. Online CA consultation across India.',
+        keywords:
+            'free CA consultation, tax consultant near me, GST expert near me, tax planning services, income tax consultant in Kaithal, online CA services India',
         path: '/consultancy',
     },
     contact: {
-        title: 'Contact Us | Protacc',
+        title: 'Contact Protacc | Best CA Firm in Kaithal, Haryana',
         description:
-            'Contact Protacc for tax, GST, and compliance services. Call +91 9034819324 or email info@protacc.in. Office in Kaithal, Haryana.',
+            'Contact Protacc, a top CA firm in Kaithal, Haryana for GST, ITR, tax and compliance services. Call +91 9034819324 or email info@protacc.in. Office on Dhand Road, Kaithal.',
+        keywords:
+            'CA firm near me, chartered accountant in Kaithal Haryana, tax consultant in Kaithal, GST consultant in Kaithal, contact CA Kaithal',
         path: '/contact',
     },
     privacy: {

@@ -234,11 +234,11 @@ const SignupForm = () => {
                         />
                         <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
                             I agree to the{' '}
-                            <Link to="/terms" className="font-medium text-indigo-600 hover:text-indigo-500">
+                            <Link to="/terms-of-service" className="font-medium text-indigo-600 hover:text-indigo-500">
                                 Terms of Service
                             </Link>{' '}
                             and{' '}
-                            <Link to="/privacy" className="font-medium text-indigo-600 hover:text-indigo-500">
+                            <Link to="/privacy-policy" className="font-medium text-indigo-600 hover:text-indigo-500">
                                 Privacy Policy
                             </Link>
                         </label>

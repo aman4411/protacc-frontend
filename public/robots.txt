@@ -12,5 +12,6 @@ Disallow: /profile
 Disallow: /verify-email
 Disallow: /forgot-password
 Disallow: /reset-password
+Disallow: /search
 
 Sitemap: https://protacc.in/sitemap.xml
