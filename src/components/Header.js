@@ -18,7 +18,7 @@ import {
 } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { searchServices } from '../services/api';
+import { searchServices, getServiceCategories } from '../services/api';
 import toast from 'react-hot-toast';
 import logo from '../logo.jpeg';
 import { SITE_CONTACT } from '../config/siteContact';
@@ -31,7 +31,8 @@ export default function Header() {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchLoading, setSearchLoading] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
-    
+    const [serviceCategories, setServiceCategories] = useState([]);
+
     const location = useLocation();
     const navigate = useNavigate();
     const { isAuthenticated, user, logout } = useAuth();
@@ -48,6 +49,29 @@ export default function Header() {
         };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    // Populate the Services dropdown from the live service categories.
+    useEffect(() => {
+        let isMounted = true;
+        getServiceCategories()
+            .then((data) => {
+                if (isMounted && Array.isArray(data)) {
+                    setServiceCategories(
+                        data.map((category) => ({
+                            id: category.id,
+                            name: category.name,
+                            path: `/services?category=${category.id}`,
+                        }))
+                    );
+                }
+            })
+            .catch(() => {
+                // Non-critical: dropdown falls back to just "View All Services".
+            });
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     const handleSearchInputChange = (e) => {
@@ -157,13 +181,6 @@ export default function Header() {
         { name: 'Services', path: '/services', icon: FaServicestack, hasDropdown: true },
         { name: 'Consultancy', path: '/consultancy', icon: FaFileContract },
         { name: 'Contact', path: '/contact', icon: FaEnvelope },
-    ];
-
-    const serviceCategories = [
-        { name: 'Business Registration', path: '/services?category=1' },
-        { name: 'Tax Compliance', path: '/services?category=2' },
-        { name: 'Digital Services', path: '/services?category=3' },
-        { name: 'Trademark & IP', path: '/services?category=4' },
     ];
 
     const isActive = (path) => {
@@ -276,7 +293,7 @@ export default function Header() {
                                             </div>
                                             {serviceCategories.map((category) => (
                                                 <Link
-                                                    key={category.name}
+                                                    key={category.id}
                                                     to={category.path}
                                                     onClick={() => setServicesOpen(false)}
                                                     className="block px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200"
@@ -512,7 +529,7 @@ export default function Header() {
                                         <div className="ml-6 mt-2 space-y-2">
                                             {serviceCategories.map((category) => (
                                                 <Link
-                                                    key={category.name}
+                                                    key={category.id}
                                                     to={category.path}
                                                     onClick={() => setMobileMenuOpen(false)}
                                                     className="block px-4 py-2 text-gray-600 hover:text-indigo-600 transition-colors duration-200"
