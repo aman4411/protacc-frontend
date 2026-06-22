@@ -110,15 +110,27 @@ export default function Header() {
         setMobileMenuOpen(false);
     }, [location.pathname]);
 
-    // Lock body scroll when mobile menu is open
+    // Lock body scroll when mobile menu is open. overflow:hidden alone does not
+    // stop touch scrolling on iOS Safari, so we pin the body with position:fixed
+    // and restore the scroll position when the menu closes.
     useEffect(() => {
-        if (mobileMenuOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
+        if (!mobileMenuOpen) return undefined;
+        const scrollY = window.scrollY;
+        const { body } = document;
+        body.style.position = 'fixed';
+        body.style.top = `-${scrollY}px`;
+        body.style.left = '0';
+        body.style.right = '0';
+        body.style.width = '100%';
+        body.style.overflow = 'hidden';
         return () => {
-            document.body.style.overflow = '';
+            body.style.position = '';
+            body.style.top = '';
+            body.style.left = '';
+            body.style.right = '';
+            body.style.width = '';
+            body.style.overflow = '';
+            window.scrollTo(0, scrollY);
         };
     }, [mobileMenuOpen]);
 
@@ -473,7 +485,7 @@ export default function Header() {
 
             {/* Mobile Menu */}
             {mobileMenuOpen && (
-                <div className="lg:hidden bg-white border-t border-gray-200 animate-fadeIn">
+                <div className="lg:hidden bg-white border-t border-gray-200 animate-fadeIn max-h-[65dvh] overflow-y-auto overscroll-contain">
                     <div className="container mx-auto px-4 py-6">
                         {/* Mobile Search */}
                         <div className="mb-6">
