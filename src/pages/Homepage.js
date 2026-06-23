@@ -18,16 +18,12 @@ import {
 } from 'react-icons/fa';
 import CountUp from 'react-countup';
 import { useAuth } from '../context/AuthContext';
-import { getServiceCategories } from '../services/api';
+import { getServiceCategories, getTopReviews } from '../services/api';
 import toast from 'react-hot-toast';
 import Seo from '../components/Seo';
 import { PAGE_SEO } from '../config/seo';
 import { organizationSchema, faqSchema } from '../utils/structuredData';
 
-// Import only testimonial images
-import testimonial1Image from '../assets/images/testimonial-1.jpg';
-import testimonial2Image from '../assets/images/testimonial-2.jpg';
-import testimonial3Image from '../assets/images/testimonial-3.jpg';
 
 const HOME_FAQS = [
     {
@@ -58,7 +54,7 @@ export default function HomePage() {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-    const [currentTestimonial, setCurrentTestimonial] = useState(0);
+    const [topReviews, setTopReviews] = useState([]);
     const statsRef = useRef(null);
     const heroRef = useRef(null);
 
@@ -89,12 +85,17 @@ export default function HomePage() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Auto-rotate testimonials
+    // Load top customer reviews for the testimonials section.
     useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-        }, 5000);
-        return () => clearInterval(timer);
+        let isMounted = true;
+        getTopReviews(6)
+            .then((data) => {
+                if (isMounted && Array.isArray(data)) setTopReviews(data);
+            })
+            .catch(() => { /* non-critical: falls back to default reviews */ });
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     useEffect(() => {
@@ -157,32 +158,37 @@ export default function HomePage() {
         { number: 99, label: "Success Rate", suffix: "%", icon: FaChartLine }
     ];
 
-    const testimonials = [
+    // Shown only when there are no real reviews yet (text-only, no images).
+    const fallbackReviews = [
         {
-            name: "Rajesh Kumar",
-            company: "Tech Solutions Pvt Ltd",
-            text: "ProtAcc's expertise in tax planning and compliance has been invaluable. They helped us save significantly on taxes while ensuring complete compliance. Their proactive approach is remarkable!",
-            role: "CEO",
-            image: testimonial1Image,
+            name: "Rajesh K.",
+            text: "ProtAcc's expertise in tax planning and compliance has been invaluable. They helped us save significantly while staying fully compliant. Their proactive approach is remarkable!",
+            context: "Tax & Compliance",
             rating: 5
         },
         {
-            name: "Priya Sharma",
-            company: "Retail Ventures",
-            text: "The virtual CFO services have transformed our financial management. Their strategic insights helped us improve profitability by 40%. Best investment we've made!",
-            role: "Director",
-            image: testimonial2Image,
+            name: "Priya S.",
+            text: "The team made GST registration and return filing completely hassle-free. Clear guidance at every step and quick turnaround. Highly recommended.",
+            context: "GST Services",
             rating: 5
         },
         {
-            name: "Amit Patel",
-            company: "StartUp Innovation Hub",
-            text: "Outstanding support in our company registration and compliance. ProtAcc's team made the process seamless and their knowledge is unmatched in the industry.",
-            role: "Founder",
-            image: testimonial3Image,
+            name: "Amit P.",
+            text: "Outstanding support with our company registration and compliance. The process was seamless and their knowledge is unmatched.",
+            context: "Company Registration",
             rating: 5
         }
     ];
+
+    // Prefer real reviews; fall back to the curated text reviews above.
+    const reviewsToShow = topReviews.length > 0
+        ? topReviews.map((r) => ({
+              name: r.reviewer_name || 'Verified customer',
+              text: r.comment,
+              context: r.service_name,
+              rating: r.rating,
+          }))
+        : fallbackReviews;
 
     const features = [
         {
@@ -502,53 +508,25 @@ export default function HomePage() {
                         </p>
                     </div>
 
-                    {/* Featured Testimonial */}
-                    <div className="max-w-4xl mx-auto mb-16">
-                        <div className="bg-white p-10 rounded-3xl shadow-2xl border border-gray-100 relative overflow-hidden">
-                            <FaQuoteLeft className="absolute top-6 left-6 text-4xl text-indigo-200" />
-                            
-                            <div className="relative z-10">
-                                <div className="flex flex-col md:flex-row items-center gap-8">
-                                    <div className="flex-shrink-0">
-                                        <img 
-                                            src={testimonials[currentTestimonial].image} 
-                                            alt={testimonials[currentTestimonial].name}
-                                            className="w-24 h-24 rounded-full object-cover border-4 border-indigo-100 shadow-lg"
-                                        />
-                                    </div>
-                                    <div className="flex-1 text-center md:text-left">
-                                        <p className="text-xl text-gray-700 italic mb-6 leading-relaxed">
-                                            "{testimonials[currentTestimonial].text}"
-                                        </p>
-                                        <div className="flex items-center justify-center md:justify-start gap-2 mb-4">
-                                            {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
-                                                <FaStar key={i} className="text-yellow-400" />
-                                            ))}
-                                        </div>
-                                        <div>
-                                            <p className="font-bold text-gray-900 text-lg">{testimonials[currentTestimonial].name}</p>
-                                            <p className="text-indigo-600 font-medium">{testimonials[currentTestimonial].role}</p>
-                                            <p className="text-gray-500">{testimonials[currentTestimonial].company}</p>
-                                        </div>
-                                    </div>
+                    {/* Reviews grid (text-only, no images) */}
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                        {reviewsToShow.map((review, index) => (
+                            <div key={index} className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
+                                <FaQuoteLeft className="text-3xl text-indigo-200 mb-4" />
+                                <div className="flex items-center gap-1 mb-4">
+                                    {[...Array(5)].map((_, i) => (
+                                        <FaStar key={i} className={i < review.rating ? 'text-yellow-400' : 'text-gray-300'} />
+                                    ))}
+                                </div>
+                                <p className="text-gray-700 italic mb-6 leading-relaxed">"{review.text}"</p>
+                                <div>
+                                    <p className="font-bold text-gray-900">{review.name}</p>
+                                    {review.context && (
+                                        <p className="text-indigo-600 text-sm font-medium">{review.context}</p>
+                                    )}
                                 </div>
                             </div>
-
-                            {/* Testimonial Navigation */}
-                            <div className="flex justify-center gap-3 mt-8">
-                                {testimonials.map((_, index) => (
-                                    <button
-                                        key={index}
-                                        onClick={() => setCurrentTestimonial(index)}
-                                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                                            index === currentTestimonial 
-                                                ? 'bg-indigo-600 w-8' 
-                                                : 'bg-gray-300 hover:bg-gray-400'
-                                        }`}
-                                    />
-                                ))}
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>

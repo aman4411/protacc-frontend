@@ -31,7 +31,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
-import { getServiceBySlug, addToCart } from '../services/api';
+import { getServiceBySlug, addToCart, getServiceReviews, getReviewEligibility, submitReview } from '../services/api';
 import { SITE_CONTACT } from '../config/siteContact';
 import Seo from '../components/Seo';
 import { getCanonicalUrl } from '../config/seo';
@@ -48,6 +48,11 @@ const ServiceDetailPage = () => {
     const [animateIn, setAnimateIn] = useState(false);
     const [shareOpen, setShareOpen] = useState(false);
     const shareRef = useRef(null);
+    const [reviews, setReviews] = useState([]);
+    const [reviewSummary, setReviewSummary] = useState({ average: 0, count: 0 });
+    const [eligibility, setEligibility] = useState(null);
+    const [reviewForm, setReviewForm] = useState({ rating: 0, comment: '' });
+    const [submittingReview, setSubmittingReview] = useState(false);
     const { isAuthenticated } = useAuth();
     const { isInCart, addToCartSmart } = useCart();
 
@@ -56,6 +61,24 @@ const ServiceDetailPage = () => {
             try {
                 const data = await getServiceBySlug(slug);
                 setService(data);
+
+                // Load reviews + aggregate for this service (non-critical).
+                try {
+                    const reviewData = await getServiceReviews(data.id);
+                    setReviews(reviewData.reviews || []);
+                    setReviewSummary(reviewData.summary || { average: 0, count: 0 });
+                } catch (e) { /* reviews are non-critical */ }
+
+                // Check whether the logged-in user can review this service.
+                if (isAuthenticated) {
+                    try {
+                        const elig = await getReviewEligibility(data.id);
+                        setEligibility(elig);
+                        if (elig?.existing) {
+                            setReviewForm({ rating: elig.existing.rating, comment: elig.existing.comment || '' });
+                        }
+                    } catch (e) { /* non-critical */ }
+                }
             } catch (error) {
                 toast.error('Failed to load service details');
                 navigate('/services');
@@ -68,7 +91,7 @@ const ServiceDetailPage = () => {
         // Scroll to top when page loads
         window.scrollTo(0, 0);
         fetchService();
-    }, [slug, navigate]);
+    }, [slug, navigate, isAuthenticated]);
 
     const handleAddToCart = async () => {
         if (!isAuthenticated) {
@@ -90,6 +113,26 @@ const ServiceDetailPage = () => {
             toast.error('Failed to add service to cart');
         } finally {
             setAddingToCart(false);
+        }
+    };
+
+    const handleSubmitReview = async () => {
+        if (reviewForm.rating < 1) {
+            toast.error('Please select a star rating');
+            return;
+        }
+        setSubmittingReview(true);
+        try {
+            await submitReview({ serviceId: service.id, rating: reviewForm.rating, comment: reviewForm.comment });
+            toast.success('Thank you for your review!');
+            const reviewData = await getServiceReviews(service.id);
+            setReviews(reviewData.reviews || []);
+            setReviewSummary(reviewData.summary || { average: 0, count: 0 });
+            setEligibility((prev) => ({ ...(prev || {}), can_review: true, already_reviewed: true }));
+        } catch (e) {
+            toast.error(typeof e === 'string' ? e : 'Failed to submit review');
+        } finally {
+            setSubmittingReview(false);
         }
     };
 
@@ -170,16 +213,16 @@ const ServiceDetailPage = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-header">
             <Seo
-                title={`${service.title} | Protacc`}
+                title={`${service.name} | Protacc`}
                 description={serviceDescription}
                 path={`/services/${service.slug}`}
                 type="product"
                 jsonLd={[
-                    serviceSchema(service),
+                    serviceSchema(service, reviewSummary, reviews),
                     breadcrumbSchema([
                         { name: 'Home', url: getCanonicalUrl('/') },
                         { name: 'Services', url: getCanonicalUrl('/services') },
-                        { name: service.title, url: getCanonicalUrl(`/services/${service.slug}`) },
+                        { name: service.name, url: getCanonicalUrl(`/services/${service.slug}`) },
                     ]),
                 ]}
                 jsonLdId="protacc-service-jsonld"
@@ -216,9 +259,13 @@ const ServiceDetailPage = () => {
                                     </span>
                                     <div className="flex items-center gap-1">
                                         {[...Array(5)].map((_, i) => (
-                                            <FaStar key={i} className="text-yellow-300 text-sm" />
+                                            <FaStar key={i} className={i < Math.round(reviewSummary.average) ? 'text-yellow-300 text-sm' : 'text-white/30 text-sm'} />
                                         ))}
-                                        <span className="text-sm ml-2">4.8 (127 reviews)</span>
+                                        <span className="text-sm ml-2">
+                                            {reviewSummary.count > 0
+                                                ? `${reviewSummary.average.toFixed(1)} (${reviewSummary.count} review${reviewSummary.count === 1 ? '' : 's'})`
+                                                : 'No reviews yet'}
+                                        </span>
                                     </div>
                                 </div>
                                 
@@ -468,97 +515,100 @@ const ServiceDetailPage = () => {
                         {activeTab === 'reviews' && (
                             <div className="animate-fadeIn">
                                 <h3 className="text-2xl font-bold text-gray-900 mb-6">Customer Reviews</h3>
-                                
+
                                 {/* Review Summary */}
-                                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl mb-8">
-                                    <div className="flex items-center gap-6">
+                                {reviewSummary.count > 0 ? (
+                                    <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl mb-8 flex items-center gap-6">
                                         <div className="text-center">
-                                            <div className="text-4xl font-bold text-gray-900">4.8</div>
-                                            <div className="flex items-center gap-1 justify-center mb-2">
+                                            <div className="text-4xl font-bold text-gray-900">{reviewSummary.average.toFixed(1)}</div>
+                                            <div className="flex items-center gap-1 justify-center my-2">
                                                 {[...Array(5)].map((_, i) => (
-                                                    <FaStar key={i} className="text-yellow-400" />
+                                                    <FaStar key={i} className={i < Math.round(reviewSummary.average) ? 'text-yellow-400' : 'text-gray-300'} />
                                                 ))}
                                             </div>
-                                            <div className="text-sm text-gray-600">127 reviews</div>
+                                            <div className="text-sm text-gray-600">{reviewSummary.count} review{reviewSummary.count === 1 ? '' : 's'}</div>
                                         </div>
-                                        <div className="flex-1">
-                                            <div className="space-y-2">
-                                                {[5, 4, 3, 2, 1].map((stars) => (
-                                                    <div key={stars} className="flex items-center gap-3">
-                                                        <span className="text-sm w-8">{stars}★</span>
-                                                        <div className="flex-1 bg-gray-200 rounded-full h-2">
-                                                            <div 
-                                                                className="bg-yellow-400 h-2 rounded-full" 
-                                                                style={{ width: `${stars === 5 ? 70 : stars === 4 ? 20 : 5}%` }}
-                                                            ></div>
-                                                        </div>
-                                                        <span className="text-sm text-gray-600 w-8">
-                                                            {stars === 5 ? 89 : stars === 4 ? 25 : stars === 3 ? 8 : stars === 2 ? 3 : 2}
-                                                        </span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
+                                        <p className="text-gray-600 flex-1">Ratings come from customers who purchased this service.</p>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className="bg-gray-50 p-6 rounded-xl mb-8 text-gray-600">
+                                        No reviews yet. {isAuthenticated && eligibility?.can_review ? 'Be the first to review this service!' : 'Reviews from verified customers will appear here.'}
+                                    </div>
+                                )}
+
+                                {/* Submit / edit review (eligible purchasers only) */}
+                                {isAuthenticated && eligibility?.can_review && (
+                                    <div className="border border-gray-200 rounded-xl p-6 mb-8">
+                                        <h4 className="font-semibold text-gray-900 mb-3">
+                                            {eligibility?.already_reviewed ? 'Update your review' : 'Write a review'}
+                                        </h4>
+                                        <div className="flex items-center gap-1 mb-4">
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <button
+                                                    type="button"
+                                                    key={star}
+                                                    onClick={() => setReviewForm((f) => ({ ...f, rating: star }))}
+                                                    className="text-2xl focus:outline-none"
+                                                    aria-label={`${star} star rating`}
+                                                >
+                                                    <FaStar className={star <= reviewForm.rating ? 'text-yellow-400' : 'text-gray-300'} />
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <textarea
+                                            value={reviewForm.comment}
+                                            onChange={(e) => setReviewForm((f) => ({ ...f, comment: e.target.value }))}
+                                            rows={4}
+                                            placeholder="Share your experience with this service..."
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 mb-4"
+                                        />
+                                        <button
+                                            onClick={handleSubmitReview}
+                                            disabled={submittingReview}
+                                            className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 flex items-center gap-2"
+                                        >
+                                            {submittingReview ? <FaSpinner className="animate-spin" /> : null}
+                                            {eligibility?.already_reviewed ? 'Update Review' : 'Submit Review'}
+                                        </button>
+                                    </div>
+                                )}
+
+                                {isAuthenticated && eligibility && !eligibility.can_review && (
+                                    <p className="text-sm text-gray-500 mb-8">Only customers who have purchased this service can leave a review.</p>
+                                )}
 
                                 {/* Individual Reviews */}
                                 <div className="space-y-6">
-                                    {[
-                                        {
-                                            name: "Rajesh Kumar",
-                                            rating: 5,
-                                            date: "2 weeks ago",
-                                            comment: "Excellent service! The team was professional and delivered exactly what was promised. Highly recommended for anyone looking for reliable business solutions.",
-                                            verified: true
-                                        },
-                                        {
-                                            name: "Priya Sharma", 
-                                            rating: 5,
-                                            date: "1 month ago",
-                                            comment: "Outstanding experience from start to finish. The documentation was thorough and the support team was always available to answer questions.",
-                                            verified: true
-                                        },
-                                        {
-                                            name: "Amit Patel",
-                                            rating: 4,
-                                            date: "2 months ago", 
-                                            comment: "Good service overall. The process was smooth and the final deliverables met our expectations. Would definitely use again.",
-                                            verified: false
-                                        }
-                                    ].map((review, index) => (
-                                        <div key={index} className="bg-white border border-gray-200 rounded-xl p-6">
+                                    {reviews.map((review) => (
+                                        <div key={review.id} className="bg-white border border-gray-200 rounded-xl p-6">
                                             <div className="flex items-start justify-between mb-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                                        {review.name.charAt(0)}
+                                                        {(review.reviewer_name || 'C').charAt(0)}
                                                     </div>
                                                     <div>
                                                         <div className="flex items-center gap-2">
-                                                            <h4 className="font-semibold text-gray-900">{review.name}</h4>
-                                                            {review.verified && (
-                                                                <FaCheckCircle className="text-green-500 text-sm" title="Verified Purchase" />
-                                                            )}
+                                                            <h4 className="font-semibold text-gray-900">{review.reviewer_name || 'Verified customer'}</h4>
+                                                            <FaCheckCircle className="text-green-500 text-sm" title="Verified Purchase" />
                                                         </div>
                                                         <div className="flex items-center gap-2 text-sm text-gray-600">
                                                             <div className="flex items-center gap-1">
                                                                 {[...Array(5)].map((_, i) => (
-                                                                    <FaStar 
-                                                                        key={i} 
-                                                                        className={i < review.rating ? "text-yellow-400" : "text-gray-300"} 
-                                                                    />
+                                                                    <FaStar key={i} className={i < review.rating ? 'text-yellow-400' : 'text-gray-300'} />
                                                                 ))}
                                                             </div>
                                                             <span>•</span>
-                                                            <span>{review.date}</span>
+                                                            <span>{new Date(review.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="relative">
-                                                <FaQuoteLeft className="absolute -top-2 -left-2 text-gray-300 text-lg" />
-                                                <p className="text-gray-700 leading-relaxed pl-6">{review.comment}</p>
-                                            </div>
+                                            {review.comment && (
+                                                <div className="relative">
+                                                    <FaQuoteLeft className="absolute -top-2 -left-2 text-gray-300 text-lg" />
+                                                    <p className="text-gray-700 leading-relaxed pl-6">{review.comment}</p>
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>

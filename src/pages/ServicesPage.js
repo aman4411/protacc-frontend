@@ -443,10 +443,18 @@ const ServiceCard = ({ service, onAddToCart, isAdding, isInCart, isAuthenticated
 
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
-                        {[...Array(5)].map((_, i) => (
-                            <FaStar key={i} className="text-yellow-300 text-xs" />
-                        ))}
-                        <span className="text-sm ml-1 opacity-90">4.8</span>
+                        {service.review_count > 0 ? (
+                            <>
+                                {[...Array(5)].map((_, i) => (
+                                    <FaStar key={i} className={i < Math.round(service.avg_rating) ? 'text-yellow-300 text-xs' : 'text-white/40 text-xs'} />
+                                ))}
+                                <span className="text-sm ml-1 opacity-90">
+                                    {service.avg_rating.toFixed(1)} ({service.review_count})
+                                </span>
+                            </>
+                        ) : (
+                            <span className="text-sm opacity-90">No reviews yet</span>
+                        )}
                     </div>
                     <div className="flex items-center gap-1 text-sm opacity-90">
                         <FaClock />

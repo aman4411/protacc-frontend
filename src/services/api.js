@@ -480,12 +480,98 @@ export const getServiceBySlug = async (slug) => {
 
 export const searchServices = async (query) => {
     try {
-        const response = await api.get('/services/search', { 
+        const response = await api.get('/services/search', {
             params: { q: query }
         });
         return response.data;
     } catch (error) {
         throw error.response?.data?.error || 'Failed to search services';
+    }
+};
+
+// ===== Reviews =====
+
+// Public: reviews + aggregate summary for a service.
+export const getServiceReviews = async (serviceId) => {
+    try {
+        const response = await api.get(`/services/${serviceId}/reviews`);
+        return response.data; // { reviews: [...], summary: { average, count } }
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch reviews';
+    }
+};
+
+// Public: top reviews for the homepage.
+export const getTopReviews = async (limit = 6) => {
+    try {
+        const response = await api.get('/reviews/top', { params: { limit } });
+        return response.data?.reviews || [];
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch reviews';
+    }
+};
+
+// Auth: whether the current user can review a service (and any existing review).
+export const getReviewEligibility = async (serviceId) => {
+    try {
+        const response = await api.get('/reviews/eligibility', { params: { service_id: serviceId } });
+        return response.data; // { can_review, already_reviewed, existing }
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to check review eligibility';
+    }
+};
+
+// Auth: create or update the current user's review for a service.
+export const submitReview = async ({ serviceId, rating, comment }) => {
+    try {
+        const response = await api.post('/reviews', { service_id: serviceId, rating, comment });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to submit review';
+    }
+};
+
+// Admin: list all reviews / delete a review.
+export const getAdminReviews = async () => {
+    try {
+        const response = await api.get('/admin/reviews');
+        return response.data?.reviews || [];
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch reviews';
+    }
+};
+
+export const deleteAdminReview = async (reviewId) => {
+    try {
+        const response = await api.delete(`/admin/reviews/${reviewId}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to delete review';
+    }
+};
+
+// Admin: create a review with a custom reviewer name (no purchase tie).
+export const adminCreateReview = async ({ serviceId, rating, comment, reviewerName }) => {
+    try {
+        const response = await api.post('/admin/reviews', {
+            service_id: serviceId,
+            rating,
+            comment,
+            reviewer_name: reviewerName,
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to create review';
+    }
+};
+
+// Admin: show/hide a review.
+export const updateAdminReviewStatus = async (reviewId, status) => {
+    try {
+        const response = await api.put(`/admin/reviews/${reviewId}/status`, { status });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update review';
     }
 };
 

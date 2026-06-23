@@ -79,25 +79,48 @@ export const faqSchema = (faqs = []) => {
     };
 };
 
-export const serviceSchema = (service) => ({
-    '@context': 'https://schema.org',
-    '@type': 'Service',
-    name: service.title,
-    description: service.short_description || service.description,
-    url: `${SITE_URL}/services/${service.slug}`,
-    provider: {
-        '@type': 'Organization',
-        name: 'Protacc',
-        url: SITE_URL,
-    },
-    offers: service.price
-        ? {
-              '@type': 'Offer',
-              price: service.price,
-              priceCurrency: 'INR',
-          }
-        : undefined,
-});
+export const serviceSchema = (service, summary = null, reviews = []) => {
+    const schema = {
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        name: service.name,
+        description: service.short_description || service.description,
+        url: `${SITE_URL}/services/${service.slug}`,
+        provider: {
+            '@type': 'Organization',
+            name: 'Protacc',
+            url: SITE_URL,
+        },
+        offers: service.price
+            ? {
+                  '@type': 'Offer',
+                  price: service.price,
+                  priceCurrency: 'INR',
+              }
+            : undefined,
+    };
+
+    // Only emit rating/review markup when real reviews exist (Google policy: no fake data).
+    if (summary && summary.count > 0) {
+        schema.aggregateRating = {
+            '@type': 'AggregateRating',
+            ratingValue: Number(summary.average).toFixed(1),
+            reviewCount: summary.count,
+            bestRating: 5,
+            worstRating: 1,
+        };
+    }
+    if (reviews && reviews.length > 0) {
+        schema.review = reviews.slice(0, 5).map((r) => ({
+            '@type': 'Review',
+            reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5, worstRating: 1 },
+            author: { '@type': 'Person', name: r.reviewer_name || 'Verified customer' },
+            reviewBody: r.comment || '',
+        }));
+    }
+
+    return schema;
+};
 
 export const breadcrumbSchema = (items) => ({
     '@context': 'https://schema.org',

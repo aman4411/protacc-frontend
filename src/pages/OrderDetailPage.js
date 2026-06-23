@@ -1,10 +1,71 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaSpinner, FaArrowLeft, FaClock, FaFileAlt, FaMoneyBillWave } from 'react-icons/fa';
+import { FaSpinner, FaArrowLeft, FaClock, FaFileAlt, FaMoneyBillWave, FaStar, FaCheckCircle } from 'react-icons/fa';
 import toast from 'react-hot-toast';
-import { getOrderByNumber, getOrderStatusHistory, createPaymentOrder, verifyPayment } from '../services/api';
+import { getOrderByNumber, getOrderStatusHistory, createPaymentOrder, verifyPayment, submitReview } from '../services/api';
 import OrderDocumentsSection from '../components/orders/OrderDocumentsSection';
 import { isOrderFullyPaid, isOrderPendingBookingPayment } from '../utils/orderPayment';
+
+// Inline "rate this service" widget shown per order item once the order is paid.
+const ServiceReviewWidget = ({ serviceId, existingRating }) => {
+    const [rating, setRating] = useState(existingRating || 0);
+    const [comment, setComment] = useState('');
+    const [submitting, setSubmitting] = useState(false);
+    const [done, setDone] = useState(false);
+
+    const submit = async () => {
+        if (rating < 1) {
+            toast.error('Please select a star rating');
+            return;
+        }
+        setSubmitting(true);
+        try {
+            await submitReview({ serviceId, rating, comment });
+            toast.success('Thank you for your review!');
+            setDone(true);
+        } catch (e) {
+            toast.error(typeof e === 'string' ? e : 'Failed to submit review');
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    if (done) {
+        return (
+            <div className="mt-3 border-t border-gray-100 pt-3 text-sm text-green-600 flex items-center gap-2">
+                <FaCheckCircle /> Review submitted. Thank you!
+            </div>
+        );
+    }
+
+    return (
+        <div className="mt-3 border-t border-gray-100 pt-3">
+            <p className="text-sm font-medium text-gray-700 mb-2">Rate this service</p>
+            <div className="flex items-center gap-1 mb-2">
+                {[1, 2, 3, 4, 5].map((s) => (
+                    <button type="button" key={s} onClick={() => setRating(s)} className="text-xl focus:outline-none" aria-label={`${s} star rating`}>
+                        <FaStar className={s <= rating ? 'text-yellow-400' : 'text-gray-300'} />
+                    </button>
+                ))}
+            </div>
+            <textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                rows={2}
+                placeholder="Share your experience (optional)"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 mb-2 text-sm"
+            />
+            <button
+                onClick={submit}
+                disabled={submitting}
+                className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg text-sm font-medium hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 flex items-center gap-2"
+            >
+                {submitting ? <FaSpinner className="animate-spin" /> : null}
+                Submit Review
+            </button>
+        </div>
+    );
+};
 
 const OrderStatusBadge = ({ status }) => {
     const getStatusColor = (orderStatus) => {
@@ -358,6 +419,9 @@ const OrderDetailPage = () => {
                                                                 <p className="text-gray-600">{item.service.estimated_delivery_days} days</p>
                                                             </div>
                                                         </div>
+                                                    )}
+                                                    {!['pending_booking_payment', 'pending_payment', 'cancelled'].includes(order.status) && item.service?.id && (
+                                                        <ServiceReviewWidget serviceId={item.service.id} />
                                                     )}
                                                 </div>
                                             </div>
