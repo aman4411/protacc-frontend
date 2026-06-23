@@ -5,13 +5,13 @@ export const organizationSchema = () => ({
     '@context': 'https://schema.org',
     '@type': 'AccountingService',
     '@id': `${SITE_URL}/#organization`,
-    name: 'Protacc',
-    alternateName: 'Protacc Chartered Accountants',
+    name: 'ProtAcc',
+    alternateName: 'ProtAcc Chartered Accountants',
     url: SITE_URL,
     logo: `${SITE_URL}/logo512.png`,
     image: `${SITE_URL}/logo512.png`,
     description:
-        'Protacc is a Chartered Accountant and CA firm in Kaithal, Haryana offering GST registration, ITR filing, company registration, TDS returns, accounting and business compliance services across India.',
+        'ProtAcc is a Chartered Accountant and CA firm in Kaithal, Haryana offering GST registration, ITR filing, company registration, TDS returns, accounting and business compliance services across India.',
     telephone: SITE_CONTACT.phoneTel,
     email: SITE_CONTACT.email,
     priceRange: '₹₹',
@@ -79,6 +79,24 @@ export const faqSchema = (faqs = []) => {
     };
 };
 
+export const blogPostingSchema = (post) => ({
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt || '',
+    image: post.cover_image || `${SITE_URL}/logo512.png`,
+    datePublished: post.published_at || post.created_at,
+    dateModified: post.updated_at || post.published_at || post.created_at,
+    url: `${SITE_URL}/articles/${post.slug}`,
+    author: { '@type': 'Organization', name: 'ProtAcc' },
+    publisher: {
+        '@type': 'Organization',
+        name: 'ProtAcc',
+        logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo512.png` },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/articles/${post.slug}` },
+});
+
 export const serviceSchema = (service, summary = null, reviews = []) => {
     const schema = {
         '@context': 'https://schema.org',
@@ -88,7 +106,7 @@ export const serviceSchema = (service, summary = null, reviews = []) => {
         url: `${SITE_URL}/services/${service.slug}`,
         provider: {
             '@type': 'Organization',
-            name: 'Protacc',
+            name: 'ProtAcc',
             url: SITE_URL,
         },
         offers: service.price

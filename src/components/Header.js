@@ -14,7 +14,8 @@ import {
     FaChevronDown,
     FaSearch,
     FaSpinner,
-    FaClipboardList
+    FaClipboardList,
+    FaNewspaper
 } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -192,6 +193,7 @@ export default function Header() {
         { name: 'Home', path: '/', icon: FaHome },
         { name: 'Services', path: '/services', icon: FaServicestack, hasDropdown: true },
         { name: 'Consultancy', path: '/consultancy', icon: FaFileContract },
+        { name: 'Articles', path: '/articles', icon: FaNewspaper },
         { name: 'Contact', path: '/contact', icon: FaEnvelope },
     ];
 

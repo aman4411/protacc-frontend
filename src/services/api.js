@@ -645,6 +645,88 @@ export const getAvailableCoupons = async () => {
     }
 };
 
+// ===== Blog posts =====
+export const getBlogPosts = async (page = 1, limit = 9, category = '') => {
+    try {
+        const response = await api.get('/posts', { params: { page, limit, category: category || undefined } });
+        return response.data; // { posts, pagination }
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch articles';
+    }
+};
+
+export const getArticleCategories = async () => {
+    try {
+        const response = await api.get('/posts/categories');
+        return response.data?.categories || [];
+    } catch (error) {
+        return []; // non-critical
+    }
+};
+
+export const getBlogPost = async (slug) => {
+    try {
+        const response = await api.get(`/posts/${slug}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch post';
+    }
+};
+
+export const getRelatedPosts = async (slug, limit = 3) => {
+    try {
+        const response = await api.get(`/posts/${slug}/related`, { params: { limit } });
+        return response.data?.posts || [];
+    } catch (error) {
+        return []; // related articles are non-critical
+    }
+};
+
+export const getAdminPosts = async () => {
+    try {
+        const response = await api.get('/admin/posts');
+        return response.data?.posts || [];
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch posts';
+    }
+};
+
+export const getAdminPost = async (id) => {
+    try {
+        const response = await api.get(`/admin/posts/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch post';
+    }
+};
+
+export const createPost = async (data) => {
+    try {
+        const response = await api.post('/admin/posts', data);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to create post';
+    }
+};
+
+export const updatePost = async (id, data) => {
+    try {
+        const response = await api.put(`/admin/posts/${id}`, data);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update post';
+    }
+};
+
+export const deletePost = async (id) => {
+    try {
+        const response = await api.delete(`/admin/posts/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to delete post';
+    }
+};
+
 // ===== Deadlines (tax/compliance calendar) =====
 export const getUpcomingDeadlines = async (limit = 8) => {
     try {

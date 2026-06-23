@@ -52,7 +52,7 @@ const Seo = ({
     jsonLd = null,
     jsonLdId = 'protacc-jsonld',
 }) => {
-    const fullTitle = title?.toLowerCase().includes('protacc') ? title : `${title} | Protacc`;
+    const fullTitle = title?.toLowerCase().includes('protacc') ? title : `${title} | ProtAcc`;
     const canonical = getCanonicalUrl(path);
     const robots = noindex ? 'noindex, nofollow' : 'index, follow';
 
@@ -62,7 +62,7 @@ const Seo = ({
         upsertMeta('name', 'description', description);
         upsertMeta('name', 'keywords', keywords);
         upsertMeta('name', 'robots', robots);
-        upsertMeta('name', 'author', 'Protacc');
+        upsertMeta('name', 'author', 'ProtAcc');
 
         upsertLink('canonical', canonical);
 
@@ -71,7 +71,7 @@ const Seo = ({
         upsertMeta('property', 'og:type', type);
         upsertMeta('property', 'og:url', canonical);
         upsertMeta('property', 'og:image', image);
-        upsertMeta('property', 'og:site_name', 'Protacc');
+        upsertMeta('property', 'og:site_name', 'ProtAcc');
         upsertMeta('property', 'og:locale', DEFAULT_SEO.locale);
 
         upsertMeta('name', 'twitter:card', 'summary_large_image');

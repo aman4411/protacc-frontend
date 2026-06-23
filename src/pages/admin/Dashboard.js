@@ -14,6 +14,7 @@ import ContactManagement from './ContactManagement';
 import ReviewManagement from './ReviewManagement';
 import CouponManagement from './CouponManagement';
 import DeadlineManagement from './DeadlineManagement';
+import BlogManagement from './BlogManagement';
 
 const AdminDashboard = () => {
     const { user: currentUser } = useAuth();
@@ -46,6 +47,7 @@ const AdminDashboard = () => {
                 <Route path="/reviews" element={<ReviewManagement />} />
                 <Route path="/coupons" element={<CouponManagement />} />
                 <Route path="/deadlines" element={<DeadlineManagement />} />
+                <Route path="/articles" element={<BlogManagement />} />
                 <Route path="*" element={<Navigate to="/admin" replace />} />
             </Routes>
         </AdminLayout>

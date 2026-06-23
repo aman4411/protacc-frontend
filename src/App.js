@@ -22,6 +22,8 @@ import ProfilePage from './pages/ProfilePage';
 import AdminDashboard from './pages/admin/Dashboard';
 import ServicesPage from './pages/ServicesPage';
 import ServiceDetailPage from './pages/ServiceDetailPage';
+import BlogListPage from './pages/BlogListPage';
+import BlogPostPage from './pages/BlogPostPage';
 import SearchPage from './pages/SearchPage';
 import CartPage from './pages/CartPage';
 import OrdersPage from './pages/OrdersPage';
@@ -76,6 +78,8 @@ function App() {
                             <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
                             <Route path="services" element={<ServicesPage />} />
                             <Route path="services/:slug" element={<ServiceDetailPage />} />
+                            <Route path="articles" element={<BlogListPage />} />
+                            <Route path="articles/:slug" element={<BlogPostPage />} />
                             <Route path="search" element={<SearchPage />} />
 
                             {/* Protected Routes */}

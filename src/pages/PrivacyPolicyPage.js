@@ -27,13 +27,13 @@ const PrivacyPolicyPage = () => {
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Privacy Policy</h1>
                     <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                        How we collect, use, store, and protect your information when you use Protacc.
+                        How we collect, use, store, and protect your information when you use ProtAcc.
                     </p>
                 </div>
 
                 <article className="bg-white rounded-3xl shadow-xl p-8 md:p-12 text-gray-700 leading-relaxed">
                     <p className="mb-4">
-                        Welcome to <strong>Protacc</strong>. Your privacy is important to us. This Privacy Policy
+                        Welcome to <strong>ProtAcc</strong>. Your privacy is important to us. This Privacy Policy
                         explains how we collect, use, store, and protect your information when you use our website
                         and services.
                     </p>
@@ -122,7 +122,7 @@ const PrivacyPolicyPage = () => {
 
                     <section>
                         <h2 className="text-2xl font-bold text-gray-900 mb-4">5. Cookies</h2>
-                        <p className="mb-4">Protacc may use cookies and similar technologies to:</p>
+                        <p className="mb-4">ProtAcc may use cookies and similar technologies to:</p>
                         <ul className="list-disc pl-6 space-y-2 mb-4">
                             <li>Improve user experience</li>
                             <li>Analyze website traffic</li>
@@ -204,7 +204,7 @@ const PrivacyPolicyPage = () => {
                             <li>
                                 <span className="font-medium text-gray-900">Website:</span>{' '}
                                 <Link to="/" className="text-indigo-600 hover:text-indigo-800 font-medium">
-                                    Protacc
+                                    ProtAcc
                                 </Link>
                             </li>
                             <li className="flex items-center gap-2">

@@ -157,7 +157,7 @@ const ServiceDetailPage = () => {
 
     const handleShare = async () => {
         const url = getCanonicalUrl(`/services/${service.slug}`);
-        const title = `${service.name} | Protacc`;
+        const title = `${service.name} | ProtAcc`;
         // Native share sheet (mobile) — exposes WhatsApp, Facebook, Instagram, etc.
         if (navigator.share) {
             try {
@@ -220,7 +220,7 @@ const ServiceDetailPage = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-header">
             <Seo
-                title={`${service.name} | Protacc`}
+                title={`${service.name} | ProtAcc`}
                 description={serviceDescription}
                 path={`/services/${service.slug}`}
                 type="product"
@@ -373,7 +373,7 @@ const ServiceDetailPage = () => {
                                                     { label: 'X (Twitter)', icon: FaTwitter, color: 'text-sky-500', href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(getCanonicalUrl(`/services/${service.slug}`))}&text=${encodeURIComponent(service.name)}` },
                                                     { label: 'LinkedIn', icon: FaLinkedinIn, color: 'text-blue-700', href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getCanonicalUrl(`/services/${service.slug}`))}` },
                                                     { label: 'Telegram', icon: FaTelegramPlane, color: 'text-sky-600', href: `https://t.me/share/url?url=${encodeURIComponent(getCanonicalUrl(`/services/${service.slug}`))}&text=${encodeURIComponent(service.name)}` },
-                                                    { label: 'Email', icon: FaEnvelope, color: 'text-gray-600', href: `mailto:?subject=${encodeURIComponent(`${service.name} | Protacc`)}&body=${encodeURIComponent(getCanonicalUrl(`/services/${service.slug}`))}` },
+                                                    { label: 'Email', icon: FaEnvelope, color: 'text-gray-600', href: `mailto:?subject=${encodeURIComponent(`${service.name} | ProtAcc`)}&body=${encodeURIComponent(getCanonicalUrl(`/services/${service.slug}`))}` },
                                                 ].map(({ label, icon: Icon, color, href }) => (
                                                     <a
                                                         key={label}
