@@ -19,7 +19,8 @@ import {
     FaHandshake,
     FaEnvelope,
     FaStar,
-    FaTags
+    FaTags,
+    FaCalendarAlt
 } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 
@@ -34,6 +35,7 @@ const AdminLayout = ({ children }) => {
         { name: 'Service Management', path: '/admin/services', icon: FaBox },
         { name: 'Review Management', path: '/admin/reviews', icon: FaStar },
         { name: 'Coupon Management', path: '/admin/coupons', icon: FaTags },
+        { name: 'Deadline Management', path: '/admin/deadlines', icon: FaCalendarAlt },
         { name: 'Order Management', path: '/admin/orders', icon: FaShoppingCart },
         { name: 'Lead Management', path: '/admin/leads', icon: FaHandshake },
         { name: 'Contact Management', path: '/admin/contacts', icon: FaEnvelope },

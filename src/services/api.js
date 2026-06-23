@@ -645,6 +645,52 @@ export const getAvailableCoupons = async () => {
     }
 };
 
+// ===== Deadlines (tax/compliance calendar) =====
+export const getUpcomingDeadlines = async (limit = 8) => {
+    try {
+        const response = await api.get('/deadlines/upcoming', { params: { limit } });
+        return response.data?.deadlines || [];
+    } catch (error) {
+        return []; // non-critical
+    }
+};
+
+export const getAdminDeadlines = async () => {
+    try {
+        const response = await api.get('/admin/deadlines');
+        return response.data?.deadlines || [];
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch deadlines';
+    }
+};
+
+export const createDeadline = async (data) => {
+    try {
+        const response = await api.post('/admin/deadlines', data);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to create deadline';
+    }
+};
+
+export const updateDeadline = async (id, data) => {
+    try {
+        const response = await api.put(`/admin/deadlines/${id}`, data);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update deadline';
+    }
+};
+
+export const deleteDeadline = async (id) => {
+    try {
+        const response = await api.delete(`/admin/deadlines/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to delete deadline';
+    }
+};
+
 // Public: coupons flagged for the homepage campaign banner.
 export const getHomepageCoupons = async () => {
     try {
@@ -828,7 +874,14 @@ export const getUserOrders = async (userId) => {
 };
 
 // Lead Management APIs (Public)
-export const createLead = (leadData) => api.post('/leads', leadData);
+export const createLead = async (leadData) => {
+    try {
+        const response = await api.post('/leads', leadData);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to submit. Please try again.';
+    }
+};
 
 // Contact APIs (Public)
 export const createContact = (contactData) => api.post('/contact', contactData);

@@ -107,7 +107,7 @@ const ContactPage = () => {
             title: 'Office',
             content: SITE_CONTACT.address.line1,
             description: SITE_CONTACT.address.short,
-            action: SITE_CONTACT.mapsSearchUrl,
+            action: SITE_CONTACT.googleBusinessUrl,
             gradient: 'from-red-500 to-red-600'
         }
     ];
@@ -556,7 +556,7 @@ const ContactPage = () => {
                                     {SITE_CONTACT.address.line3}
                                 </p>
                                 <a
-                                    href={SITE_CONTACT.mapsSearchUrl}
+                                    href={SITE_CONTACT.googleBusinessUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"

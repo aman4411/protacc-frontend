@@ -233,10 +233,10 @@ export default function Header() {
                         </div>
                         <div className="flex items-center gap-4">
                             <span className="hidden md:block">Free Consultation Available</span>
-                            <div className="flex items-center gap-2">
+                            {/* <div className="flex items-center gap-2">
                                 <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                                 <span className="text-xs">Online</span>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>

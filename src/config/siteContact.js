@@ -23,6 +23,9 @@ export const SITE_CONTACT = {
     mapsSearchUrl:
         'https://www.google.com/maps/search/?api=1&query=1st+floor+above+RS+Collection+Gali+No+4+Rishi+Nagar+Dhand+Road+Kaithal+136027',
 
+    // Google Business profile (used for "Get Directions" — opens the profile + map + reviews)
+    googleBusinessUrl: 'https://share.google/nRfR1UBy5HJJ9s4RR',
+
     social: {
         instagram: 'https://www.instagram.com/protacc.in',
         facebook: 'https://www.facebook.com/protacc',

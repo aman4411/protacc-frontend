@@ -31,7 +31,6 @@ const Consultancy = () => {
         company_name: '',
         business_type: '',
         services_interested: [],
-        budget_range: '',
         preferred_contact_method: 'email',
         message: ''
     });
@@ -61,14 +60,6 @@ const Consultancy = () => {
         'Audit & Assurance',
         'Digital Marketing',
         'Business Consulting'
-    ];
-
-    const budgetRanges = [
-        '₹10,000 - ₹50,000',
-        '₹50,000 - ₹1,00,000',
-        '₹1,00,000 - ₹5,00,000',
-        '₹5,00,000 - ₹10,00,000',
-        '₹10,00,000+'
     ];
 
     const businessTypes = [
@@ -111,7 +102,7 @@ const Consultancy = () => {
             toast.success('Thank you! We will contact you soon.');
         } catch (error) {
             console.error('Error submitting lead:', error);
-            toast.error(error || 'Failed to submit. Please try again.');
+            toast.error(typeof error === 'string' ? error : 'Failed to submit. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -139,7 +130,6 @@ const Consultancy = () => {
                                 company_name: '',
                                 business_type: '',
                                 services_interested: [],
-                                budget_range: '',
                                 preferred_contact_method: 'email',
                                 message: ''
                             });
@@ -277,20 +267,20 @@ const Consultancy = () => {
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="grid md:grid-cols-4 gap-8 text-center">
                         <div className="group">
-                            <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300">500+</div>
-                            <div className="text-white/80 font-medium">Businesses Served</div>
+                            <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300">1500+</div>
+                            <div className="text-white/80 font-medium">Happy Clients</div>
                         </div>
                         <div className="group">
-                            <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-white to-green-100 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300">98%</div>
-                            <div className="text-white/80 font-medium">Client Satisfaction</div>
-                        </div>
-                        <div className="group">
-                            <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-white to-yellow-100 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300">24hrs</div>
-                            <div className="text-white/80 font-medium">Response Time</div>
-                        </div>
-                        <div className="group">
-                            <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-white to-purple-100 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300">5+</div>
+                            <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-white to-green-100 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300">10+</div>
                             <div className="text-white/80 font-medium">Years Experience</div>
+                        </div>
+                        <div className="group">
+                            <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-white to-yellow-100 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300">800+</div>
+                            <div className="text-white/80 font-medium">Business Registrations</div>
+                        </div>
+                        <div className="group">
+                            <div className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-white to-purple-100 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300">99%</div>
+                            <div className="text-white/80 font-medium">Success Rate</div>
                         </div>
                     </div>
                 </div>
@@ -487,24 +477,6 @@ const Consultancy = () => {
                                             </label>
                                         ))}
                                     </div>
-                                </div>
-
-                                {/* Budget Range */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Budget Range
-                                    </label>
-                                    <select
-                                        name="budget_range"
-                                        value={formData.budget_range}
-                                        onChange={handleInputChange}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                    >
-                                        <option value="">Select budget range</option>
-                                        {budgetRanges.map(range => (
-                                            <option key={range} value={range}>{range}</option>
-                                        ))}
-                                    </select>
                                 </div>
 
                                 {/* Message */}

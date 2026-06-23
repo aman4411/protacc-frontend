@@ -19,7 +19,7 @@ export const DEFAULT_SEO = {
 
 export const PAGE_SEO = {
     home: {
-        title: 'Chartered Accountant in Kaithal | CA Firm – Protacc',
+        title: 'ProtAcc: Your Chartered Accountant for GST, ITR & Company Registration | CA Firm',
         description:
             'Protacc — trusted Chartered Accountant & CA firm in Kaithal, Haryana. GST registration & return filing, ITR filing, company registration, TDS, accounting and ROC compliance. Online CA services across India.',
         keywords: DEFAULT_SEO.keywords,

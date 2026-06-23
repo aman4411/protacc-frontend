@@ -52,7 +52,7 @@ const Seo = ({
     jsonLd = null,
     jsonLdId = 'protacc-jsonld',
 }) => {
-    const fullTitle = title?.includes('Protacc') ? title : `${title} | Protacc`;
+    const fullTitle = title?.toLowerCase().includes('protacc') ? title : `${title} | Protacc`;
     const canonical = getCanonicalUrl(path);
     const robots = noindex ? 'noindex, nofollow' : 'index, follow';
 

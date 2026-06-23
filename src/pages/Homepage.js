@@ -14,11 +14,22 @@ import {
     FaUserTie,
     FaAward,
     FaQuoteLeft,
-    FaLightbulb
+    FaLightbulb,
+    FaFileInvoiceDollar,
+    FaReceipt,
+    FaBuilding,
+    FaLandmark,
+    FaGavel,
+    FaClipboardCheck,
+    FaConciergeBell,
+    FaThLarge,
+    FaLaptop,
+    FaRupeeSign,
+    FaCalendarCheck
 } from 'react-icons/fa';
 import CountUp from 'react-countup';
 import { useAuth } from '../context/AuthContext';
-import { getServiceCategories, getTopReviews, getHomepageCoupons } from '../services/api';
+import { getServiceCategories, getTopReviews, getHomepageCoupons, getUpcomingDeadlines } from '../services/api';
 import toast from 'react-hot-toast';
 import Seo from '../components/Seo';
 import { PAGE_SEO } from '../config/seo';
@@ -48,6 +59,20 @@ const HOME_FAQS = [
     },
 ];
 
+// Maps a (dynamic) service category to an icon + gradient by keyword, with a
+// sensible fallback — so cards look distinct without hardcoding the DB list.
+const categoryStyle = (category) => {
+    const key = `${category.slug || ''} ${category.name || ''}`.toLowerCase();
+    if (key.includes('gst')) return { Icon: FaFileInvoiceDollar, gradient: 'from-emerald-500 to-teal-600' };
+    if (key.includes('income') || key.includes('tax')) return { Icon: FaReceipt, gradient: 'from-blue-500 to-indigo-600' };
+    if (key.includes('legal') || key.includes('notice')) return { Icon: FaGavel, gradient: 'from-rose-500 to-pink-600' };
+    if (key.includes('compliance')) return { Icon: FaClipboardCheck, gradient: 'from-cyan-500 to-blue-600' };
+    if (key.includes('government')) return { Icon: FaLandmark, gradient: 'from-amber-500 to-orange-600' };
+    if (key.includes('business') || key.includes('startup') || key.includes('registration')) return { Icon: FaBuilding, gradient: 'from-indigo-500 to-purple-600' };
+    if (key.includes('additional')) return { Icon: FaConciergeBell, gradient: 'from-fuchsia-500 to-purple-600' };
+    return { Icon: FaThLarge, gradient: 'from-slate-500 to-slate-700' };
+};
+
 export default function HomePage() {
     const { isAuthenticated, user } = useAuth();
     const [isStatsVisible, setIsStatsVisible] = useState(false);
@@ -56,6 +81,7 @@ export default function HomePage() {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [topReviews, setTopReviews] = useState([]);
     const [promoCoupons, setPromoCoupons] = useState([]);
+    const [deadlines, setDeadlines] = useState([]);
     const [promoIndex, setPromoIndex] = useState(0);
     const promoPausedRef = useRef(false);
     const statsRef = useRef(null);
@@ -101,10 +127,29 @@ export default function HomePage() {
                 if (isMounted && Array.isArray(data)) setPromoCoupons(data);
             })
             .catch(() => { /* non-critical */ });
+        getUpcomingDeadlines(6)
+            .then((data) => {
+                if (isMounted && Array.isArray(data)) setDeadlines(data);
+            })
+            .catch(() => { /* non-critical */ });
         return () => {
             isMounted = false;
         };
     }, []);
+
+    const deadlineCatColor = (cat) => ({
+        'GST': 'bg-emerald-100 text-emerald-700',
+        'Income Tax': 'bg-blue-100 text-blue-700',
+        'TDS': 'bg-amber-100 text-amber-700',
+        'ROC / MCA': 'bg-purple-100 text-purple-700',
+    }[cat] || 'bg-gray-100 text-gray-700');
+
+    const daysUntil = (iso) => {
+        const diff = Math.ceil((new Date(iso) - new Date(new Date().toDateString())) / 86400000);
+        if (diff <= 0) return 'Due today';
+        if (diff === 1) return 'Due tomorrow';
+        return `in ${diff} days`;
+    };
 
     // Auto-rotate the promo banner when more than one coupon is live (pause on hover).
     useEffect(() => {
@@ -182,9 +227,15 @@ export default function HomePage() {
 
     const stats = [
         { number: 1500, label: "Happy Clients", suffix: "+", icon: FaHandshake },
-        { number: 20, label: "Years Experience", suffix: "+", icon: FaAward },
+        { number: 10, label: "Years Experience", suffix: "+", icon: FaAward },
         { number: 800, label: "Business Registrations", suffix: "+", icon: FaRocket },
         { number: 99, label: "Success Rate", suffix: "%", icon: FaChartLine }
+    ];
+
+    const howItWorks = [
+        { icon: FaLightbulb, title: 'Pick your service', desc: 'Choose from GST, ITR, company registration and more — with clear, upfront pricing.' },
+        { icon: FaShieldAlt, title: 'Share documents securely', desc: 'Pay a small booking amount and upload your documents online. No office visit needed.' },
+        { icon: FaCheckCircle, title: 'We file it, you relax', desc: 'Our Chartered Accountants complete the work and keep you updated at every step.' },
     ];
 
     // Shown only when there are no real reviews yet (text-only, no images).
@@ -221,28 +272,28 @@ export default function HomePage() {
 
     const features = [
         {
-            icon: FaShieldAlt,
-            title: "100% Secure & Compliant",
-            description: "Bank-level security with complete regulatory compliance",
-            color: "from-green-400 to-green-600"
-        },
-        {
-            icon: FaClock,
-            title: "24/7 Expert Support",
-            description: "Round-the-clock assistance from certified professionals",
-            color: "from-blue-400 to-blue-600"
-        },
-        {
-            icon: FaLightbulb,
-            title: "Smart Solutions",
-            description: "AI-powered insights for optimal business decisions",
-            color: "from-purple-400 to-purple-600"
-        },
-        {
             icon: FaUserTie,
-            title: "Dedicated Account Manager",
-            description: "Personal relationship manager for all your needs",
-            color: "from-orange-400 to-orange-600"
+            title: "CA-led & expert-reviewed",
+            description: "Every return, registration and notice reply is prepared and double-checked by qualified Chartered Accountants.",
+            color: "from-indigo-500 to-purple-600"
+        },
+        {
+            icon: FaLaptop,
+            title: "100% online & paperless",
+            description: "Upload documents and track your order from anywhere in India — no office visits, no paperwork runs.",
+            color: "from-blue-500 to-cyan-600"
+        },
+        {
+            icon: FaRupeeSign,
+            title: "Transparent, upfront pricing",
+            description: "Clear fixed prices on every service. Book for a small amount and pay the rest only after the work is done.",
+            color: "from-emerald-500 to-teal-600"
+        },
+        {
+            icon: FaCalendarCheck,
+            title: "On-time, penalty-free filing",
+            description: "We track your due dates and file accurately — helping you avoid notices, penalties and late fees.",
+            color: "from-amber-500 to-orange-600"
         }
     ];
 
@@ -433,24 +484,25 @@ export default function HomePage() {
                             Why <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">ProtAcc</span>?
                         </h2>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                            Experience the future of financial services with our cutting-edge technology and expert guidance
+                            Real Chartered Accountants, clear pricing and on-time filing — tax &amp; compliance, done the way it should be.
                         </p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {features.map((feature, index) => (
-                            <div 
+                            <div
                                 key={index}
-                                className="group bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 animate-fadeInUp"
-                                style={{animationDelay: `${index * 0.1}s`}}
+                                className="group relative overflow-hidden bg-white p-7 rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 border border-gray-100 animate-fadeInUp"
+                                style={{ animationDelay: `${index * 0.08}s` }}
                             >
-                                <div className={`h-16 w-16 bg-gradient-to-r ${feature.color} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                                <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.color} scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300`} />
+                                <div className={`h-14 w-14 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-5 shadow-md group-hover:scale-110 transition-transform duration-300`}>
                                     <feature.icon className="text-2xl text-white" />
                                 </div>
-                                <h3 className="text-xl font-bold mb-4 text-gray-900 group-hover:text-indigo-600 transition-colors">
+                                <h3 className="text-lg font-bold mb-2 text-gray-900 group-hover:text-indigo-600 transition-colors">
                                     {feature.title}
                                 </h3>
-                                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                                <p className="text-gray-600 leading-relaxed text-sm">{feature.description}</p>
                             </div>
                         ))}
                     </div>
@@ -478,44 +530,71 @@ export default function HomePage() {
                             </div>
                         </div>
                     ) : (
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {categories.map((category, index) => (
-                                <Link
-                                    key={category.id}
-                                    to={`/services?category=${category.id}`}
-                                    className="group bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-gray-100 animate-fadeInUp"
-                                    style={{animationDelay: `${index * 0.1}s`}}
-                                >
-                                    <div className="text-center">
-                                        {category.icon && (
-                                            <div className="mb-6 group-hover:scale-110 transition-transform duration-300">
-                                                <div className="relative">
-                                                    <img 
-                                                        src={`${process.env.REACT_APP_PROTACC_API_BASE_URL}${category.icon}`}
-                                                        alt={category.name}
-                                                        className="w-20 h-20 mx-auto object-contain"
-                                                        onError={(e) => {
-                                                            e.target.onerror = null;
-                                                            e.target.src = '/images/default-category.svg';
-                                                        }}
-                                                    />
-                                                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                                </div>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {categories.map((category, index) => {
+                                const { Icon, gradient } = categoryStyle(category);
+                                return (
+                                    <Link
+                                        key={category.id}
+                                        to={`/services?category=${category.id}`}
+                                        className="group relative overflow-hidden bg-white rounded-3xl p-7 shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 border border-gray-100 animate-fadeInUp"
+                                        style={{ animationDelay: `${index * 0.08}s` }}
+                                    >
+                                        {/* Subtle gradient wash on hover */}
+                                        <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-[0.06] transition-opacity duration-300`} />
+                                        {/* Top accent bar */}
+                                        <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${gradient} scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300`} />
+
+                                        <div className="relative">
+                                            <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white text-2xl mb-5 shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                                                <Icon />
                                             </div>
-                                        )}
-                                        <h3 className="text-2xl font-bold mb-4 text-gray-900 group-hover:text-indigo-600 transition-colors">
-                                            {category.name}
-                                        </h3>
-                                        <p className="text-gray-600 leading-relaxed mb-6">{category.description}</p>
-                                        <div className="flex items-center justify-center text-indigo-600 font-semibold group-hover:text-indigo-700">
-                                            Explore Services 
-                                            <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                                            <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
+                                                {category.name}
+                                            </h3>
+                                            <p className="text-gray-600 leading-relaxed mb-5 line-clamp-2">{category.description}</p>
+                                            <div className="flex items-center text-indigo-600 font-semibold text-sm">
+                                                Explore services
+                                                <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                                            </div>
                                         </div>
-                                    </div>
-                                </Link>
-                            ))}
+                                    </Link>
+                                );
+                            })}
                         </div>
                     )}
+                </div>
+            </div>
+
+            {/* How It Works */}
+            <div className="py-20 bg-white">
+                <div className="container mx-auto px-4">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">How it works</h2>
+                        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                            Get your tax &amp; compliance work done in three simple steps — 100% online.
+                        </p>
+                    </div>
+                    <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                        {howItWorks.map((step, index) => (
+                            <div key={index} className="relative bg-gray-50 rounded-3xl p-8 text-center border border-gray-100">
+                                <div className="absolute top-4 right-6 text-6xl font-black text-gray-100 select-none pointer-events-none">{index + 1}</div>
+                                <div className="relative w-16 h-16 mx-auto mb-5 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center justify-center text-white text-2xl">
+                                    <step.icon />
+                                </div>
+                                <h3 className="relative text-xl font-bold text-gray-900 mb-2">{step.title}</h3>
+                                <p className="relative text-gray-600 leading-relaxed">{step.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="text-center mt-12">
+                        <Link
+                            to="/services"
+                            className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-xl transition-all"
+                        >
+                            Get started <FaArrowRight />
+                        </Link>
+                    </div>
                 </div>
             </div>
 
@@ -679,6 +758,47 @@ export default function HomePage() {
                     </div>
                 </div>
             </div>
+
+            {/* Upcoming Deadlines */}
+            {deadlines.length > 0 && (
+                <div className="py-20 bg-white">
+                    <div className="container mx-auto px-4">
+                        <div className="text-center mb-12">
+                            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Upcoming tax &amp; compliance deadlines</h2>
+                            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                                Never miss a due date — and let our Chartered Accountants handle the filing for you.
+                            </p>
+                        </div>
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
+                            {deadlines.map((d) => {
+                                const due = new Date(d.due_date);
+                                return (
+                                    <div key={d.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-shadow p-5 flex items-start gap-4">
+                                        <div className="flex-shrink-0 w-14 rounded-xl bg-indigo-50 py-2 text-center">
+                                            <div className="text-2xl font-black text-indigo-600 leading-none">{due.getDate()}</div>
+                                            <div className="text-xs uppercase text-gray-500 mt-0.5">{due.toLocaleDateString('en-IN', { month: 'short' })}</div>
+                                        </div>
+                                        <div className="min-w-0">
+                                            <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium mb-1 ${deadlineCatColor(d.category)}`}>{d.category || 'Other'}</span>
+                                            <p className="font-semibold text-gray-900 leading-snug">{d.title}</p>
+                                            {d.description && <p className="text-sm text-gray-500 mt-0.5">{d.description}</p>}
+                                            <p className="text-xs text-gray-400 mt-1">{daysUntil(d.due_date)}</p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div className="text-center mt-10">
+                            <Link
+                                to="/consultancy"
+                                className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-xl transition-all"
+                            >
+                                Need help filing? Talk to a CA <FaArrowRight />
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* FAQ Section */}
             <div className="py-20 bg-gradient-to-b from-white to-gray-50">
