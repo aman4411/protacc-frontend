@@ -29,6 +29,14 @@ import {
 } from '../../services/api';
 import toast from 'react-hot-toast';
 
+// Normalize a string into a URL-safe slug (matches the backend's slug rules).
+const slugify = (str) =>
+    (str || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
 const ServiceManagement = () => {
     const [activeTab, setActiveTab] = useState('services');
     const [services, setServices] = useState([]);
@@ -131,6 +139,8 @@ const ServiceManagement = () => {
                 submitData.requirements = submitData.requirements.split('\n').filter(r => r.trim());
                 submitData.suited_for = (submitData.suited_for || '').split('\n').filter(s => s.trim());
                 submitData.whats_included = (submitData.whats_included || '').split('\n').filter(w => w.trim());
+                // Normalize slug; empty -> backend auto-generates from the name.
+                submitData.slug = slugify(submitData.slug || '');
                 submitData.price = parseFloat(submitData.price) || 0;
                 submitData.booking_amount = parseFloat(submitData.booking_amount) || 0;
                 submitData.estimated_delivery_days = parseInt(submitData.estimated_delivery_days) || 0;
@@ -622,6 +632,32 @@ const ServiceForm = ({ formData, setFormData, categories, isReadOnly }) => {
                         ))}
                     </select>
                 </div>
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">URL Slug</label>
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        value={formData.slug || ''}
+                        onChange={(e) => handleChange('slug', e.target.value)}
+                        readOnly={isReadOnly}
+                        placeholder="auto-generated from name if left blank"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                    {!isReadOnly && (
+                        <button
+                            type="button"
+                            onClick={() => handleChange('slug', slugify(formData.name || ''))}
+                            className="px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 whitespace-nowrap"
+                        >
+                            Regenerate
+                        </button>
+                    )}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                    URL: /services/{slugify(formData.slug || formData.name || '') || '…'} — changing it keeps the old URL working via a redirect.
+                </p>
             </div>
 
             <div>

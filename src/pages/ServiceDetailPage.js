@@ -60,6 +60,13 @@ const ServiceDetailPage = () => {
         const fetchService = async () => {
             try {
                 const data = await getServiceBySlug(slug);
+
+                // If we resolved via an old slug, redirect to the canonical URL.
+                if (data.slug && data.slug !== slug) {
+                    navigate(`/services/${data.slug}`, { replace: true });
+                    return;
+                }
+
                 setService(data);
 
                 // Load reviews + aggregate for this service (non-critical).
