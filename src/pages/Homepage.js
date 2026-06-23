@@ -30,7 +30,7 @@ import {
 } from 'react-icons/fa';
 import CountUp from 'react-countup';
 import { useAuth } from '../context/AuthContext';
-import { getServiceCategories, getTopReviews, getHomepageCoupons, getUpcomingDeadlines, getBlogPosts } from '../services/api';
+import { getServiceCategories, getHomepageCoupons, getUpcomingDeadlines, getBlogPosts } from '../services/api';
 import toast from 'react-hot-toast';
 import Seo from '../components/Seo';
 import { PAGE_SEO } from '../config/seo';
@@ -80,7 +80,6 @@ export default function HomePage() {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-    const [topReviews, setTopReviews] = useState([]);
     const [promoCoupons, setPromoCoupons] = useState([]);
     const [deadlines, setDeadlines] = useState([]);
     const [latestPosts, setLatestPosts] = useState([]);
@@ -116,14 +115,9 @@ export default function HomePage() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Load top customer reviews for the testimonials section.
+    // Homepage testimonials always use the curated default reviews (see reviewsToShow below).
     useEffect(() => {
         let isMounted = true;
-        getTopReviews(6)
-            .then((data) => {
-                if (isMounted && Array.isArray(data)) setTopReviews(data);
-            })
-            .catch(() => { /* non-critical: falls back to default reviews */ });
         getHomepageCoupons()
             .then((data) => {
                 if (isMounted && Array.isArray(data)) setPromoCoupons(data);
@@ -268,14 +262,8 @@ export default function HomePage() {
     ];
 
     // Prefer real reviews; fall back to the curated text reviews above.
-    const reviewsToShow = topReviews.length > 0
-        ? topReviews.map((r) => ({
-              name: r.reviewer_name || 'Verified customer',
-              text: r.comment,
-              context: r.service_name,
-              rating: r.rating,
-          }))
-        : fallbackReviews;
+    // Always show the curated default reviews on the homepage.
+    const reviewsToShow = fallbackReviews;
 
     const features = [
         {
