@@ -614,9 +614,9 @@ export const createOrder = async (serviceId) => {
     }
 };
 
-export const createOrderFromCart = async (promoCode = '') => {
+export const createOrderFromCart = async (couponCode = '') => {
     try {
-        const body = promoCode ? { promo_code: promoCode } : {};
+        const body = couponCode ? { coupon_code: couponCode } : {};
         const response = await api.post('/orders', body);
         return response.data;
     } catch (error) {
@@ -624,20 +624,71 @@ export const createOrderFromCart = async (promoCode = '') => {
     }
 };
 
-export const validatePromoCode = async ({ code, bookingAmount, totalAmount }) => {
+// Validate a coupon against the user's current cart. Returns
+// { amounts: { subtotal, discount_amount, total_amount, booking_amount, remaining_amount }, coupon }.
+export const previewCoupon = async (code) => {
     try {
-        const response = await api.post('/promo/validate', {
-            code,
-            booking_amount: bookingAmount,
-            total_amount: totalAmount,
-        });
+        const response = await api.post('/orders/coupon/preview', { code });
         return response.data;
     } catch (error) {
-        const data = error.response?.data;
-        if (data?.message) {
-            throw data.message;
-        }
-        throw error.response?.data?.error || 'Failed to validate promo code';
+        throw error.response?.data?.error || 'Invalid coupon code';
+    }
+};
+
+// Public: coupons flagged to display on the cart page.
+export const getAvailableCoupons = async () => {
+    try {
+        const response = await api.get('/coupons/available');
+        return response.data?.coupons || [];
+    } catch (error) {
+        return []; // non-critical
+    }
+};
+
+// Public: coupons flagged for the homepage campaign banner.
+export const getHomepageCoupons = async () => {
+    try {
+        const response = await api.get('/coupons/promotions');
+        return response.data?.coupons || [];
+    } catch (error) {
+        return []; // non-critical
+    }
+};
+
+// ===== Admin: coupons =====
+export const getAdminCoupons = async () => {
+    try {
+        const response = await api.get('/admin/coupons');
+        return response.data?.coupons || [];
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch coupons';
+    }
+};
+
+export const createCoupon = async (data) => {
+    try {
+        const response = await api.post('/admin/coupons', data);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to create coupon';
+    }
+};
+
+export const updateCoupon = async (id, data) => {
+    try {
+        const response = await api.put(`/admin/coupons/${id}`, data);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to update coupon';
+    }
+};
+
+export const deleteCoupon = async (id) => {
+    try {
+        const response = await api.delete(`/admin/coupons/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to delete coupon';
     }
 };
 

@@ -12,6 +12,7 @@ import ReportsAnalytics from './ReportsAnalytics';
 import LeadManagement from './LeadManagement';
 import ContactManagement from './ContactManagement';
 import ReviewManagement from './ReviewManagement';
+import CouponManagement from './CouponManagement';
 
 const AdminDashboard = () => {
     const { user: currentUser } = useAuth();
@@ -42,6 +43,7 @@ const AdminDashboard = () => {
                 <Route path="/leads" element={<LeadManagement />} />
                 <Route path="/contacts" element={<ContactManagement />} />
                 <Route path="/reviews" element={<ReviewManagement />} />
+                <Route path="/coupons" element={<CouponManagement />} />
                 <Route path="*" element={<Navigate to="/admin" replace />} />
             </Routes>
         </AdminLayout>

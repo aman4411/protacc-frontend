@@ -25,7 +25,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
-import { removeFromCart, createOrderFromCart, createPaymentOrder, verifyPayment, validatePromoCode } from '../services/api';
+import { removeFromCart, createOrderFromCart, createPaymentOrder, verifyPayment, previewCoupon, getAvailableCoupons } from '../services/api';
 
 const CartPage = () => {
     const [removingItem, setRemovingItem] = useState(null);
@@ -36,6 +36,7 @@ const CartPage = () => {
     const [promoLoading, setPromoLoading] = useState(false);
     const [appliedPromoCode, setAppliedPromoCode] = useState('');
     const [promoDetails, setPromoDetails] = useState(null);
+    const [availableCoupons, setAvailableCoupons] = useState([]);
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
     const { cartItems, loading, removeFromCartState } = useCart();
@@ -43,6 +44,7 @@ const CartPage = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
         setTimeout(() => setAnimateIn(true), 100);
+        getAvailableCoupons().then(setAvailableCoupons).catch(() => {});
     }, []);
 
     // Redirect to login if not authenticated
@@ -162,38 +164,29 @@ const CartPage = () => {
         return { subtotal, bookingTotal };
     }, [cartItems]);
 
-    const applyPromoCode = async () => {
-        const code = promoCode.trim();
+    const applyPromoCode = async (codeArg) => {
+        const code = (typeof codeArg === 'string' && codeArg ? codeArg : promoCode).trim();
         if (!code) {
-            toast.error('Enter a promo code');
+            toast.error('Enter a coupon code');
             return;
         }
 
-        const { subtotal, bookingTotal } = getCartTotals();
+        const { bookingTotal } = getCartTotals();
         if (bookingTotal <= 0) {
-            toast.error('Add services to cart before applying a promo');
+            toast.error('Add services to cart before applying a coupon');
             return;
         }
 
         try {
             setPromoLoading(true);
-            const result = await validatePromoCode({
-                code,
-                bookingAmount: bookingTotal,
-                totalAmount: subtotal,
-            });
-
-            if (!result.valid) {
-                toast.error(result.message || 'Invalid promo code');
-                return;
-            }
-
+            const result = await previewCoupon(code);
             setPromoApplied(true);
-            setAppliedPromoCode(result.code || code.toUpperCase());
-            setPromoDetails(result);
-            toast.success(result.message || 'Promo code applied!');
+            setAppliedPromoCode(result.coupon?.code || code.toUpperCase());
+            setPromoCode(code.toUpperCase());
+            setPromoDetails(result.amounts);
+            toast.success('Coupon applied!');
         } catch (error) {
-            toast.error(typeof error === 'string' ? error : 'Invalid promo code');
+            toast.error(typeof error === 'string' ? error : 'Invalid coupon code');
             setPromoApplied(false);
             setAppliedPromoCode('');
             setPromoDetails(null);
@@ -217,36 +210,26 @@ const CartPage = () => {
         }).format(price);
     };
 
-    const calculateTotal = () => {
-        const { subtotal } = getCartTotals();
+    // Unified summary — uses the server-validated coupon breakdown when applied,
+    // otherwise the plain cart totals.
+    const getSummary = () => {
+        const { subtotal, bookingTotal } = getCartTotals();
+        if (promoApplied && promoDetails) {
+            return {
+                subtotal: promoDetails.subtotal,
+                discount: promoDetails.discount_amount,
+                total: promoDetails.total_amount,
+                bookingNow: promoDetails.booking_amount,
+                remaining: promoDetails.remaining_amount,
+            };
+        }
         return {
             subtotal,
             discount: 0,
             total: subtotal,
+            bookingNow: bookingTotal,
+            remaining: subtotal - bookingTotal,
         };
-    };
-
-    const calculateBookingTotal = () => {
-        const { bookingTotal } = getCartTotals();
-        if (promoApplied && promoDetails?.final_booking_amount != null) {
-            return promoDetails.final_booking_amount;
-        }
-        return bookingTotal;
-    };
-
-    const getBookingDiscount = () => {
-        if (promoApplied && promoDetails?.booking_discount) {
-            return promoDetails.booking_discount;
-        }
-        return 0;
-    };
-
-    const getOriginalBookingTotal = () => {
-        const { bookingTotal } = getCartTotals();
-        if (promoApplied && promoDetails?.original_booking_amount != null) {
-            return promoDetails.original_booking_amount;
-        }
-        return bookingTotal;
     };
 
     if (loading) {
@@ -322,7 +305,7 @@ const CartPage = () => {
         );
     }
 
-    const totals = calculateTotal();
+    const summary = getSummary();
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-header">
@@ -388,18 +371,18 @@ const CartPage = () => {
                             </div>
 
                             <div className="p-6 space-y-6">
-                                {/* Promo Code */}
+                                {/* Coupon Code */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Promo Code
+                                        Have a coupon?
                                     </label>
                                     <div className="flex gap-2">
                                         <input
                                             type="text"
                                             value={promoCode}
-                                            onChange={(e) => setPromoCode(e.target.value)}
-                                            placeholder="Enter code"
-                                            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                            onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                                            placeholder="Enter coupon code"
+                                            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent uppercase"
                                             disabled={promoApplied}
                                         />
                                         <button
@@ -416,46 +399,64 @@ const CartPage = () => {
                                             )}
                                         </button>
                                     </div>
-                                    {promoApplied && (
+                                    {promoApplied && summary.discount > 0 && (
                                         <div className="flex items-center gap-2 mt-2 text-green-600 text-sm">
                                             <FaCheckCircle />
-                                            <span>
-                                                {appliedPromoCode} applied – booking amount reduced by {formatPrice(getBookingDiscount())}
-                                            </span>
+                                            <span>{appliedPromoCode} applied — you save {formatPrice(summary.discount)}</span>
                                         </div>
                                     )}
-                                    <p className="text-xs text-gray-500 mt-2">
-                                        First-time customers: use code <strong>FIRST9</strong> to pay only ₹9 booking amount.
-                                    </p>
+
+                                    {!promoApplied && availableCoupons.length > 0 && (
+                                        <div className="mt-3 space-y-2">
+                                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Available offers</p>
+                                            {availableCoupons.map((c) => (
+                                                <div key={c.code} className="flex items-center justify-between border border-dashed border-indigo-300 rounded-lg px-3 py-2 bg-indigo-50/50">
+                                                    <div className="min-w-0 pr-3">
+                                                        <p className="font-semibold text-indigo-700 text-sm">{c.code}</p>
+                                                        <p className="text-xs text-gray-600">
+                                                            {c.description || (c.discount_type === 'percentage'
+                                                                ? `${c.discount_value}% off${c.max_discount_amount ? ` up to ${formatPrice(c.max_discount_amount)}` : ''}`
+                                                                : `${formatPrice(c.discount_value)} off`)}
+                                                            {c.min_order_amount ? ` · min ${formatPrice(c.min_order_amount)}` : ''}
+                                                        </p>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => applyPromoCode(c.code)}
+                                                        disabled={promoLoading}
+                                                        className="text-sm font-medium text-indigo-600 hover:text-indigo-800 disabled:opacity-50 flex-shrink-0"
+                                                    >
+                                                        Apply
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Price Breakdown */}
                                 <div className="space-y-3">
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Subtotal</span>
-                                        <span className="font-medium">{formatPrice(totals.subtotal)}</span>
+                                        <span className="font-medium">{formatPrice(summary.subtotal)}</span>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Booking Amount (Pay Now)</span>
-                                        <div className="text-right">
-                                            {promoApplied && getBookingDiscount() > 0 && (
-                                                <span className="block text-sm text-gray-400 line-through">
-                                                    {formatPrice(getOriginalBookingTotal())}
-                                                </span>
-                                            )}
-                                            <span className="font-medium text-indigo-600">{formatPrice(calculateBookingTotal())}</span>
-                                        </div>
-                                    </div>
-                                    {promoApplied && getBookingDiscount() > 0 && (
+                                    {promoApplied && summary.discount > 0 && (
                                         <div className="flex justify-between text-green-600">
-                                            <span>Promo discount ({appliedPromoCode})</span>
-                                            <span>-{formatPrice(getBookingDiscount())}</span>
+                                            <span>Discount ({appliedPromoCode})</span>
+                                            <span>-{formatPrice(summary.discount)}</span>
                                         </div>
                                     )}
-                                    <hr />
                                     <div className="flex justify-between text-lg font-bold">
-                                        <span>Total Service Value</span>
-                                        <span className="text-indigo-600">{formatPrice(totals.total)}</span>
+                                        <span>Total</span>
+                                        <span className="text-indigo-600">{formatPrice(summary.total)}</span>
+                                    </div>
+                                    <hr />
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-700 font-medium">Pay now (booking)</span>
+                                        <span className="font-bold text-indigo-600">{formatPrice(summary.bookingNow)}</span>
+                                    </div>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-500">Remaining (after completion)</span>
+                                        <span className="text-gray-600">{formatPrice(summary.remaining)}</span>
                                     </div>
                                 </div>
 
@@ -500,7 +501,7 @@ const CartPage = () => {
                                     ) : (
                                         <>
                                             <FaLock />
-                                            Pay {formatPrice(calculateBookingTotal())}
+                                            Pay {formatPrice(summary.bookingNow)}
                                         </>
                                     )}
                                 </button>

@@ -18,7 +18,7 @@ import {
 } from 'react-icons/fa';
 import CountUp from 'react-countup';
 import { useAuth } from '../context/AuthContext';
-import { getServiceCategories, getTopReviews } from '../services/api';
+import { getServiceCategories, getTopReviews, getHomepageCoupons } from '../services/api';
 import toast from 'react-hot-toast';
 import Seo from '../components/Seo';
 import { PAGE_SEO } from '../config/seo';
@@ -27,24 +27,24 @@ import { organizationSchema, faqSchema } from '../utils/structuredData';
 
 const HOME_FAQS = [
     {
-        question: 'Who is the best Chartered Accountant (CA) in Kaithal?',
-        answer: 'Protacc is a trusted CA firm in Kaithal, Haryana offering GST registration, ITR filing, company registration, TDS returns, accounting and business compliance. You can book a free consultation by calling +91 9034819324.',
+        question: 'Can I use Protacc’s CA services online from anywhere in India?',
+        answer: 'Yes. Protacc is a fully online CA service — you can file GST returns, register for GST, file your income tax return (ITR), register a company and more from anywhere in India, without visiting an office. Everything is handled digitally with expert support.',
     },
     {
-        question: 'What services does Protacc offer in Kaithal?',
+        question: 'What services does Protacc offer?',
         answer: 'Protacc provides GST registration & return filing, GST notice reply, income tax (ITR) filing, TDS return filing, private limited company / LLP / MSME registration, ROC & MCA compliance, accounting, bookkeeping, payroll, audit and tax planning services.',
     },
     {
-        question: 'Can I file my GST return or ITR online with Protacc?',
-        answer: 'Yes. Protacc offers online CA services across India. You can file GST returns, register for GST, and file your income tax return (ITR) online with expert support, without visiting the office.',
+        question: 'How does the online process work?',
+        answer: 'Choose a service, share your documents securely online, and our Chartered Accountants complete the filing or registration for you — keeping you updated at every step. You can talk to an expert over call or WhatsApp whenever you need.',
     },
     {
-        question: 'How much does GST registration or ITR filing cost?',
-        answer: 'Pricing depends on your business type and turnover. Browse our services page for transparent pricing, or book a free consultation and our tax consultants will share a quote tailored to your needs.',
+        question: 'How much do GST registration, ITR filing or company registration cost?',
+        answer: 'Pricing is transparent and listed on each service page. It depends on your business type and turnover — book a free consultation and our experts will share a quote tailored to your needs.',
     },
     {
-        question: 'Does Protacc serve areas outside Kaithal?',
-        answer: 'Yes. Besides Kaithal, Protacc serves clients across Haryana including Chandigarh and Gurgaon, and offers online CA services to businesses and individuals throughout India.',
+        question: 'Do you also serve clients locally in Kaithal and Haryana?',
+        answer: 'Yes. Protacc is based in Kaithal, Haryana, so local clients are welcome to visit — while our online services are available to individuals and businesses across all of India.',
     },
 ];
 
@@ -55,6 +55,9 @@ export default function HomePage() {
     const [loading, setLoading] = useState(true);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [topReviews, setTopReviews] = useState([]);
+    const [promoCoupons, setPromoCoupons] = useState([]);
+    const [promoIndex, setPromoIndex] = useState(0);
+    const promoPausedRef = useRef(false);
     const statsRef = useRef(null);
     const heroRef = useRef(null);
 
@@ -93,10 +96,36 @@ export default function HomePage() {
                 if (isMounted && Array.isArray(data)) setTopReviews(data);
             })
             .catch(() => { /* non-critical: falls back to default reviews */ });
+        getHomepageCoupons()
+            .then((data) => {
+                if (isMounted && Array.isArray(data)) setPromoCoupons(data);
+            })
+            .catch(() => { /* non-critical */ });
         return () => {
             isMounted = false;
         };
     }, []);
+
+    // Auto-rotate the promo banner when more than one coupon is live (pause on hover).
+    useEffect(() => {
+        if (promoCoupons.length <= 1) return undefined;
+        const id = setInterval(() => {
+            if (!promoPausedRef.current) {
+                setPromoIndex((i) => (i + 1) % promoCoupons.length);
+            }
+        }, 4500);
+        return () => clearInterval(id);
+    }, [promoCoupons.length]);
+
+    const couponOffer = (c) => c.description || (c.discount_type === 'percentage'
+        ? `${c.discount_value}% OFF${c.max_discount_amount ? ` up to ₹${c.max_discount_amount}` : ''}`
+        : `₹${c.discount_value} OFF`);
+
+    const copyCouponCode = (code) => {
+        navigator.clipboard?.writeText(code)
+            .then(() => toast.success(`Coupon ${code} copied!`))
+            .catch(() => {});
+    };
 
     useEffect(() => {
         let isMounted = true; // Flag to prevent state updates if component unmounts
@@ -250,7 +279,7 @@ export default function HomePage() {
             </div>
 
             {/* Hero Section */}
-            <div 
+            <div
                 ref={heroRef}
                 className="relative bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 text-white py-32 overflow-hidden"
             >
@@ -270,33 +299,68 @@ export default function HomePage() {
                             <div className="h-1 w-32 bg-gradient-to-r from-indigo-400 to-purple-400 mx-auto rounded-full"></div>
                         </div>
 
-                        {/* Dynamic Greeting */}
+                        {/* Headline — consistent across logged-in / logged-out */}
                         <div className="mb-8 animate-fadeInUp">
-                            {isAuthenticated ? (
-                                <div className="space-y-4">
-                                    <h2 className="text-4xl md:text-5xl font-bold">
-                                        Welcome Back, <span className="text-indigo-300">{user?.firstName}!</span>
-                                    </h2>
-                                    <p className="text-2xl text-indigo-200">
-                                        Your Financial Success Partner
-                                    </p>
-                                </div>
-                            ) : (
-                                <div className="space-y-4">
-                                    <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">Chartered Accountant</span> &amp; Tax Consultant in Kaithal
-                                    </h1>
-                                    <p className="text-xl md:text-2xl text-indigo-200 max-w-3xl mx-auto">
-                                        Protacc is your trusted CA firm in Kaithal, Haryana for GST registration, ITR filing, company registration, TDS &amp; business compliance — online across India.
-                                    </p>
-                                </div>
+                            {isAuthenticated && (
+                                <p className="text-lg text-indigo-200 mb-3">
+                                    Welcome back, <span className="text-white font-semibold">{user?.firstName}</span> 👋
+                                </p>
                             )}
+                            <div className="space-y-4">
+                                <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+                                    Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">Chartered Accountant</span> for GST, ITR &amp; Company Registration
+                                </h1>
+                                <p className="text-xl md:text-2xl text-indigo-200 max-w-3xl mx-auto">
+                                    File returns, register your business and stay compliant — 100% online, with expert Chartered Accountants serving clients across India.
+                                </p>
+                            </div>
                         </div>
+
+                        {/* Coupon / Campaign offers — auto-rotating carousel when multiple are live */}
+                        {promoCoupons.length > 0 && (() => {
+                            const current = promoCoupons[promoIndex % promoCoupons.length];
+                            return (
+                                <div className="mb-10 flex flex-col items-center animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+                                    <div
+                                        onMouseEnter={() => { promoPausedRef.current = true; }}
+                                        onMouseLeave={() => { promoPausedRef.current = false; }}
+                                        className="w-full max-w-xl flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/25 rounded-2xl px-4 py-3 text-left transition-all"
+                                    >
+                                        <span className="text-2xl flex-shrink-0">🎉</span>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="font-semibold text-white leading-tight text-sm">{couponOffer(current)}</p>
+                                            <p className="text-xs text-indigo-200 mt-0.5">
+                                                Code <span className="font-bold tracking-wide text-white">{current.code}</span>
+                                                {current.min_order_amount ? ` · above ₹${current.min_order_amount}` : ''}
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={() => copyCouponCode(current.code)}
+                                            className="flex-shrink-0 px-3 py-2 bg-white text-indigo-700 rounded-xl font-bold text-xs hover:bg-indigo-50 transition-colors"
+                                        >
+                                            Copy
+                                        </button>
+                                    </div>
+                                    {promoCoupons.length > 1 && (
+                                        <div className="flex justify-center gap-2 mt-3">
+                                            {promoCoupons.map((c, i) => (
+                                                <button
+                                                    key={c.code}
+                                                    onClick={() => setPromoIndex(i)}
+                                                    aria-label={`Show offer ${i + 1}`}
+                                                    className={`h-2 rounded-full transition-all ${i === (promoIndex % promoCoupons.length) ? 'w-6 bg-white' : 'w-2 bg-white/40 hover:bg-white/60'}`}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })()}
 
                         {/* Feature Pills */}
                         <div className="flex flex-wrap justify-center gap-4 mb-12 animate-fadeInUp" style={{animationDelay: '0.3s'}}>
                             <span className="bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full text-sm font-medium border border-white/30">
-                                ✨ AI-Powered Solutions
+                                ✨ Expert Chartered Accountants
                             </span>
                             <span className="bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full text-sm font-medium border border-white/30">
                                 🚀 Fast Processing
@@ -624,7 +688,7 @@ export default function HomePage() {
                             Frequently Asked Questions
                         </h2>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            Common questions about our CA, GST and tax services in Kaithal
+                            Common questions about our online CA, GST and tax services across India
                         </p>
                     </div>
                     <div className="max-w-3xl mx-auto space-y-4">
