@@ -544,8 +544,8 @@ const Consultancy = () => {
                                     <FaUser className="text-indigo-600" />
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-gray-800">Rajesh Kumar</div>
-                                    <div className="text-sm text-gray-600">CEO, TechStart Solutions</div>
+                                    <div className="font-semibold text-gray-800">Shreya K.</div>
+                                    <div className="text-sm text-gray-600">Business Owner</div>
                                 </div>
                             </div>
                         </div>
@@ -568,8 +568,8 @@ const Consultancy = () => {
                                     <FaUser className="text-green-600" />
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-gray-800">Priya Sharma</div>
-                                    <div className="text-sm text-gray-600">Founder, EcoFriendly Products</div>
+                                    <div className="font-semibold text-gray-800">Kunal D.</div>
+                                    <div className="text-sm text-gray-600">Business Owner</div>
                                 </div>
                             </div>
                         </div>
@@ -592,8 +592,8 @@ const Consultancy = () => {
                                     <FaUser className="text-purple-600" />
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-gray-800">Amit Patel</div>
-                                    <div className="text-sm text-gray-600">Director, Growth Ventures</div>
+                                    <div className="font-semibold text-gray-800">Sagar J.</div>
+                                    <div className="text-sm text-gray-600">Salaried Individual</div>
                                 </div>
                             </div>
                         </div>

@@ -326,11 +326,10 @@ export default function HomePage() {
 
             {/* Hero Section */}
             <div
-                ref={heroRef}
-                className="relative bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 text-white py-32 overflow-hidden"
+                className="relative bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 text-white py-24 md:py-28 overflow-hidden"
             >
-                {/* Animated Background Pattern */}
-                <div className="absolute inset-0 opacity-10">
+                {/* Animated Background Pattern — parallax applied here so hero content (incl. CTAs) stays in flow */}
+                <div ref={heroRef} className="absolute inset-0 opacity-10 will-change-transform">
                     <div className="absolute inset-0 bg-grid-pattern animate-pulse"></div>
                 </div>
                 
@@ -370,25 +369,26 @@ export default function HomePage() {
                                     <div
                                         onMouseEnter={() => { promoPausedRef.current = true; }}
                                         onMouseLeave={() => { promoPausedRef.current = false; }}
-                                        className="w-full max-w-xl flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/25 rounded-2xl px-4 py-3 text-left transition-all"
+                                        className="w-full max-w-2xl flex items-center gap-4 bg-white/15 backdrop-blur-md border border-white/30 ring-1 ring-white/10 shadow-2xl shadow-black/20 rounded-3xl px-6 py-5 text-left transition-all"
                                     >
-                                        <span className="text-2xl flex-shrink-0">🎉</span>
+                                        <span className="text-4xl md:text-5xl flex-shrink-0">🎉</span>
                                         <div className="min-w-0 flex-1">
-                                            <p className="font-semibold text-white leading-tight text-sm">{couponOffer(current)}</p>
-                                            <p className="text-xs text-indigo-200 mt-0.5">
+                                            <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-amber-300 mb-1">Limited-time offer</span>
+                                            <p className="font-bold text-white leading-snug text-lg md:text-xl">{couponOffer(current)}</p>
+                                            <p className="text-sm text-indigo-200 mt-1">
                                                 Code <span className="font-bold tracking-wide text-white">{current.code}</span>
                                                 {current.min_order_amount ? ` · above ₹${current.min_order_amount}` : ''}
                                             </p>
                                         </div>
                                         <button
                                             onClick={() => copyCouponCode(current.code)}
-                                            className="flex-shrink-0 px-3 py-2 bg-white text-indigo-700 rounded-xl font-bold text-xs hover:bg-indigo-50 transition-colors"
+                                            className="flex-shrink-0 px-6 py-3 bg-white text-indigo-700 rounded-xl font-bold text-sm md:text-base hover:bg-indigo-50 transition-colors shadow-lg"
                                         >
                                             Copy
                                         </button>
                                     </div>
                                     {promoCoupons.length > 1 && (
-                                        <div className="flex justify-center gap-2 mt-3">
+                                        <div className="flex justify-center gap-2 mt-4">
                                             {promoCoupons.map((c, i) => (
                                                 <button
                                                     key={c.code}

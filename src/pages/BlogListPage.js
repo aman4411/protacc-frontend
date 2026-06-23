@@ -57,14 +57,24 @@ const BlogListPage = () => {
         <div className="min-h-screen bg-gray-50 pt-header">
             <Seo title={seo.title} description={seo.description} keywords={seo.keywords} path={seo.path} />
 
-            <div className="bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 text-white py-20">
-                <div className="container mx-auto px-4 text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4">ProtAcc Articles</h1>
-                    <p className="text-lg text-indigo-200 max-w-2xl mx-auto">
-                        Latest amendments, announcements and expert insights on GST, income tax & compliance.
+            <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-700 text-white py-20 relative overflow-hidden">
+                {/* Decorative animated bubbles (matches Services & Consultancy headers) */}
+                <div className="absolute inset-0 bg-black opacity-10"></div>
+                <div className="absolute inset-0">
+                    <div className="absolute top-10 left-10 w-20 h-20 bg-white opacity-10 rounded-full animate-pulse"></div>
+                    <div className="absolute top-32 right-20 w-32 h-32 bg-yellow-300 opacity-10 rounded-full animate-bounce"></div>
+                    <div className="absolute bottom-10 left-1/3 w-16 h-16 bg-pink-300 opacity-10 rounded-full animate-pulse"></div>
+                </div>
+
+                <div className="container mx-auto px-4 relative z-10 text-center">
+                    <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-blue-100 to-indigo-100 bg-clip-text text-transparent">
+                        ProtAcc Articles
+                    </h1>
+                    <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+                        Latest amendments, announcements and expert insights on GST, income tax &amp; compliance.
                     </p>
                 </div>
-            </div>
+            </section>
 
             <div className="container mx-auto px-4 py-16">
                 {/* Category filter pills */}

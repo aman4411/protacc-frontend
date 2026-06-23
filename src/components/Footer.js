@@ -46,7 +46,7 @@ export default function Footer() {
             </div>
 
             {/* Newsletter Section */}
-            <div className="relative z-10 bg-gradient-to-r from-indigo-600 to-purple-600 py-12">
+            {/* <div className="relative z-10 bg-gradient-to-r from-indigo-600 to-purple-600 py-12">
                 <div className="container mx-auto px-4 text-center">
                     <h3 className="text-2xl md:text-3xl font-bold mb-4">Stay Updated with Latest Business Insights</h3>
                     <p className="text-indigo-100 mb-8 max-w-2xl mx-auto">
@@ -63,7 +63,7 @@ export default function Footer() {
                         </button>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             {/* Main Footer Content */}
             <div className="relative z-10 container mx-auto px-4 py-16">
