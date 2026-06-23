@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { 
-    FaShoppingCart, 
-    FaSpinner, 
-    FaCheckCircle, 
-    FaClock, 
-    FaFileAlt, 
+import {
+    FaShoppingCart,
+    FaSpinner,
+    FaCheckCircle,
+    FaClock,
+    FaFileAlt,
     FaCheck,
     FaStar,
     FaShieldAlt,
@@ -13,7 +13,6 @@ import {
     FaRocket,
     FaArrowLeft,
     FaShare,
-    FaHeart,
     FaCalendarAlt,
     FaRupeeSign,
     FaUsers,
@@ -21,7 +20,13 @@ import {
     FaPlay,
     FaDownload,
     FaPhone,
-    FaEnvelope
+    FaEnvelope,
+    FaWhatsapp,
+    FaFacebookF,
+    FaTwitter,
+    FaLinkedinIn,
+    FaTelegramPlane,
+    FaLink
 } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -31,6 +36,7 @@ import { SITE_CONTACT } from '../config/siteContact';
 import Seo from '../components/Seo';
 import { getCanonicalUrl } from '../config/seo';
 import { serviceSchema, breadcrumbSchema } from '../utils/structuredData';
+import Markdown from '../components/Markdown';
 
 const ServiceDetailPage = () => {
     const { slug } = useParams();
@@ -40,6 +46,8 @@ const ServiceDetailPage = () => {
     const [addingToCart, setAddingToCart] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
     const [animateIn, setAnimateIn] = useState(false);
+    const [shareOpen, setShareOpen] = useState(false);
+    const shareRef = useRef(null);
     const { isAuthenticated } = useAuth();
     const { isInCart, addToCartSmart } = useCart();
 
@@ -83,6 +91,44 @@ const ServiceDetailPage = () => {
         } finally {
             setAddingToCart(false);
         }
+    };
+
+    // Close the share menu when clicking outside it.
+    useEffect(() => {
+        if (!shareOpen) return undefined;
+        const onClickOutside = (e) => {
+            if (shareRef.current && !shareRef.current.contains(e.target)) {
+                setShareOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', onClickOutside);
+        return () => document.removeEventListener('mousedown', onClickOutside);
+    }, [shareOpen]);
+
+    const handleShare = async () => {
+        const url = getCanonicalUrl(`/services/${service.slug}`);
+        const title = `${service.name} | Protacc`;
+        // Native share sheet (mobile) — exposes WhatsApp, Facebook, Instagram, etc.
+        if (navigator.share) {
+            try {
+                await navigator.share({ title, text: service.short_description || title, url });
+            } catch (err) {
+                // User dismissed the share sheet — nothing to do.
+            }
+            return;
+        }
+        // Desktop fallback — toggle a menu of explicit share links.
+        setShareOpen((open) => !open);
+    };
+
+    const handleCopyLink = async () => {
+        try {
+            await navigator.clipboard.writeText(getCanonicalUrl(`/services/${service.slug}`));
+            toast.success('Link copied to clipboard');
+        } catch (err) {
+            toast.error('Could not copy link');
+        }
+        setShareOpen(false);
     };
 
     const formatPrice = (price) => {
@@ -212,20 +258,19 @@ const ServiceDetailPage = () => {
                                     </div>
                                 </div>
 
-                                <div className="space-y-4 mb-8">
-                                    <div className="flex items-center gap-3">
-                                        <FaCheck className="text-green-500" />
-                                        <span className="text-gray-700">Expert consultation included</span>
+                                {service.suited_for && service.suited_for.length > 0 && (
+                                    <div className="mb-8">
+                                        <h4 className="text-sm font-semibold text-gray-900 mb-3">Suited For</h4>
+                                        <div className="space-y-3">
+                                            {service.suited_for.map((item, idx) => (
+                                                <div key={idx} className="flex items-center gap-3">
+                                                    <FaCheck className="text-green-500 flex-shrink-0" />
+                                                    <span className="text-gray-700">{item}</span>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                        <FaCheck className="text-green-500" />
-                                        <span className="text-gray-700">Money-back guarantee</span>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <FaCheck className="text-green-500" />
-                                        <span className="text-gray-700">Dedicated support</span>
-                                    </div>
-                                </div>
+                                )}
 
                                 <div className="space-y-3">
                                     <button
@@ -257,15 +302,46 @@ const ServiceDetailPage = () => {
                                         )}
                                     </button>
 
-                                    <div className="flex gap-3">
-                                        <button className="flex-1 py-3 px-4 border-2 border-indigo-600 text-indigo-600 rounded-xl hover:bg-indigo-50 transition-all duration-300 flex items-center justify-center gap-2">
-                                            <FaHeart />
-                                            Save
-                                        </button>
-                                        <button className="flex-1 py-3 px-4 border-2 border-indigo-600 text-indigo-600 rounded-xl hover:bg-indigo-50 transition-all duration-300 flex items-center justify-center gap-2">
+                                    <div className="relative" ref={shareRef}>
+                                        <button
+                                            onClick={handleShare}
+                                            className="w-full py-3 px-4 border-2 border-indigo-600 text-indigo-600 rounded-xl hover:bg-indigo-50 transition-all duration-300 flex items-center justify-center gap-2"
+                                        >
                                             <FaShare />
                                             Share
                                         </button>
+
+                                        {shareOpen && (
+                                            <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-xl shadow-xl border border-gray-100 p-2 z-20">
+                                                {[
+                                                    { label: 'WhatsApp', icon: FaWhatsapp, color: 'text-green-600', href: `https://wa.me/?text=${encodeURIComponent(`${service.name} — ${getCanonicalUrl(`/services/${service.slug}`)}`)}` },
+                                                    { label: 'Facebook', icon: FaFacebookF, color: 'text-blue-600', href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getCanonicalUrl(`/services/${service.slug}`))}` },
+                                                    { label: 'X (Twitter)', icon: FaTwitter, color: 'text-sky-500', href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(getCanonicalUrl(`/services/${service.slug}`))}&text=${encodeURIComponent(service.name)}` },
+                                                    { label: 'LinkedIn', icon: FaLinkedinIn, color: 'text-blue-700', href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getCanonicalUrl(`/services/${service.slug}`))}` },
+                                                    { label: 'Telegram', icon: FaTelegramPlane, color: 'text-sky-600', href: `https://t.me/share/url?url=${encodeURIComponent(getCanonicalUrl(`/services/${service.slug}`))}&text=${encodeURIComponent(service.name)}` },
+                                                    { label: 'Email', icon: FaEnvelope, color: 'text-gray-600', href: `mailto:?subject=${encodeURIComponent(`${service.name} | Protacc`)}&body=${encodeURIComponent(getCanonicalUrl(`/services/${service.slug}`))}` },
+                                                ].map(({ label, icon: Icon, color, href }) => (
+                                                    <a
+                                                        key={label}
+                                                        href={href}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        onClick={() => setShareOpen(false)}
+                                                        className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-700 transition-colors"
+                                                    >
+                                                        <Icon className={color} />
+                                                        <span className="text-sm">{label}</span>
+                                                    </a>
+                                                ))}
+                                                <button
+                                                    onClick={handleCopyLink}
+                                                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-700 transition-colors"
+                                                >
+                                                    <FaLink className="text-indigo-600" />
+                                                    <span className="text-sm">Copy link</span>
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -309,27 +385,22 @@ const ServiceDetailPage = () => {
                         {activeTab === 'overview' && (
                             <div className="animate-fadeIn">
                                 <h3 className="text-2xl font-bold text-gray-900 mb-6">Service Overview</h3>
-                                <div className="prose prose-lg max-w-none">
-                                    <p className="text-gray-700 leading-relaxed mb-6">
-                                        {service.description}
-                                    </p>
-                                    
+                                <div className="max-w-none">
+                                    <Markdown>{service.description}</Markdown>
+
                                     <div className="grid md:grid-cols-2 gap-8 mt-8">
                                         <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-6 rounded-xl">
                                             <h4 className="text-lg font-semibold text-gray-900 mb-4">What's Included</h4>
                                             <ul className="space-y-2">
-                                                <li className="flex items-center gap-2">
-                                                    <FaCheck className="text-green-500" />
-                                                    <span>Complete documentation</span>
-                                                </li>
-                                                <li className="flex items-center gap-2">
-                                                    <FaCheck className="text-green-500" />
-                                                    <span>Expert consultation</span>
-                                                </li>
-                                                <li className="flex items-center gap-2">
-                                                    <FaCheck className="text-green-500" />
-                                                    <span>Follow-up support</span>
-                                                </li>
+                                                {(service.whats_included && service.whats_included.length > 0
+                                                    ? service.whats_included
+                                                    : ['Complete documentation', 'Expert consultation', 'Follow-up support']
+                                                ).map((item, idx) => (
+                                                    <li key={idx} className="flex items-center gap-2">
+                                                        <FaCheck className="text-green-500" />
+                                                        <span>{item}</span>
+                                                    </li>
+                                                ))}
                                             </ul>
                                         </div>
 

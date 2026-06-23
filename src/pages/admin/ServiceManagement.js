@@ -80,7 +80,9 @@ const ServiceManagement = () => {
             setFormData(item ? {
                 ...item,
                 features: Array.isArray(item.features) ? item.features.join('\n') : '',
-                requirements: Array.isArray(item.requirements) ? item.requirements.join('\n') : ''
+                requirements: Array.isArray(item.requirements) ? item.requirements.join('\n') : '',
+                suited_for: Array.isArray(item.suited_for) ? item.suited_for.join('\n') : '',
+                whats_included: Array.isArray(item.whats_included) ? item.whats_included.join('\n') : ''
             } : {
                 name: '',
                 slug: '',
@@ -88,6 +90,8 @@ const ServiceManagement = () => {
                 short_description: '',
                 features: '',
                 requirements: '',
+                suited_for: '',
+                whats_included: '',
                 price: '',
                 booking_amount: '',
                 estimated_delivery_days: '',
@@ -122,9 +126,11 @@ const ServiceManagement = () => {
             const submitData = { ...formData };
             
             if (modalEntity === 'service') {
-                // Convert features and requirements back to arrays
+                // Convert features, requirements, and suited_for back to arrays
                 submitData.features = submitData.features.split('\n').filter(f => f.trim());
                 submitData.requirements = submitData.requirements.split('\n').filter(r => r.trim());
+                submitData.suited_for = (submitData.suited_for || '').split('\n').filter(s => s.trim());
+                submitData.whats_included = (submitData.whats_included || '').split('\n').filter(w => w.trim());
                 submitData.price = parseFloat(submitData.price) || 0;
                 submitData.booking_amount = parseFloat(submitData.booking_amount) || 0;
                 submitData.estimated_delivery_days = parseInt(submitData.estimated_delivery_days) || 0;
@@ -699,6 +705,30 @@ const ServiceForm = ({ formData, setFormData, categories, isReadOnly }) => {
                     readOnly={isReadOnly}
                     rows={4}
                     placeholder="Requirement 1&#10;Requirement 2&#10;Requirement 3"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Suited For (one per line)</label>
+                <textarea
+                    value={formData.suited_for || ''}
+                    onChange={(e) => handleChange('suited_for', e.target.value)}
+                    readOnly={isReadOnly}
+                    rows={4}
+                    placeholder="Salaried Individuals&#10;Single & Multiple Employers&#10;Freelancers & Professionals"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">What's Included (one per line)</label>
+                <textarea
+                    value={formData.whats_included || ''}
+                    onChange={(e) => handleChange('whats_included', e.target.value)}
+                    readOnly={isReadOnly}
+                    rows={4}
+                    placeholder="Complete documentation&#10;Expert consultation&#10;Follow-up support"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
             </div>

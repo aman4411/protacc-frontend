@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { 
     FaShoppingCart, 
     FaSpinner, 
@@ -7,7 +7,6 @@ import {
     FaSearch, 
     FaFilter,
     FaStar,
-    FaArrowRight,
     FaClock,
     FaBoxOpen
 } from 'react-icons/fa';
@@ -397,6 +396,8 @@ const ServicesPage = () => {
 // Service Card Component
 const ServiceCard = ({ service, onAddToCart, isAdding, isInCart, isAuthenticated, index, animateIn }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const navigate = useNavigate();
+    const goToService = () => navigate(`/services/${service.slug}`);
 
     const formatPrice = (price) => {
         return new Intl.NumberFormat('en-IN', {
@@ -407,16 +408,26 @@ const ServiceCard = ({ service, onAddToCart, isAdding, isInCart, isAuthenticated
     };
 
     return (
-        <div 
-            className={`bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden group h-full flex flex-col ${
+        <div
+            className={`bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden group h-full flex flex-col cursor-pointer ${
                 animateIn ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`}
-            style={{ 
+            style={{
                 transitionDelay: `${800 + index * 100}ms`,
                 animation: animateIn ? `slideInUp 0.6s ease-out ${800 + index * 100}ms both` : 'none'
             }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            onClick={goToService}
+            role="link"
+            tabIndex={0}
+            aria-label={`View details for ${service.name}`}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    goToService();
+                }
+            }}
         >
             {/* Card Header */}
             <div className="relative p-6 bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
@@ -489,6 +500,7 @@ const ServiceCard = ({ service, onAddToCart, isAdding, isInCart, isAuthenticated
                     {isAuthenticated && isInCart ? (
                         <Link
                             to="/cart"
+                            onClick={(e) => e.stopPropagation()}
                             className="flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl"
                         >
                             <FaShoppingCart />
@@ -496,7 +508,10 @@ const ServiceCard = ({ service, onAddToCart, isAdding, isInCart, isAuthenticated
                         </Link>
                     ) : (
                         <button
-                            onClick={() => onAddToCart(service.id)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onAddToCart(service.id);
+                            }}
                             disabled={isAdding}
                             className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 ${
                                 isAdding
@@ -517,13 +532,6 @@ const ServiceCard = ({ service, onAddToCart, isAdding, isInCart, isAuthenticated
                             )}
                         </button>
                     )}
-
-                    <Link
-                        to={`/services/${service.slug}`}
-                        className="px-4 py-3 border-2 border-transparent bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
-                    >
-                        <FaArrowRight />
-                    </Link>
                 </div>
             </div>
 
