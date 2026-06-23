@@ -26,7 +26,8 @@ import {
     FaLaptop,
     FaRupeeSign,
     FaCalendarCheck,
-    FaRegNewspaper
+    FaRegNewspaper,
+    FaEnvelope
 } from 'react-icons/fa';
 import CountUp from 'react-countup';
 import { useAuth } from '../context/AuthContext';
@@ -75,7 +76,7 @@ const categoryStyle = (category) => {
 };
 
 export default function HomePage() {
-    const { isAuthenticated, user } = useAuth();
+    const { isAuthenticated } = useAuth();
     const [isStatsVisible, setIsStatsVisible] = useState(false);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -152,16 +153,17 @@ export default function HomePage() {
         return `in ${diff} days`;
     };
 
-    // Auto-rotate the promo banner when more than one coupon is live (pause on hover).
+    // Auto-rotate the promo carousel — 2 coupons per slide, sliding one coupon at a time (pause on hover).
+    const couponSlideCount = Math.max(1, promoCoupons.length - 1);
     useEffect(() => {
-        if (promoCoupons.length <= 1) return undefined;
+        if (couponSlideCount <= 1) return undefined;
         const id = setInterval(() => {
             if (!promoPausedRef.current) {
-                setPromoIndex((i) => (i + 1) % promoCoupons.length);
+                setPromoIndex((i) => (i + 1) % couponSlideCount);
             }
-        }, 4500);
+        }, 5000);
         return () => clearInterval(id);
-    }, [promoCoupons.length]);
+    }, [couponSlideCount]);
 
     const couponOffer = (c) => c.description || (c.discount_type === 'percentage'
         ? `${c.discount_value}% OFF${c.max_discount_amount ? ` up to ₹${c.max_discount_amount}` : ''}`
@@ -346,11 +348,6 @@ export default function HomePage() {
 
                         {/* Headline — consistent across logged-in / logged-out */}
                         <div className="mb-8 animate-fadeInUp">
-                            {isAuthenticated && (
-                                <p className="text-lg text-indigo-200 mb-3">
-                                    Welcome back, <span className="text-white font-semibold">{user?.firstName}</span> 👋
-                                </p>
-                            )}
                             <div className="space-y-4">
                                 <h1 className="text-4xl md:text-6xl font-bold leading-tight">
                                     Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">Chartered Accountant</span> for GST, ITR &amp; Company Registration
@@ -360,48 +357,6 @@ export default function HomePage() {
                                 </p>
                             </div>
                         </div>
-
-                        {/* Coupon / Campaign offers — auto-rotating carousel when multiple are live */}
-                        {promoCoupons.length > 0 && (() => {
-                            const current = promoCoupons[promoIndex % promoCoupons.length];
-                            return (
-                                <div className="mb-10 flex flex-col items-center animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-                                    <div
-                                        onMouseEnter={() => { promoPausedRef.current = true; }}
-                                        onMouseLeave={() => { promoPausedRef.current = false; }}
-                                        className="w-full max-w-2xl flex items-center gap-4 bg-white/15 backdrop-blur-md border border-white/30 ring-1 ring-white/10 shadow-2xl shadow-black/20 rounded-3xl px-6 py-5 text-left transition-all"
-                                    >
-                                        <span className="text-4xl md:text-5xl flex-shrink-0">🎉</span>
-                                        <div className="min-w-0 flex-1">
-                                            <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-amber-300 mb-1">Limited-time offer</span>
-                                            <p className="font-bold text-white leading-snug text-lg md:text-xl">{couponOffer(current)}</p>
-                                            <p className="text-sm text-indigo-200 mt-1">
-                                                Code <span className="font-bold tracking-wide text-white">{current.code}</span>
-                                                {current.min_order_amount ? ` · above ₹${current.min_order_amount}` : ''}
-                                            </p>
-                                        </div>
-                                        <button
-                                            onClick={() => copyCouponCode(current.code)}
-                                            className="flex-shrink-0 px-6 py-3 bg-white text-indigo-700 rounded-xl font-bold text-sm md:text-base hover:bg-indigo-50 transition-colors shadow-lg"
-                                        >
-                                            Copy
-                                        </button>
-                                    </div>
-                                    {promoCoupons.length > 1 && (
-                                        <div className="flex justify-center gap-2 mt-4">
-                                            {promoCoupons.map((c, i) => (
-                                                <button
-                                                    key={c.code}
-                                                    onClick={() => setPromoIndex(i)}
-                                                    aria-label={`Show offer ${i + 1}`}
-                                                    className={`h-2 rounded-full transition-all ${i === (promoIndex % promoCoupons.length) ? 'w-6 bg-white' : 'w-2 bg-white/40 hover:bg-white/60'}`}
-                                                />
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })()}
 
                         {/* Feature Pills */}
                         <div className="flex flex-wrap justify-center gap-4 mb-12 animate-fadeInUp" style={{animationDelay: '0.3s'}}>
@@ -418,43 +373,21 @@ export default function HomePage() {
 
                         {/* CTA Buttons */}
                         <div className="flex flex-col sm:flex-row justify-center gap-6 animate-fadeInUp" style={{animationDelay: '0.6s'}}>
-                            {isAuthenticated ? (
-                                <>
-                                    <Link
-                                        to="/services"
-                                        className="group bg-gradient-to-r from-white to-indigo-50 text-indigo-600 px-10 py-4 rounded-2xl font-bold text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
-                                    >
-                                        <FaRocket className="group-hover:animate-bounce" />
-                                        Explore Services
-                                        <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
-                                    </Link>
-                                    <Link
-                                        to="/profile"
-                                        className="group border-2 border-white/50 backdrop-blur-sm text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-white hover:text-indigo-600 transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
-                                    >
-                                        <FaUserTie />
-                                        My Profile
-                                    </Link>
-                                </>
-                            ) : (
-                                <>
-                                    <Link
-                                        to="/signup"
-                                        className="group bg-gradient-to-r from-white to-indigo-50 text-indigo-600 px-10 py-4 rounded-2xl font-bold text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
-                                    >
-                                        <FaPlay className="group-hover:animate-pulse" />
-                                        Get Started Free
-                                        <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
-                                    </Link>
-                                    <Link
-                                        to="/consultancy"
-                                        className="group border-2 border-white/50 backdrop-blur-sm text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-white hover:text-indigo-600 transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
-                                    >
-                                        <FaLightbulb />
-                                        Free Consultation
-                                    </Link>
-                                </>
-                            )}
+                            <Link
+                                to="/services"
+                                className="group bg-gradient-to-r from-white to-indigo-50 text-indigo-600 px-10 py-4 rounded-2xl font-bold text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
+                            >
+                                <FaRocket className="group-hover:animate-bounce" />
+                                Our Services
+                                <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+                            </Link>
+                            <Link
+                                to="/contact"
+                                className="group border-2 border-white/50 backdrop-blur-sm text-white px-10 py-4 rounded-2xl font-bold text-lg hover:bg-white hover:text-indigo-600 transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
+                            >
+                                <FaEnvelope />
+                                Contact Us
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -470,6 +403,58 @@ export default function HomePage() {
                     <div className="w-3 h-3 bg-purple-400/40 rounded-full"></div>
                 </div>
             </div>
+
+            {/* Promo coupons — auto-rotating carousel, 2 coupons per slide */}
+            {promoCoupons.length > 0 && (() => {
+                const slideIndex = promoIndex % couponSlideCount;
+                // Sliding window of 2, advancing one coupon per slide: [c0,c1], [c1,c2], [c2,c3]...
+                const slideCoupons = promoCoupons.slice(slideIndex, slideIndex + 2);
+                return (
+                    <section className="bg-gradient-to-b from-indigo-50 to-white py-12 border-b border-gray-100">
+                        <div className="container mx-auto px-4">
+                            <div
+                                className="max-w-5xl mx-auto"
+                                onMouseEnter={() => { promoPausedRef.current = true; }}
+                                onMouseLeave={() => { promoPausedRef.current = false; }}
+                            >
+                                <div className={`grid gap-4 items-stretch ${slideCoupons.length === 1 ? 'max-w-xl mx-auto' : 'sm:grid-cols-2'}`}>
+                                    {slideCoupons.map((c) => (
+                                        <div key={c.code} className="flex items-start gap-4 bg-white rounded-2xl border border-indigo-100 shadow-sm hover:shadow-md transition-shadow px-5 py-4 h-full min-h-[112px]">
+                                            <span className="text-3xl flex-shrink-0 self-center">🎉</span>
+                                            <div className="min-w-0 flex-1">
+                                                <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-amber-500 mb-0.5">Limited-time offer</span>
+                                                <p className="font-bold text-gray-900 leading-snug text-base md:text-lg line-clamp-2">{couponOffer(c)}</p>
+                                                <p className="text-sm text-gray-500 mt-0.5">
+                                                    Code <span className="font-bold tracking-wide text-indigo-600">{c.code}</span>
+                                                    {c.min_order_amount ? ` · above ₹${c.min_order_amount}` : ''}
+                                                </p>
+                                            </div>
+                                            <button
+                                                onClick={() => copyCouponCode(c.code)}
+                                                className="flex-shrink-0 self-center px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold text-sm hover:from-indigo-700 hover:to-purple-700 transition-colors"
+                                            >
+                                                Copy
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                                {couponSlideCount > 1 && (
+                                    <div className="flex justify-center gap-2 mt-6">
+                                        {Array.from({ length: couponSlideCount }).map((_, i) => (
+                                            <button
+                                                key={i}
+                                                onClick={() => setPromoIndex(i)}
+                                                aria-label={`Show offers slide ${i + 1}`}
+                                                className={`h-2 rounded-full transition-all ${i === slideIndex ? 'w-6 bg-indigo-600' : 'w-2 bg-indigo-200 hover:bg-indigo-300'}`}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </section>
+                );
+            })()}
 
             {/* Services Section */}
             <div className="py-20 bg-white relative overflow-hidden">
@@ -507,17 +492,19 @@ export default function HomePage() {
                                         {/* Top accent bar */}
                                         <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${gradient} scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300`} />
 
-                                        <div className="relative">
-                                            <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white text-2xl mb-5 shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                                        <div className="relative flex md:block items-start gap-4 md:text-center">
+                                            <div className={`w-14 h-14 flex-shrink-0 md:mx-auto rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white text-2xl mb-0 md:mb-5 shadow-md group-hover:scale-110 transition-transform duration-300`}>
                                                 <Icon />
                                             </div>
-                                            <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
-                                                {category.name}
-                                            </h3>
-                                            <p className="text-gray-600 leading-relaxed mb-5 line-clamp-2">{category.description}</p>
-                                            <div className="flex items-center text-indigo-600 font-semibold text-sm">
-                                                Explore services
-                                                <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
+                                                    {category.name}
+                                                </h3>
+                                                <p className="text-gray-600 leading-relaxed mb-5 line-clamp-2">{category.description}</p>
+                                                <div className="flex md:justify-center items-center text-indigo-600 font-semibold text-sm">
+                                                    Explore services
+                                                    <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                                                </div>
                                             </div>
                                         </div>
                                     </Link>
@@ -605,13 +592,17 @@ export default function HomePage() {
                                 style={{ animationDelay: `${index * 0.08}s` }}
                             >
                                 <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.color} scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300`} />
-                                <div className={`h-14 w-14 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-5 shadow-md group-hover:scale-110 transition-transform duration-300`}>
-                                    <feature.icon className="text-2xl text-white" />
+                                <div className="flex md:block items-start gap-4 md:text-center">
+                                    <div className={`h-14 w-14 flex-shrink-0 md:mx-auto bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-0 md:mb-5 shadow-md group-hover:scale-110 transition-transform duration-300`}>
+                                        <feature.icon className="text-2xl text-white" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="text-lg font-bold mb-2 text-gray-900 group-hover:text-indigo-600 transition-colors">
+                                            {feature.title}
+                                        </h3>
+                                        <p className="text-gray-600 leading-relaxed text-sm">{feature.description}</p>
+                                    </div>
                                 </div>
-                                <h3 className="text-lg font-bold mb-2 text-gray-900 group-hover:text-indigo-600 transition-colors">
-                                    {feature.title}
-                                </h3>
-                                <p className="text-gray-600 leading-relaxed text-sm">{feature.description}</p>
                             </div>
                         ))}
                     </div>
