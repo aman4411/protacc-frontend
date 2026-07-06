@@ -96,6 +96,7 @@ const ServiceManagement = () => {
                 slug: '',
                 description: '',
                 short_description: '',
+                flash_note: '',
                 features: '',
                 requirements: '',
                 suited_for: '',
@@ -683,6 +684,19 @@ const ServiceForm = ({ formData, setFormData, categories, isReadOnly }) => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     required
                 />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Flash note (optional)</label>
+                <textarea
+                    value={formData.flash_note || ''}
+                    onChange={(e) => handleChange('flash_note', e.target.value)}
+                    readOnly={isReadOnly}
+                    rows={2}
+                    placeholder="e.g. Confused between FSSAI Registration and FSSAI License? Our experts will evaluate your eligibility and pick the correct category for you."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                />
+                <p className="mt-1 text-xs text-gray-400">Shown as a highlighted banner on the service overview page. Leave blank to hide it.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

@@ -26,7 +26,8 @@ import {
     FaTwitter,
     FaLinkedinIn,
     FaTelegramPlane,
-    FaLink
+    FaLink,
+    FaBullhorn
 } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -404,6 +405,16 @@ const ServiceDetailPage = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Configurable flash note (set per-service from the admin panel) */}
+            {service.flash_note && service.flash_note.trim() !== '' && (
+                <div className="container mx-auto px-4 pt-10">
+                    <div className="flex items-start gap-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl px-5 py-4 shadow-sm">
+                        <FaBullhorn className="text-amber-500 text-xl flex-shrink-0 mt-0.5 animate-pulse" />
+                        <p className="text-amber-900 font-medium leading-relaxed">{service.flash_note}</p>
+                    </div>
+                </div>
+            )}
 
             <div className="container mx-auto px-4 py-16">
                 {/* Tabs Navigation */}
