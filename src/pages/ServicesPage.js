@@ -17,6 +17,7 @@ import { getServices, getServiceCategories, addToCart } from '../services/api';
 import Seo from '../components/Seo';
 import { PAGE_SEO } from '../config/seo';
 import { formatDeliveryDays } from '../utils/delivery';
+import { priceInlineSuffix, priceNote } from '../utils/pricing';
 
 const ServicesPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -495,17 +496,23 @@ const ServiceCard = ({ service, onAddToCart, isAdding, isInCart, isAuthenticated
                 {/* Pricing */}
                 <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-gray-600">Starting from</span>
+                        <span className="text-sm text-gray-600">{service.price_type === 'onwards' ? 'Starting from' : 'Price'}</span>
                         <span className="text-sm text-gray-600">Booking Amount</span>
                     </div>
                     <div className="flex items-center justify-between">
                         <div className="text-2xl font-bold text-gray-900">
                             {formatPrice(service.price)}
+                            {priceInlineSuffix(service.price_type) && (
+                                <span className="text-sm font-semibold text-gray-500 ml-1">{priceInlineSuffix(service.price_type)}</span>
+                            )}
                         </div>
                         <div className="text-lg font-semibold text-indigo-600">
                             {formatPrice(service.booking_amount)}
                         </div>
                     </div>
+                    {priceNote(service.price_type) && (
+                        <div className="text-xs font-medium text-amber-600 mt-1">+ {priceNote(service.price_type)}</div>
+                    )}
                 </div>
 
                 {/* Actions - Always at bottom */}

@@ -27,6 +27,7 @@ import {
     updateCategoryPriority,
     updateServicePriority
 } from '../../services/api';
+import { PRICE_TYPE_OPTIONS } from '../../utils/pricing';
 import toast from 'react-hot-toast';
 
 // Normalize a string into a URL-safe slug (matches the backend's slug rules).
@@ -103,6 +104,7 @@ const ServiceManagement = () => {
                 whats_included: '',
                 price: '',
                 booking_amount: '',
+                price_type: 'fixed',
                 min_delivery_days: '',
                 max_delivery_days: '',
                 category_id: '',
@@ -697,6 +699,21 @@ const ServiceForm = ({ formData, setFormData, categories, isReadOnly }) => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
                 <p className="mt-1 text-xs text-gray-400">Shown as a highlighted banner on the service overview page. Leave blank to hide it.</p>
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Price Type</label>
+                <select
+                    value={formData.price_type || 'fixed'}
+                    onChange={(e) => handleChange('price_type', e.target.value)}
+                    disabled={isReadOnly}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                >
+                    {PRICE_TYPE_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                </select>
+                <p className="mt-1 text-xs text-gray-400">Controls how the price is shown on the site — "Onwards"/"Monthly" add a label, "Govt Charges Extra" adds a note, "Fixed" shows just the price.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

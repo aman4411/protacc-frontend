@@ -38,6 +38,7 @@ import Seo from '../components/Seo';
 import { getCanonicalUrl } from '../config/seo';
 import { serviceSchema, breadcrumbSchema } from '../utils/structuredData';
 import { formatDeliveryDays } from '../utils/delivery';
+import { priceInlineSuffix, priceNote } from '../utils/pricing';
 import Markdown from '../components/Markdown';
 
 const ServiceDetailPage = () => {
@@ -305,13 +306,20 @@ const ServiceDetailPage = () => {
                             {/* Pricing Card */}
                             <div className="bg-white bg-opacity-90 backdrop-blur-lg rounded-2xl p-8 shadow-2xl">
                                 <div className="text-center mb-6">
-                                    <div className="text-sm text-gray-600 mb-2">Starting from</div>
+                                    <div className="text-sm text-gray-600 mb-2">{service.price_type === 'onwards' ? 'Starting from' : 'Price'}</div>
                                     <div className="text-4xl font-bold text-gray-900 mb-2">
                                         {formatPrice(service.price)}
+                                        {priceInlineSuffix(service.price_type) && (
+                                            <span className="text-lg font-semibold text-gray-500 ml-1">{priceInlineSuffix(service.price_type)}</span>
+                                        )}
                                     </div>
+                                    {priceNote(service.price_type) && (
+                                        <div className="text-sm font-medium text-amber-600 mb-2">+ {priceNote(service.price_type)}</div>
+                                    )}
                                     <div className="text-lg text-indigo-600">
                                         Book now for {formatPrice(service.booking_amount)}
                                     </div>
+                                    <div className="text-xs text-gray-500 mt-1">Booking amount is refundable if we can't finalize the scope for your case.</div>
                                 </div>
 
                                 {service.suited_for && service.suited_for.length > 0 && (
