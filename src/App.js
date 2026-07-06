@@ -25,6 +25,7 @@ import ServiceDetailPage from './pages/ServiceDetailPage';
 import BlogListPage from './pages/BlogListPage';
 import BlogPostPage from './pages/BlogPostPage';
 import SearchPage from './pages/SearchPage';
+import NotFoundPage from './pages/NotFoundPage';
 import CartPage from './pages/CartPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailPage from './pages/OrderDetailPage';
@@ -115,6 +116,7 @@ function App() {
                                     </ProtectedRoute>
                                 }
                             />
+                            <Route path="*" element={<NotFoundPage />} />
                         </Route>
                     </Routes>
                     <Toaster position="top-right" />
