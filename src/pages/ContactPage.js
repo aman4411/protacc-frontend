@@ -464,12 +464,8 @@ const ContactPage = () => {
 
                                 <div className="space-y-3">
                                     <div className="flex justify-between items-center">
-                                        <span className="font-medium">Monday - Friday</span>
-                                        <span className="opacity-90">9:00 AM - 7:00 PM</span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="font-medium">Saturday</span>
-                                        <span className="opacity-90">10:00 AM - 5:00 PM</span>
+                                        <span className="font-medium">Monday - Saturday</span>
+                                        <span className="opacity-90">9:30 AM - 7:00 PM</span>
                                     </div>
                                     <div className="flex justify-between items-center">
                                         <span className="font-medium">Sunday</span>
@@ -546,25 +542,30 @@ const ContactPage = () => {
                     </div>
 
                     <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-                        <div className="aspect-w-16 aspect-h-9 bg-gray-200 flex items-center justify-center">
-                            <div className="text-center p-12">
-                                <FaMapMarkerAlt className="text-6xl text-indigo-600 mx-auto mb-4" />
-                                <h3 className="text-2xl font-bold text-gray-900 mb-2">Interactive Map</h3>
-                                <p className="text-gray-600 mb-6">
-                                    {SITE_CONTACT.address.line1}<br />
-                                    {SITE_CONTACT.address.line2}<br />
-                                    {SITE_CONTACT.address.line3}
-                                </p>
-                                <a
-                                    href={SITE_CONTACT.googleBusinessUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
-                                >
-                                    <FaMapMarkerAlt className="mr-2" />
-                                    Get Directions
-                                </a>
-                            </div>
+                        <iframe
+                            title="ProtAcc office location"
+                            src={`https://www.google.com/maps?q=${encodeURIComponent(SITE_CONTACT.address.full)}&output=embed`}
+                            width="100%"
+                            height="420"
+                            style={{ border: 0, display: 'block' }}
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                            allowFullScreen
+                        ></iframe>
+                        <div className="p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <p className="text-gray-600">
+                                <FaMapMarkerAlt className="inline text-indigo-600 mr-2" />
+                                {SITE_CONTACT.address.full}
+                            </p>
+                            <a
+                                href={SITE_CONTACT.googleBusinessUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 whitespace-nowrap"
+                            >
+                                <FaMapMarkerAlt className="mr-2" />
+                                Get Directions
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -596,7 +597,11 @@ const ContactPage = () => {
                             },
                             {
                                 question: "Do you serve clients outside of Kaithal?",
-                                answer: "Absolutely! We serve clients across India and have experience with regulations in all major states. Many of our services can be handled remotely."
+                                answer: "Absolutely! We serve clients across India and have experience with regulations in all major states. Many of our services can be handled remotely through digital communication and secure document sharing."
+                            },
+                            {
+                                question: "Do you provide on-site support at the client's location?",
+                                answer: "Yes, we provide on-site support and visit client locations whenever required for audits, compliance reviews, business consultations, and other professional services, ensuring personalized assistance wherever our clients are located."
                             }
                         ].map((faq, index) => (
                             <div key={index} className="bg-white rounded-2xl shadow-lg p-6">

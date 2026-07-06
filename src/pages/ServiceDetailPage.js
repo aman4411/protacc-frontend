@@ -36,6 +36,7 @@ import { SITE_CONTACT } from '../config/siteContact';
 import Seo from '../components/Seo';
 import { getCanonicalUrl } from '../config/seo';
 import { serviceSchema, breadcrumbSchema } from '../utils/structuredData';
+import { formatDeliveryDays } from '../utils/delivery';
 import Markdown from '../components/Markdown';
 
 const ServiceDetailPage = () => {
@@ -287,7 +288,7 @@ const ServiceDetailPage = () => {
                                 <div className="flex flex-wrap gap-4 mb-8">
                                     <div className="flex items-center gap-2 bg-white bg-opacity-20 px-4 py-2 rounded-full">
                                         <FaClock className="text-green-300" />
-                                        <span>{service.estimated_delivery_days} days delivery</span>
+                                        <span>{formatDeliveryDays(service.min_delivery_days, service.max_delivery_days)} delivery</span>
                                     </div>
                                     <div className="flex items-center gap-2 bg-white bg-opacity-20 px-4 py-2 rounded-full">
                                         <FaShieldAlt className="text-blue-300" />

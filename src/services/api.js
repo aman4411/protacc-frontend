@@ -452,7 +452,7 @@ export const getPublicSettings = async () => {
 export const getServiceCategories = async () => {
     try {
         const response = await api.get('/services/categories');
-        return response.data;
+        return response.data || []; // backend sends null for an empty list
     } catch (error) {
         throw error.response?.data?.error || 'Failed to fetch service categories';
     }
@@ -463,7 +463,7 @@ export const getServices = async (categoryId = null) => {
     try {
         const params = categoryId ? { category_id: categoryId } : {};
         const response = await api.get('/services', { params });
-        return response.data;
+        return response.data || []; // backend sends null for an empty list
     } catch (error) {
         throw error.response?.data?.error || 'Failed to fetch services';
     }

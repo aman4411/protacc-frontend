@@ -16,6 +16,7 @@ import toast from 'react-hot-toast';
 import { getServices, getServiceCategories, addToCart } from '../services/api';
 import Seo from '../components/Seo';
 import { PAGE_SEO } from '../config/seo';
+import { formatDeliveryDays } from '../utils/delivery';
 
 const ServicesPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -25,7 +26,7 @@ const ServicesPage = () => {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [priceFilter, setPriceFilter] = useState('');
-    const [sortBy, setSortBy] = useState('name');
+    const [sortBy, setSortBy] = useState('priority');
     const [loading, setLoading] = useState(true);
     const [addingToCart, setAddingToCart] = useState(null);
     const [showFilters, setShowFilters] = useState(false);
@@ -112,13 +113,9 @@ const ServicesPage = () => {
             });
         }
 
-        // Sort services
-        // Use priority sorting by default when no filters are applied
-        const hasActiveFilters = searchTerm || priceFilter || selectedCategory;
-        const effectiveSortBy = hasActiveFilters ? sortBy : 'priority';
-        
+        // Sort services — defaults to curated priority order (see sortBy initial state).
         filtered.sort((a, b) => {
-            switch (effectiveSortBy) {
+            switch (sortBy) {
                 case 'price-low':
                     return a.price - b.price;
                 case 'price-high':
@@ -182,6 +179,13 @@ const ServicesPage = () => {
         return category ? category.name : 'All Services';
     };
 
+    const DEFAULT_SERVICES_TAGLINE = 'Professional services tailored to your business needs';
+    const getSelectedCategoryDescription = () => {
+        if (!selectedCategory) return DEFAULT_SERVICES_TAGLINE;
+        const category = categories.find(cat => cat.id === selectedCategory);
+        return category?.description || DEFAULT_SERVICES_TAGLINE;
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
@@ -215,7 +219,7 @@ const ServicesPage = () => {
                             {getSelectedCategoryName()}
                         </h1>
                         <p className="text-xl md:text-2xl mb-8 text-indigo-100">
-                            Professional services tailored to your business needs
+                            {getSelectedCategoryDescription()}
                         </p>
                         <div className="flex flex-wrap justify-center gap-4 text-sm">
                             <div className="flex items-center bg-white bg-opacity-20 px-4 py-2 rounded-full">
@@ -288,6 +292,7 @@ const ServicesPage = () => {
                                     onChange={(e) => setSortBy(e.target.value)}
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                 >
+                                    <option value="priority">Recommended</option>
                                     <option value="name">Name (A-Z)</option>
                                     <option value="price-low">Price (Low to High)</option>
                                     <option value="price-high">Price (High to Low)</option>
@@ -458,7 +463,7 @@ const ServiceCard = ({ service, onAddToCart, isAdding, isInCart, isAuthenticated
                     </div>
                     <div className="flex items-center gap-1 text-sm opacity-90">
                         <FaClock />
-                        <span>{service.estimated_delivery_days} days</span>
+                        <span>{formatDeliveryDays(service.min_delivery_days, service.max_delivery_days)}</span>
                     </div>
                 </div>
             </div>

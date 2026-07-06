@@ -32,9 +32,9 @@ export const SITE_CONTACT = {
     },
 
     businessHours: {
-        weekdays: 'Mon - Sat, 9 AM to 6 PM',
-        weekdayDetail: '9:00 AM - 7:00 PM',
-        saturday: '10:00 AM - 5:00 PM',
+        weekdays: 'Mon - Sat, 9:30 AM to 7:00 PM',
+        weekdayDetail: '9:30 AM - 7:00 PM',
+        saturday: '9:30 AM - 7:00 PM',
     },
 };
 

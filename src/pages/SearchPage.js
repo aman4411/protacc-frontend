@@ -19,6 +19,7 @@ import toast from 'react-hot-toast';
 import { searchServices, addToCart } from '../services/api';
 import Seo from '../components/Seo';
 import { PAGE_SEO } from '../config/seo';
+import { formatDeliveryDays } from '../utils/delivery';
 
 // ServiceCard Component
 const ServiceCard = ({ service, addingToCart, handleAddToCart, isInCart, isAuthenticated, index }) => {
@@ -75,7 +76,7 @@ const ServiceCard = ({ service, addingToCart, handleAddToCart, isInCart, isAuthe
                     <div className="text-right">
                         <div className="flex items-center gap-1 text-sm text-indigo-600 font-medium">
                             <FaClock className="text-xs" />
-                            <span>{service.estimated_delivery_days} days</span>
+                            <span>{formatDeliveryDays(service.min_delivery_days, service.max_delivery_days)}</span>
                         </div>
                         <div className="text-xs text-gray-500">Delivery</div>
                     </div>

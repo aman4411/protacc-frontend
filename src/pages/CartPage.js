@@ -26,6 +26,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
 import { removeFromCart, createOrderFromCart, createPaymentOrder, verifyPayment, previewCoupon, getAvailableCoupons } from '../services/api';
+import { formatDeliveryDays } from '../utils/delivery';
 
 const CartPage = () => {
     const [removingItem, setRemovingItem] = useState(null);
@@ -581,7 +582,7 @@ const CartItem = ({ item, onRemove, isRemoving, index, animateIn }) => {
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-1 text-sm text-gray-600">
                                 <FaClock />
-                                <span>{item.service?.estimated_delivery_days} days</span>
+                                <span>{formatDeliveryDays(item.service?.min_delivery_days, item.service?.max_delivery_days)}</span>
                             </div>
                             <button className="flex items-center gap-1 text-sm text-gray-600 hover:text-indigo-600 transition-colors">
                                 <FaHeart />

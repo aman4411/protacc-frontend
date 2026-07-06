@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { getOrderByNumber, getOrderStatusHistory, createPaymentOrder, verifyPayment, submitReview } from '../services/api';
 import OrderDocumentsSection from '../components/orders/OrderDocumentsSection';
 import { isOrderFullyPaid, isOrderPendingBookingPayment } from '../utils/orderPayment';
+import { formatDeliveryDays, hasDeliveryEstimate } from '../utils/delivery';
 
 // Inline "rate this service" widget shown per order item once the order is paid.
 const ServiceReviewWidget = ({ serviceId, existingRating }) => {
@@ -411,12 +412,12 @@ const OrderDetailPage = () => {
                                                             <p className="font-medium text-gray-900">₹{item.price}</p>
                                                         </div>
                                                     </div>
-                                                    {item.service.estimated_delivery_days > 0 && (
+                                                    {hasDeliveryEstimate(item.service) && (
                                                         <div className="flex items-center gap-3">
                                                             <FaClock className="text-indigo-600" />
                                                             <div>
                                                                 <p className="font-medium text-gray-900">Estimated Delivery</p>
-                                                                <p className="text-gray-600">{item.service.estimated_delivery_days} days</p>
+                                                                <p className="text-gray-600">{formatDeliveryDays(item.service.min_delivery_days, item.service.max_delivery_days)}</p>
                                                             </div>
                                                         </div>
                                                     )}
