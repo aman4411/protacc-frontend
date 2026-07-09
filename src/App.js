@@ -1,5 +1,5 @@
 // src/App.js
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
@@ -19,7 +19,6 @@ import OTPVerification from './components/auth/OTPVerification';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import RedirectIfAuthenticated from './components/auth/RedirectIfAuthenticated';
 import ProfilePage from './pages/ProfilePage';
-import AdminDashboard from './pages/admin/Dashboard';
 import ServicesPage from './pages/ServicesPage';
 import ServiceDetailPage from './pages/ServiceDetailPage';
 import BlogListPage from './pages/BlogListPage';
@@ -33,6 +32,10 @@ import ScrollToTop from './components/ScrollToTop';
 import GoogleAnalytics from './components/GoogleAnalytics';
 import MicrosoftClarity from './components/MicrosoftClarity';
 // import more pages...
+
+// Admin panel is code-split: its heavy deps (TipTap/ProseMirror rich-text editor)
+// load only when an admin visits, keeping them out of the public bundle.
+const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
 
 function App() {
     return (
@@ -48,7 +51,9 @@ function App() {
                             path="admin/*"
                             element={
                                 <ProtectedRoute roles={['admin']}>
-                                    <AdminDashboard />
+                                    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-gray-500">Loading…</div>}>
+                                        <AdminDashboard />
+                                    </Suspense>
                                 </ProtectedRoute>
                             }
                         />

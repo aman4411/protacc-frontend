@@ -430,7 +430,7 @@ export default function HomePage() {
                                         <div key={c.code} className="flex items-start gap-4 bg-white rounded-2xl border border-indigo-100 shadow-sm hover:shadow-md transition-shadow px-5 py-4 h-full min-h-[112px]">
                                             <span className="text-3xl flex-shrink-0 self-center">🎉</span>
                                             <div className="min-w-0 flex-1">
-                                                <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-amber-500 mb-0.5">Limited-time offer</span>
+                                                <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-amber-700 mb-0.5">Limited-time offer</span>
                                                 <p className="font-bold text-gray-900 leading-snug text-base md:text-lg line-clamp-2">{couponOffer(c)}</p>
                                                 <p className="text-sm text-gray-500 mt-0.5">
                                                     Code <span className="font-bold tracking-wide text-indigo-600">{c.code}</span>
@@ -549,7 +549,7 @@ export default function HomePage() {
                                     className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 border border-gray-100 flex flex-col"
                                 >
                                     {post.cover_image ? (
-                                        <img src={post.cover_image} alt={post.title} className="h-44 w-full object-cover" />
+                                        <img src={post.cover_image} alt={post.title} loading="lazy" decoding="async" className="h-44 w-full object-cover" />
                                     ) : (
                                         <div className="h-44 w-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
                                             <FaRegNewspaper className="text-5xl text-white/70" />
@@ -562,7 +562,7 @@ export default function HomePage() {
                                         <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2">{post.title}</h3>
                                         {post.excerpt && <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">{post.excerpt}</p>}
                                         <div className="mt-auto flex items-center justify-between text-sm">
-                                            <span className="text-gray-400">
+                                            <span className="text-gray-500">
                                                 {(post.published_at || post.created_at) ? new Date(post.published_at || post.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}
                                             </span>
                                             <span className="text-indigo-600 font-semibold flex items-center gap-1">Read <FaArrowRight className="group-hover:translate-x-1 transition-transform" /></span>
@@ -748,7 +748,7 @@ export default function HomePage() {
                                             <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium mb-1 ${deadlineCatColor(d.category)}`}>{d.category || 'Other'}</span>
                                             <p className="font-semibold text-gray-900 leading-snug">{d.title}</p>
                                             {d.description && <p className="text-sm text-gray-500 mt-0.5">{d.description}</p>}
-                                            <p className="text-xs text-gray-400 mt-1">{daysUntil(d.due_date)}</p>
+                                            <p className="text-xs text-gray-500 mt-1">{daysUntil(d.due_date)}</p>
                                         </div>
                                     </div>
                                 );

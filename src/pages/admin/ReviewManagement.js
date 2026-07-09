@@ -228,7 +228,7 @@ const ReviewManagement = () => {
                             />
                         </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3">
                         <select
                             value={filters.status}
                             onChange={(e) => handleFilterChange('status', e.target.value)}
@@ -275,7 +275,7 @@ const ReviewManagement = () => {
                 ) : (
                     <>
                         <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
+                            <table className="w-full min-w-[720px] divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reviewer</th>

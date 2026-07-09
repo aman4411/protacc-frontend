@@ -79,7 +79,7 @@ const BlogPostPage = () => {
 
                 {post.tags && post.tags.length > 0 && (
                     <div className="mt-10 flex flex-wrap items-center gap-2">
-                        <FaTag className="text-gray-400" />
+                        <FaTag className="text-gray-500" />
                         {post.tags.map((tag) => (
                             <span key={tag} className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700 capitalize">{tag}</span>
                         ))}
@@ -106,7 +106,7 @@ const BlogPostPage = () => {
                                     className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 flex flex-col"
                                 >
                                     {rp.cover_image ? (
-                                        <img src={rp.cover_image} alt={rp.title} className="h-36 w-full object-cover" />
+                                        <img src={rp.cover_image} alt={rp.title} loading="lazy" decoding="async" className="h-36 w-full object-cover" />
                                     ) : (
                                         <div className="h-36 w-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
                                             <FaRegNewspaper className="text-4xl text-white/70" />
@@ -119,7 +119,7 @@ const BlogPostPage = () => {
                                         <h3 className="font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2">{rp.title}</h3>
                                         {rp.excerpt && <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 mb-4">{rp.excerpt}</p>}
                                         <div className="mt-auto flex items-center justify-between text-sm">
-                                            <span className="text-gray-400">{formatShortDate(rp.published_at || rp.created_at)}</span>
+                                            <span className="text-gray-500">{formatShortDate(rp.published_at || rp.created_at)}</span>
                                             <span className="text-indigo-600 font-semibold flex items-center gap-1">Read <FaArrowRight className="group-hover:translate-x-1 transition-transform" /></span>
                                         </div>
                                     </div>

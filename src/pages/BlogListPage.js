@@ -122,7 +122,7 @@ const BlogListPage = () => {
                                     className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 border border-gray-100 flex flex-col"
                                 >
                                     {post.cover_image ? (
-                                        <img src={post.cover_image} alt={post.title} className="h-48 w-full object-cover" />
+                                        <img src={post.cover_image} alt={post.title} loading="lazy" decoding="async" className="h-48 w-full object-cover" />
                                     ) : (
                                         <div className="h-48 w-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
                                             <FaRegNewspaper className="text-5xl text-white/70" />
@@ -135,7 +135,7 @@ const BlogListPage = () => {
                                         <h2 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2">{post.title}</h2>
                                         {post.excerpt && <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">{post.excerpt}</p>}
                                         <div className="mt-auto flex items-center justify-between text-sm">
-                                            <span className="text-gray-400">{formatDate(post.published_at || post.created_at)}</span>
+                                            <span className="text-gray-500">{formatDate(post.published_at || post.created_at)}</span>
                                             <span className="text-indigo-600 font-semibold flex items-center gap-1">Read <FaArrowRight className="group-hover:translate-x-1 transition-transform" /></span>
                                         </div>
                                     </div>

@@ -264,12 +264,12 @@ const ServiceManagement = () => {
                     </div>
 
                     {/* Filters */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3">
                         {activeTab === 'services' && (
                             <select
                                 value={filters.category}
                                 onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
-                                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                             >
                                 <option value="">All Categories</option>
                                 {categories.map(category => (
@@ -283,7 +283,7 @@ const ServiceManagement = () => {
                         <select
                             value={filters.status}
                             onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                         >
                             <option value="">All Status</option>
                             <option value="active">Active</option>
@@ -292,7 +292,7 @@ const ServiceManagement = () => {
 
                         <button
                             onClick={() => handleOpenModal('create', activeTab === 'services' ? 'service' : 'category')}
-                            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
                         >
                             <FaPlus />
                             Add {activeTab === 'services' ? 'Service' : 'Category'}
@@ -355,7 +355,7 @@ const ServicesTable = ({ services, categories, onEdit, onView, onDelete }) => {
 
     return (
         <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table className="w-full min-w-[720px] divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                     <tr>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -443,7 +443,7 @@ const ServicesTable = ({ services, categories, onEdit, onView, onDelete }) => {
 const CategoriesTable = ({ categories, onEdit, onView, onDelete }) => {
     return (
         <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table className="w-full min-w-[720px] divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                     <tr>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">

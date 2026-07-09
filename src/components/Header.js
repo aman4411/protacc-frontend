@@ -382,9 +382,10 @@ export default function Header() {
                             {/* Cart Button */}
                             <Link
                                 to="/cart"
+                                aria-label="Cart"
                                 className="relative p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-300"
                             >
-                                <FaShoppingCart className="text-lg" />
+                                <FaShoppingCart className="text-lg" aria-hidden="true" />
                                 {cartCount > 0 && (
                                     <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-pulse">
                                         {cartCount}
