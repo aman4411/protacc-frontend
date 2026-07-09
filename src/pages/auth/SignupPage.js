@@ -1,9 +1,11 @@
 import React from 'react';
 import SignupForm from '../../components/auth/SignupForm';
+import Seo from '../../components/Seo';
 
 const SignupPage = () => {
     return (
         <div className="min-h-screen bg-white flex pt-header">
+            <Seo title="Sign Up | ProtAcc" path="/signup" noindex />
             {/* Left side - Features/Benefits */}
             <div className="hidden lg:flex lg:flex-1 bg-white border-r border-gray-100 p-12 flex-col justify-center">
                 <div className="max-w-md mx-auto">

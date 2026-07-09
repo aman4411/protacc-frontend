@@ -2,16 +2,12 @@
 User-agent: *
 Allow: /
 
-# Private / low-value pages for crawlers
+# Admin area — never crawl
 Disallow: /admin
-Disallow: /login
-Disallow: /signup
-Disallow: /cart
-Disallow: /orders
-Disallow: /profile
-Disallow: /verify-email
-Disallow: /forgot-password
-Disallow: /reset-password
-Disallow: /search
+
+# Note: user/utility pages (cart, login, signup, orders, profile, search,
+# password reset, email verification) are intentionally crawlable but carry a
+# `noindex` meta tag. That lets Google read the tag and drop them from results,
+# instead of indexing them URL-only and surfacing them as sitelinks.
 
 Sitemap: https://protacc.in/sitemap.xml

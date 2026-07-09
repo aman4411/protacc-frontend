@@ -28,6 +28,7 @@ import toast from 'react-hot-toast';
 import { removeFromCart, createOrderFromCart, createPaymentOrder, verifyPayment, previewCoupon, getAvailableCoupons } from '../services/api';
 import { formatDeliveryDays } from '../utils/delivery';
 import { trackPurchase } from '../utils/analytics';
+import Seo from '../components/Seo';
 
 const CartPage = () => {
     const [removingItem, setRemovingItem] = useState(null);
@@ -312,6 +313,7 @@ const CartPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-header">
+            <Seo title="Your Cart | ProtAcc" path="/cart" noindex />
             {/* Hero Section */}
             <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-700 text-white py-16">
                 <div className="container mx-auto px-4">
