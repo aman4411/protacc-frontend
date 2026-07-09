@@ -4,6 +4,7 @@ import { FaSpinner, FaArrowRight, FaRegNewspaper, FaChevronLeft, FaChevronRight 
 import { getBlogPosts, getArticleCategories } from '../services/api';
 import Seo from '../components/Seo';
 import { PAGE_SEO } from '../config/seo';
+import { sizedImage } from '../utils/images';
 
 const PAGE_SIZE = 9;
 const formatDate = (iso) => (iso ? new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
@@ -122,7 +123,7 @@ const BlogListPage = () => {
                                     className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 border border-gray-100 flex flex-col"
                                 >
                                     {post.cover_image ? (
-                                        <img src={post.cover_image} alt={post.title} loading="lazy" decoding="async" className="h-48 w-full object-cover" />
+                                        <img src={sizedImage(post.cover_image, 600)} alt={post.title} loading="lazy" decoding="async" className="h-48 w-full object-cover" />
                                     ) : (
                                         <div className="h-48 w-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
                                             <FaRegNewspaper className="text-5xl text-white/70" />

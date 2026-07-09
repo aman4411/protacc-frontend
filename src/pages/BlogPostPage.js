@@ -5,6 +5,7 @@ import { FaSpinner, FaArrowLeft, FaArrowRight, FaTag, FaRegNewspaper } from 'rea
 import { getBlogPost, getRelatedPosts } from '../services/api';
 import Seo from '../components/Seo';
 import { blogPostingSchema } from '../utils/structuredData';
+import { sizedImage } from '../utils/images';
 
 const formatDate = (iso) => (iso ? new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '');
 const formatShortDate = (iso) => (iso ? new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
@@ -71,7 +72,7 @@ const BlogPostPage = () => {
                 <p className="text-gray-500 mb-8">{formatDate(post.published_at || post.created_at)}</p>
 
                 {post.cover_image && (
-                    <img src={post.cover_image} alt={post.title} className="w-full rounded-2xl mb-8 object-cover" />
+                    <img src={sizedImage(post.cover_image, 1000)} alt={post.title} decoding="async" className="w-full rounded-2xl mb-8 object-cover" />
                 )}
 
                 {/* eslint-disable-next-line react/no-danger */}
@@ -106,7 +107,7 @@ const BlogPostPage = () => {
                                     className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 flex flex-col"
                                 >
                                     {rp.cover_image ? (
-                                        <img src={rp.cover_image} alt={rp.title} loading="lazy" decoding="async" className="h-36 w-full object-cover" />
+                                        <img src={sizedImage(rp.cover_image, 400)} alt={rp.title} loading="lazy" decoding="async" className="h-36 w-full object-cover" />
                                     ) : (
                                         <div className="h-36 w-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
                                             <FaRegNewspaper className="text-4xl text-white/70" />

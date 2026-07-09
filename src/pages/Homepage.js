@@ -36,6 +36,7 @@ import toast from 'react-hot-toast';
 import Seo from '../components/Seo';
 import { PAGE_SEO } from '../config/seo';
 import { organizationSchema, faqSchema } from '../utils/structuredData';
+import { sizedImage } from '../utils/images';
 
 
 const HOME_FAQS = [
@@ -549,7 +550,7 @@ export default function HomePage() {
                                     className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 border border-gray-100 flex flex-col"
                                 >
                                     {post.cover_image ? (
-                                        <img src={post.cover_image} alt={post.title} loading="lazy" decoding="async" className="h-44 w-full object-cover" />
+                                        <img src={sizedImage(post.cover_image, 600)} alt={post.title} loading="lazy" decoding="async" className="h-44 w-full object-cover" />
                                     ) : (
                                         <div className="h-44 w-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
                                             <FaRegNewspaper className="text-5xl text-white/70" />
@@ -742,7 +743,7 @@ export default function HomePage() {
                                     <div key={d.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-shadow p-5 flex items-start gap-4">
                                         <div className="flex-shrink-0 w-14 rounded-xl bg-indigo-50 py-2 text-center">
                                             <div className="text-2xl font-black text-indigo-600 leading-none">{due.getDate()}</div>
-                                            <div className="text-xs uppercase text-gray-500 mt-0.5">{due.toLocaleDateString('en-IN', { month: 'short' })}</div>
+                                            <div className="text-xs uppercase text-gray-600 mt-0.5">{due.toLocaleDateString('en-IN', { month: 'short' })}</div>
                                         </div>
                                         <div className="min-w-0">
                                             <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium mb-1 ${deadlineCatColor(d.category)}`}>{d.category || 'Other'}</span>

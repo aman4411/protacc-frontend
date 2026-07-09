@@ -477,9 +477,11 @@ export default function Header() {
                             {/* Mobile Menu Button */}
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+                                aria-expanded={mobileMenuOpen}
                                 className="lg:hidden p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-300"
                             >
-                                {mobileMenuOpen ? <FaTimes /> : <FaBars />}
+                                {mobileMenuOpen ? <FaTimes aria-hidden="true" /> : <FaBars aria-hidden="true" />}
                             </button>
                         </div>
                     </div>
