@@ -98,6 +98,9 @@ const ServiceManagement = () => {
                 description: '',
                 short_description: '',
                 flash_note: '',
+                seo_title: '',
+                seo_description: '',
+                faqs: [],
                 features: '',
                 requirements: '',
                 suited_for: '',
@@ -606,6 +609,15 @@ const ServiceForm = ({ formData, setFormData, categories, isReadOnly }) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
+    const faqs = Array.isArray(formData.faqs) ? formData.faqs : [];
+    const addFaq = () => setFormData(prev => ({ ...prev, faqs: [...(Array.isArray(prev.faqs) ? prev.faqs : []), { question: '', answer: '' }] }));
+    const updateFaq = (idx, field, value) => setFormData(prev => {
+        const next = [...(Array.isArray(prev.faqs) ? prev.faqs : [])];
+        next[idx] = { ...next[idx], [field]: value };
+        return { ...prev, faqs: next };
+    });
+    const removeFaq = (idx) => setFormData(prev => ({ ...prev, faqs: (Array.isArray(prev.faqs) ? prev.faqs : []).filter((_, i) => i !== idx) }));
+
     return (
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -699,6 +711,84 @@ const ServiceForm = ({ formData, setFormData, categories, isReadOnly }) => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
                 <p className="mt-1 text-xs text-gray-400">Shown as a highlighted banner on the service overview page. Leave blank to hide it.</p>
+            </div>
+
+            {/* SEO fields */}
+            <div className="rounded-lg border border-gray-200 p-4 space-y-4">
+                <p className="text-sm font-semibold text-gray-700">SEO (optional — overrides the auto-generated title/description on Google)</p>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">SEO title</label>
+                    <input
+                        value={formData.seo_title || ''}
+                        onChange={(e) => handleChange('seo_title', e.target.value)}
+                        readOnly={isReadOnly}
+                        maxLength={70}
+                        placeholder="e.g. GST Registration Online — Fees, Documents & Process | ProtAcc"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                    <p className="mt-1 text-xs text-gray-400">Keep under ~60 characters. Leave blank to auto-generate from the service name.</p>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">SEO meta description</label>
+                    <textarea
+                        value={formData.seo_description || ''}
+                        onChange={(e) => handleChange('seo_description', e.target.value)}
+                        readOnly={isReadOnly}
+                        rows={2}
+                        maxLength={200}
+                        placeholder="1–2 sentences with the main keyword — shown as the description in Google results."
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                    <p className="mt-1 text-xs text-gray-400">Keep under ~155 characters. Leave blank to use the short description.</p>
+                </div>
+            </div>
+
+            {/* FAQ editor */}
+            <div className="rounded-lg border border-gray-200 p-4">
+                <div className="flex items-center justify-between mb-3">
+                    <div>
+                        <p className="text-sm font-semibold text-gray-700">FAQs</p>
+                        <p className="text-xs text-gray-400">Shown on the service page and emitted as FAQ structured data for Google rich results.</p>
+                    </div>
+                    {!isReadOnly && (
+                        <button type="button" onClick={addFaq} className="flex items-center gap-1 px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                            <FaPlus className="text-xs" /> Add FAQ
+                        </button>
+                    )}
+                </div>
+                {faqs.length === 0 ? (
+                    <p className="text-sm text-gray-400">No FAQs yet.</p>
+                ) : (
+                    <div className="space-y-4">
+                        {faqs.map((faq, idx) => (
+                            <div key={idx} className="rounded-md border border-gray-100 bg-gray-50 p-3 space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-xs font-medium text-gray-500">FAQ {idx + 1}</span>
+                                    {!isReadOnly && (
+                                        <button type="button" onClick={() => removeFaq(idx)} className="text-red-500 hover:text-red-700 text-sm" title="Remove">
+                                            <FaTrash />
+                                        </button>
+                                    )}
+                                </div>
+                                <input
+                                    value={faq.question || ''}
+                                    onChange={(e) => updateFaq(idx, 'question', e.target.value)}
+                                    readOnly={isReadOnly}
+                                    placeholder="Question — e.g. What documents are required for GST registration?"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                />
+                                <textarea
+                                    value={faq.answer || ''}
+                                    onChange={(e) => updateFaq(idx, 'answer', e.target.value)}
+                                    readOnly={isReadOnly}
+                                    rows={2}
+                                    placeholder="Answer"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
 
             <div>

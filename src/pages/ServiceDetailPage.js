@@ -27,16 +27,19 @@ import {
     FaLinkedinIn,
     FaTelegramPlane,
     FaLink,
-    FaBullhorn
+    FaBullhorn,
+    FaUserTie,
+    FaQuestionCircle,
+    FaArrowRight
 } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
-import { getServiceBySlug, addToCart, getServiceReviews, getReviewEligibility, submitReview } from '../services/api';
+import { getServiceBySlug, addToCart, getServiceReviews, getReviewEligibility, submitReview, getServices } from '../services/api';
 import { SITE_CONTACT } from '../config/siteContact';
 import Seo from '../components/Seo';
 import { getCanonicalUrl } from '../config/seo';
-import { serviceSchema, breadcrumbSchema } from '../utils/structuredData';
+import { serviceSchema, breadcrumbSchema, faqSchema } from '../utils/structuredData';
 import { formatDeliveryDays } from '../utils/delivery';
 import { priceInlineSuffix, priceNote } from '../utils/pricing';
 import Markdown from '../components/Markdown';
@@ -56,6 +59,7 @@ const ServiceDetailPage = () => {
     const [eligibility, setEligibility] = useState(null);
     const [reviewForm, setReviewForm] = useState({ rating: 0, comment: '' });
     const [submittingReview, setSubmittingReview] = useState(false);
+    const [relatedServices, setRelatedServices] = useState([]);
     const { isAuthenticated } = useAuth();
     const { isInCart, addToCartSmart } = useCart();
 
@@ -71,6 +75,14 @@ const ServiceDetailPage = () => {
                 }
 
                 setService(data);
+
+                // Related services from the same category (internal linking, non-critical).
+                if (data.category_id) {
+                    try {
+                        const catServices = await getServices(data.category_id);
+                        setRelatedServices((catServices || []).filter((s) => s.id !== data.id).slice(0, 3));
+                    } catch (e) { /* non-critical */ }
+                }
 
                 // Load reviews + aggregate for this service (non-critical).
                 try {
@@ -216,14 +228,20 @@ const ServiceDetailPage = () => {
         );
     }
 
+    // SEO title/description: admin-set fields take priority, otherwise a
+    // keyword-friendly fallback so no service page ships with a bare title.
+    const seoTitle = service.seo_title?.trim()
+        ? service.seo_title.trim()
+        : `${service.name} — Fees, Process & Documents | ProtAcc`;
     const serviceDescription =
+        (service.seo_description?.trim()) ||
         service.short_description ||
         (service.description ? String(service.description).slice(0, 160) : undefined);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-header">
             <Seo
-                title={`${service.name} | ProtAcc`}
+                title={seoTitle}
                 description={serviceDescription}
                 path={`/services/${service.slug}`}
                 type="product"
@@ -234,6 +252,7 @@ const ServiceDetailPage = () => {
                         { name: 'Services', url: getCanonicalUrl('/services') },
                         { name: service.name, url: getCanonicalUrl(`/services/${service.slug}`) },
                     ]),
+                    ...(service.faqs && service.faqs.length > 0 ? [faqSchema(service.faqs)] : []),
                 ]}
                 jsonLdId="protacc-service-jsonld"
             />
@@ -434,13 +453,17 @@ const ServiceDetailPage = () => {
                             { id: 'overview', label: 'Overview', icon: FaFileAlt },
                             { id: 'features', label: 'Features', icon: FaRocket },
                             { id: 'requirements', label: 'Requirements', icon: FaCheckCircle },
+                            ...(service.faqs && service.faqs.length > 0 ? [{ id: 'faqs', label: 'FAQs', icon: FaQuestionCircle }] : []),
                             { id: 'reviews', label: 'Reviews', icon: FaStar },
                         ].map((tab) => {
                             const Icon = tab.icon;
                             return (
                                 <button
                                     key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
+                                    onClick={() => {
+                                        setActiveTab(tab.id);
+                                        document.getElementById(`svc-${tab.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                    }}
                                     className={`flex items-center gap-2 px-6 py-4 font-medium transition-all duration-300 ${
                                         activeTab === tab.id
                                             ? 'text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50'
@@ -455,9 +478,9 @@ const ServiceDetailPage = () => {
                     </div>
 
                     <div className="p-8">
-                        {/* Overview Tab */}
-                        {activeTab === 'overview' && (
-                            <div className="animate-fadeIn">
+                        {/* Overview */}
+                        {(
+                            <div id="svc-overview" className="animate-fadeIn scroll-mt-28 mb-10">
                                 <h3 className="text-2xl font-bold text-gray-900 mb-6">Service Overview</h3>
                                 <div className="max-w-none">
                                     <Markdown>{service.description}</Markdown>
@@ -479,20 +502,26 @@ const ServiceDetailPage = () => {
                                         </div>
 
                                         <div className="bg-gradient-to-br from-purple-50 to-pink-100 p-6 rounded-xl">
-                                            <h4 className="text-lg font-semibold text-gray-900 mb-4">Why Choose Us</h4>
+                                            <h4 className="text-lg font-semibold text-gray-900 mb-4">Why choose ProtAcc</h4>
                                             <ul className="space-y-2">
                                                 <li className="flex items-center gap-2">
-                                                    <FaStar className="text-yellow-500" />
-                                                    <span>4.8+ rating from clients</span>
+                                                    <FaUserTie className="text-indigo-500" />
+                                                    <span>Handled by qualified Chartered Accountants</span>
                                                 </li>
                                                 <li className="flex items-center gap-2">
-                                                    <FaUsers className="text-blue-500" />
-                                                    <span>500+ satisfied customers</span>
+                                                    <FaFileAlt className="text-purple-500" />
+                                                    <span>Transparent, upfront pricing — no hidden charges</span>
                                                 </li>
                                                 <li className="flex items-center gap-2">
                                                     <FaShieldAlt className="text-green-500" />
-                                                    <span>100% money-back guarantee</span>
+                                                    <span>100% online with secure document handling</span>
                                                 </li>
+                                                {reviewSummary.count > 0 && (
+                                                    <li className="flex items-center gap-2">
+                                                        <FaStar className="text-yellow-500" />
+                                                        <span>{reviewSummary.average.toFixed(1)}★ from {reviewSummary.count} verified {reviewSummary.count === 1 ? 'review' : 'reviews'}</span>
+                                                    </li>
+                                                )}
                                             </ul>
                                         </div>
                                     </div>
@@ -500,9 +529,9 @@ const ServiceDetailPage = () => {
                             </div>
                         )}
 
-                        {/* Features Tab */}
-                        {activeTab === 'features' && (
-                            <div className="animate-fadeIn">
+                        {/* Features */}
+                        {(
+                            <div id="svc-features" className="animate-fadeIn scroll-mt-28 mb-10">
                                 <h3 className="text-2xl font-bold text-gray-900 mb-6">Key Features</h3>
                                 {service.features && service.features.length > 0 ? (
                                     <div className="grid md:grid-cols-2 gap-4">
@@ -519,9 +548,9 @@ const ServiceDetailPage = () => {
                             </div>
                         )}
 
-                        {/* Requirements Tab */}
-                        {activeTab === 'requirements' && (
-                            <div className="animate-fadeIn">
+                        {/* Requirements */}
+                        {(
+                            <div id="svc-requirements" className="animate-fadeIn scroll-mt-28 mb-10">
                                 <h3 className="text-2xl font-bold text-gray-900 mb-6">Requirements</h3>
                                 {service.requirements && service.requirements.length > 0 ? (
                                     <div className="space-y-4">
@@ -538,9 +567,27 @@ const ServiceDetailPage = () => {
                             </div>
                         )}
 
-                        {/* Reviews Tab */}
-                        {activeTab === 'reviews' && (
-                            <div className="animate-fadeIn">
+                        {/* FAQs */}
+                        {service.faqs && service.faqs.length > 0 && (
+                            <div id="svc-faqs" className="animate-fadeIn scroll-mt-28 mb-10">
+                                <h3 className="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h3>
+                                <div className="space-y-4">
+                                    {service.faqs.map((faq, idx) => (
+                                        <details key={idx} className="group bg-gray-50 rounded-xl border border-gray-100 p-5">
+                                            <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-gray-900">
+                                                {faq.question}
+                                                <span className="ml-4 text-indigo-600 transition-transform group-open:rotate-45">+</span>
+                                            </summary>
+                                            <p className="mt-3 text-gray-600 leading-relaxed">{faq.answer}</p>
+                                        </details>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Reviews */}
+                        {(
+                            <div id="svc-reviews" className="animate-fadeIn scroll-mt-28 mb-10">
                                 <h3 className="text-2xl font-bold text-gray-900 mb-6">Customer Reviews</h3>
 
                                 {/* Review Summary */}
@@ -670,6 +717,28 @@ const ServiceDetailPage = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Related services — same category (internal linking for SEO) */}
+            {relatedServices.length > 0 && (
+                <div className="container mx-auto px-4 pb-16">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Related services</h2>
+                    <div className="grid md:grid-cols-3 gap-6">
+                        {relatedServices.map((rs) => (
+                            <Link
+                                key={rs.id}
+                                to={`/services/${rs.slug}`}
+                                className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all p-6 flex flex-col"
+                            >
+                                <h3 className="font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">{rs.name}</h3>
+                                {rs.short_description && <p className="text-gray-600 text-sm line-clamp-2 mb-4">{rs.short_description}</p>}
+                                <span className="mt-auto text-indigo-600 font-semibold text-sm inline-flex items-center gap-1">
+                                    View details <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+                                </span>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
