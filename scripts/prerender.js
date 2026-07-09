@@ -1,15 +1,31 @@
 /* eslint-disable */
 /**
- * Prerenders the built SPA with react-snap.
- * Unlike the default static config, this:
- *   1. warms the API (Render free tier sleeps, so cold starts would snapshot empty pages),
- *   2. explicitly enumerates every service and article detail route so they are prerendered
- *      with real content (react-snap otherwise misses data-driven dynamic pages),
- *   3. allows cross-origin requests so the onrender.com API loads during prerender.
- * GA/Clarity are guarded against the ReactSnap user agent, so they do not fire here.
+ * Fail-soft prerenderer using a modern headless Chromium (Puppeteer).
+ * Replaces react-snap, whose bundled Chromium was too old to parse modern JS
+ * (optional chaining `?.`), which broke the build.
+ *
+ * Design: prerendering is a best-effort enhancement — it must NEVER fail the build.
+ * Any error (no Chromium, a page that throws, API down) is logged and skipped, and
+ * the script exits 0 so the normal SPA still deploys.
+ *
+ * It: warms the API (Render cold start), enumerates every service + article route,
+ * serves build/ on a fixed port the backend CORS allows, and writes the rendered
+ * HTML back into build/<route>/index.html.
  */
-const { run } = require('react-snap');
+const fs = require('fs');
+const path = require('path');
+const http = require('http');
 
+let puppeteer;
+try {
+    puppeteer = require('puppeteer');
+} catch (e) {
+    console.warn('[prerender] puppeteer not installed — skipping prerender (SPA still deploys)');
+    process.exit(0);
+}
+
+const BUILD = path.join(__dirname, '..', 'build');
+const PORT = 45678; // must be allowed by the backend CORS config
 const API = process.env.REACT_APP_PROTACC_API_BASE_URL || 'https://protacc-backend.onrender.com';
 
 const STATIC_ROUTES = [
@@ -23,6 +39,13 @@ const STATIC_ROUTES = [
     '/refund-policy',
 ];
 
+const MIME = {
+    '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
+    '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.gif': 'image/gif', '.svg': 'image/svg+xml',
+    '.ico': 'image/x-icon', '.webp': 'image/webp', '.woff': 'font/woff', '.woff2': 'font/woff2', '.ttf': 'font/ttf',
+    '.txt': 'text/plain', '.xml': 'application/xml', '.map': 'application/json',
+};
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function fetchJson(url) {
@@ -31,22 +54,15 @@ async function fetchJson(url) {
     return res.json();
 }
 
-// Wake the backend and wait until it responds, so prerendered pages capture real data.
 async function warmApi() {
     for (let i = 0; i < 8; i++) {
         try {
             const res = await fetch(`${API}/api/v1/services`, { headers: { Accept: 'application/json' } });
-            if (res.ok) {
-                console.log(`[prerender] API warm after ${i + 1} attempt(s)`);
-                return true;
-            }
-        } catch (e) {
-            // backend still waking up
-        }
+            if (res.ok) { console.log(`[prerender] API warm after ${i + 1} attempt(s)`); return; }
+        } catch (e) { /* still waking */ }
         await sleep(5000);
     }
-    console.warn('[prerender] API did not warm up in time — dynamic pages may be thin');
-    return false;
+    console.warn('[prerender] API did not warm up — dynamic pages may be thin');
 }
 
 async function getServiceRoutes() {
@@ -60,16 +76,45 @@ async function getArticleRoutes() {
     let totalPages = 1;
     do {
         const data = await fetchJson(`${API}/api/v1/posts?page=${page}&limit=50`);
-        (data.posts || []).forEach((p) => {
-            if (p && p.slug) routes.push(`/articles/${p.slug}`);
-        });
+        (data.posts || []).forEach((p) => { if (p && p.slug) routes.push(`/articles/${p.slug}`); });
         totalPages = (data.pagination && data.pagination.total_pages) || 1;
         page += 1;
     } while (page <= totalPages);
     return routes;
 }
 
+function startServer() {
+    return new Promise((resolve) => {
+        const server = http.createServer((req, res) => {
+            const urlPath = decodeURIComponent(req.url.split('?')[0]);
+            let file = path.join(BUILD, urlPath);
+            try {
+                if (urlPath.endsWith('/')) file = path.join(file, 'index.html');
+                if (fs.existsSync(file) && fs.statSync(file).isFile()) {
+                    res.setHeader('Content-Type', MIME[path.extname(file).toLowerCase()] || 'application/octet-stream');
+                    fs.createReadStream(file).pipe(res);
+                    return;
+                }
+            } catch (e) { /* fall through to SPA shell */ }
+            res.setHeader('Content-Type', 'text/html');
+            fs.createReadStream(path.join(BUILD, 'index.html')).pipe(res);
+        });
+        server.listen(PORT, () => resolve(server));
+    });
+}
+
+function writeHtml(route, html) {
+    const dir = route === '/' ? BUILD : path.join(BUILD, route);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'index.html'), html);
+}
+
 (async () => {
+    if (!fs.existsSync(path.join(BUILD, 'index.html'))) {
+        console.warn('[prerender] build/ not found — skipping');
+        process.exit(0);
+    }
+
     await warmApi();
 
     let dynamicRoutes = [];
@@ -81,22 +126,40 @@ async function getArticleRoutes() {
         console.warn(`[prerender] could not fetch dynamic routes: ${err.message}`);
     }
 
-    const include = [...STATIC_ROUTES, ...dynamicRoutes];
-    console.log(`[prerender] rendering ${include.length} routes`);
+    const routes = [...STATIC_ROUTES, ...dynamicRoutes];
+    console.log(`[prerender] rendering ${routes.length} routes`);
 
+    let server;
+    let browser;
     try {
-        await run({
-            source: 'build',
-            include,
-            // Serve on a fixed port that the backend CORS allows, so the API loads during prerender.
-            port: 45678,
-            // Allow cross-origin requests so the onrender.com API is not blocked here.
-            skipThirdPartyRequests: false,
-            inlineCss: false,
-            puppeteerArgs: ['--no-sandbox', '--disable-setuid-sandbox'],
-        });
+        server = await startServer();
+        browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     } catch (err) {
-        console.error('[prerender] react-snap failed:', err);
-        process.exit(1);
+        console.warn(`[prerender] could not start renderer — skipping (SPA still deploys): ${err.message}`);
+        if (server) server.close();
+        process.exit(0);
     }
+
+    let ok = 0;
+    let skipped = 0;
+    for (const route of routes) {
+        let page;
+        try {
+            page = await browser.newPage();
+            await page.goto(`http://localhost:${PORT}${route}`, { waitUntil: 'networkidle0', timeout: 45000 });
+            await sleep(300);
+            writeHtml(route, await page.content());
+            ok += 1;
+        } catch (err) {
+            skipped += 1;
+            console.warn(`[prerender] skip ${route}: ${err.message}`);
+        } finally {
+            if (page) { try { await page.close(); } catch (e) { /* ignore */ } }
+        }
+    }
+
+    try { await browser.close(); } catch (e) { /* ignore */ }
+    server.close();
+    console.log(`[prerender] done — ${ok} prerendered, ${skipped} skipped`);
+    process.exit(0);
 })();
