@@ -38,27 +38,9 @@
     "start": "craco start",
     "prebuild": "node scripts/generate-sitemap.js",
     "build": "craco build",
-    "postbuild": "react-snap",
+    "postbuild": "node scripts/prerender.js",
     "test": "craco test",
     "eject": "react-scripts eject"
-  },
-  "reactSnap": {
-    "source": "build",
-    "include": [
-      "/",
-      "/services",
-      "/consultancy",
-      "/contact",
-      "/privacy-policy",
-      "/terms-of-service",
-      "/refund-policy"
-    ],
-    "skipThirdPartyRequests": true,
-    "inlineCss": false,
-    "puppeteerArgs": [
-      "--no-sandbox",
-      "--disable-setuid-sandbox"
-    ]
   },
   "eslintConfig": {
     "extends": [

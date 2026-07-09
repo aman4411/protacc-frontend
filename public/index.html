@@ -2,6 +2,20 @@
 <html lang="en-IN">
   <head>
     <meta charset="utf-8" />
+    <!-- Polyfills for react-snap's older bundled Chromium (harmless in modern browsers). -->
+    <script>
+      (function () {
+        if (!Object.hasOwn) {
+          Object.hasOwn = function (o, k) { return Object.prototype.hasOwnProperty.call(o, k); };
+        }
+        if (!String.prototype.replaceAll) {
+          String.prototype.replaceAll = function (s, r) { return this.split(s).join(r); };
+        }
+        if (!Array.prototype.at) {
+          Array.prototype.at = function (n) { n = Math.trunc(n) || 0; if (n < 0) n += this.length; return this[n]; };
+        }
+      })();
+    </script>
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#4f46e5" />

@@ -98,22 +98,26 @@ export const blogPostingSchema = (post) => ({
 });
 
 export const serviceSchema = (service, summary = null, reviews = []) => {
+    // Modelled as Product: Google supports aggregateRating/review rich results on
+    // Product, but NOT on Service (which triggers "Invalid object type").
     const schema = {
         '@context': 'https://schema.org',
-        '@type': 'Service',
+        '@type': 'Product',
         name: service.name,
         description: service.short_description || service.description,
         url: `${SITE_URL}/services/${service.slug}`,
-        provider: {
+        image: service.cover_image || `${SITE_URL}/logo512.png`,
+        brand: {
             '@type': 'Organization',
             name: 'ProtAcc',
-            url: SITE_URL,
         },
         offers: service.price
             ? {
                   '@type': 'Offer',
                   price: service.price,
                   priceCurrency: 'INR',
+                  availability: 'https://schema.org/InStock',
+                  url: `${SITE_URL}/services/${service.slug}`,
               }
             : undefined,
     };
