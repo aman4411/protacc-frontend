@@ -6,14 +6,8 @@ import {
     FaSpinner, 
     FaEye,
     FaSearch,
-    FaFilter,
     FaTag,
     FaServicestack,
-    FaToggleOn,
-    FaToggleOff,
-    FaArrowUp,
-    FaArrowDown,
-    FaSortNumericDown
 } from 'react-icons/fa';
 import { 
     getAdminServices, 
@@ -24,8 +18,6 @@ import {
     createCategory,
     updateCategory,
     deleteCategory,
-    updateCategoryPriority,
-    updateServicePriority
 } from '../../services/api';
 import { PRICE_TYPE_OPTIONS } from '../../utils/pricing';
 import toast from 'react-hot-toast';
@@ -61,6 +53,7 @@ const ServiceManagement = () => {
 
     useEffect(() => {
         fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab]);
 
     const fetchData = async () => {
@@ -137,7 +130,6 @@ const ServiceManagement = () => {
         setProcessing(true);
 
         try {
-            let result;
             const submitData = { ...formData };
             
             if (modalEntity === 'service') {
@@ -155,18 +147,18 @@ const ServiceManagement = () => {
                 submitData.category_id = parseInt(submitData.category_id) || 0;
 
                 if (modalType === 'create') {
-                    result = await createService(submitData);
+                    await createService(submitData);
                     toast.success('Service created successfully');
                 } else {
-                    result = await updateService(selectedItem.id, submitData);
+                    await updateService(selectedItem.id, submitData);
                     toast.success('Service updated successfully');
                 }
             } else {
                 if (modalType === 'create') {
-                    result = await createCategory(submitData);
+                    await createCategory(submitData);
                     toast.success('Category created successfully');
                 } else {
-                    result = await updateCategory(selectedItem.id, submitData);
+                    await updateCategory(selectedItem.id, submitData);
                     toast.success('Category updated successfully');
                 }
             }

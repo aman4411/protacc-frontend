@@ -4,7 +4,6 @@ import {
     FaUsers, 
     FaShoppingCart, 
     FaDollarSign,
-    FaCalendarAlt,
     FaDownload,
     FaSpinner,
     FaArrowUp,
@@ -36,6 +35,7 @@ const ReportsAnalytics = () => {
 
     useEffect(() => {
         fetchAnalytics();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dateRange]);
 
     const fetchAnalytics = async () => {

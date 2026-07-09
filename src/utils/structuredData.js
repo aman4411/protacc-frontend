@@ -108,7 +108,7 @@ export const serviceSchema = (service, summary = null, reviews = []) => {
         url: `${SITE_URL}/services/${service.slug}`,
         image: service.cover_image || `${SITE_URL}/logo512.png`,
         brand: {
-            '@type': 'Organization',
+            '@type': 'Brand',
             name: 'ProtAcc',
         },
         offers: service.price

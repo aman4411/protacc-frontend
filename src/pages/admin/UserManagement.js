@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FaEdit, FaTrash, FaFilter, FaEye, FaSpinner, FaSearch, FaUserCheck, FaUserTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { getUsers, updateUserRole, deleteUser } from '../../services/api';
+import { FaFilter, FaEye, FaSpinner, FaSearch, FaUserCheck, FaUserTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { getUsers, updateUserRole } from '../../services/api';
 import UserProfile from '../../components/UserProfile';
 import toast from 'react-hot-toast';
 
@@ -29,6 +29,7 @@ const UserManagement = () => {
 
     useEffect(() => {
         fetchUsers();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filters]);
 
     const fetchUsers = async () => {

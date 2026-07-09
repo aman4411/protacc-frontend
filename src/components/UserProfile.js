@@ -6,7 +6,6 @@ import {
     FaPhone,
     FaCalendarAlt,
     FaShoppingCart,
-    FaDollarSign,
     FaEye,
     FaSpinner,
     FaCheckCircle,
@@ -29,6 +28,7 @@ const UserProfile = ({ user, onClose }) => {
         if (user) {
             fetchUserOrders();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     const fetchUserOrders = async () => {
@@ -329,7 +329,7 @@ const UserProfile = ({ user, onClose }) => {
             </div>
 
             {/* Order Details Modal */}
-            {console.log('showOrderDetails:', showOrderDetails) || showOrderDetails && (
+            {showOrderDetails && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70] p-4">
                     <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
                         {/* Order Details Header */}

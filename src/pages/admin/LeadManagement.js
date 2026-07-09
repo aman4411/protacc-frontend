@@ -13,14 +13,10 @@ import {
     FaBuilding,
     FaUser,
     FaTimes,
-    FaCalendarAlt,
-    FaStickyNote,
     FaChartLine,
     FaUsers,
     FaUserCheck,
-    FaDollarSign,
     FaClock,
-    FaExclamationTriangle,
     FaCheckCircle,
     FaBan,
     FaSync
@@ -38,7 +34,7 @@ import toast from 'react-hot-toast';
 const LeadManagement = () => {
     const [leads, setLeads] = useState([]);
     const [stats, setStats] = useState({});
-    const [users, setUsers] = useState([]);
+    const [, setUsers] = useState([]);
     const [assignableUsers, setAssignableUsers] = useState([]); // Only admin and staff users
     const [loading, setLoading] = useState(true);
     const [selectedLead, setSelectedLead] = useState(null);
@@ -83,6 +79,7 @@ const LeadManagement = () => {
         fetchLeads();
         fetchStats();
         fetchUsers();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filters]);
 
     const fetchLeads = async () => {

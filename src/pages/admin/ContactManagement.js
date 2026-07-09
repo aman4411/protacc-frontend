@@ -86,6 +86,7 @@ const ContactManagement = () => {
     useEffect(() => {
         fetchContacts();
         fetchStats();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filters]);
 
     // Handle filter changes

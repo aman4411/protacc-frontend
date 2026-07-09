@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
     FaPhone, 
     FaEnvelope, 
@@ -7,8 +7,6 @@ import {
     FaCheckCircle, 
     FaSpinner,
     FaLightbulb,
-    FaHandshake,
-    FaChartLine,
     FaShieldAlt,
     FaClock,
     FaUsers,

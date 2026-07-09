@@ -11,10 +11,6 @@ import {
     FaSpinner,
     FaSave,
     FaUndo,
-    FaPlus,
-    FaTrash,
-    FaCheck,
-    FaTimes,
     FaEdit,
     FaEye,
     FaEyeSlash
@@ -48,6 +44,7 @@ const SystemSettings = () => {
 
     useEffect(() => {
         fetchSettings();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchSettings = async () => {

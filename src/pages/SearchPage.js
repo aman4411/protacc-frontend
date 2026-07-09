@@ -157,6 +157,7 @@ const SearchPage = () => {
         
         // Trigger animation after component mounts
         setTimeout(() => setAnimateIn(true), 100);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams]);
 
     const handleSearch = useCallback(async (searchQuery = query) => {
@@ -180,6 +181,7 @@ const SearchPage = () => {
         } finally {
             setLoading(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams, query]); // Added searchParams and query to dependencies
 
     const handleInputChange = (e) => {

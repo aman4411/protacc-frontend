@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
     FaSearch, 
-    FaFilter, 
     FaEye,
     FaEdit, 
     FaSpinner, 
@@ -72,6 +71,7 @@ const OrderManagement = () => {
 
     useEffect(() => {
         fetchOrders();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filters]);
 
     const fetchOrders = async () => {

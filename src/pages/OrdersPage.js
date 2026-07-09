@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaSpinner, FaClipboardList, FaExclamationTriangle, FaSyncAlt, FaShoppingBag } from 'react-icons/fa';
+import { FaSpinner, FaExclamationTriangle, FaSyncAlt, FaShoppingBag } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { getOrders } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -119,6 +119,7 @@ const OrdersPage = () => {
         // Scroll to top when page loads
         window.scrollTo(0, 0);
         fetchOrders();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleRetry = () => {

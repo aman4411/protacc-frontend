@@ -7,6 +7,7 @@ const useScrollToTop = (dependencies = []) => {
             left: 0,
             behavior: 'auto' // Instant scroll for better UX
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, dependencies);
 };
 

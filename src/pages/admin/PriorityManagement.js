@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { 
     FaArrowUp, 
     FaArrowDown, 
-    FaSortNumericDown, 
     FaSpinner,
     FaServicestack,
     FaTag,
-    FaSave
 } from 'react-icons/fa';
 import { 
     getAdminServices, 
