@@ -12,6 +12,7 @@ const GoogleAnalytics = () => {
 
     useEffect(() => {
         if (!MEASUREMENT_ID || typeof window === 'undefined') return;
+        if (navigator.userAgent === 'ReactSnap') return; // don't load GA during prerender
 
         if (!window.gtag) {
             const script = document.createElement('script');

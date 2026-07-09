@@ -20,6 +20,7 @@ import {
 } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { createContact } from '../services/api';
+import { trackLead } from '../utils/analytics';
 import { SITE_CONTACT } from '../config/siteContact';
 import Seo from '../components/Seo';
 import { PAGE_SEO } from '../config/seo';
@@ -58,7 +59,8 @@ const ContactPage = () => {
 
         try {
             await createContact(formData);
-            
+            trackLead('contact_form');
+
             toast.success('Message sent successfully! We will get back to you soon.');
             setFormData({
                 name: '',
@@ -584,11 +586,11 @@ const ContactPage = () => {
                     <div className="space-y-6">
                         {[
                             {
-                                question: "How quickly can you respond to my inquiry?",
+                                question: "How quickly does ProtAcc respond to inquiries?",
                                 answer: "We typically respond to all inquiries within 24 hours during business days. For urgent matters, you can call us directly for immediate assistance."
                             },
                             {
-                                question: "Do you offer free consultations?",
+                                question: "Does ProtAcc offer free consultations?",
                                 answer: "Yes, we offer a free initial consultation to understand your requirements and provide preliminary guidance on the best approach for your business needs."
                             },
                             {
@@ -596,11 +598,11 @@ const ContactPage = () => {
                                 answer: "The required documents vary by service. During our initial consultation, we'll provide you with a comprehensive list of documents specific to your requirements."
                             },
                             {
-                                question: "Do you serve clients outside of Kaithal?",
+                                question: "Does ProtAcc serve clients across India?",
                                 answer: "Absolutely! We serve clients across India and have experience with regulations in all major states. Many of our services can be handled remotely through digital communication and secure document sharing."
                             },
                             {
-                                question: "Do you provide on-site support at the client's location?",
+                                question: "Does ProtAcc provide on-site support at the client's location?",
                                 answer: "Yes, we provide on-site support and visit client locations whenever required for audits, compliance reviews, business consultations, and other professional services, ensuring personalized assistance wherever our clients are located."
                             }
                         ].map((faq, index) => (

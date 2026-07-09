@@ -31,6 +31,7 @@ import OrdersPage from './pages/OrdersPage';
 import OrderDetailPage from './pages/OrderDetailPage';
 import ScrollToTop from './components/ScrollToTop';
 import GoogleAnalytics from './components/GoogleAnalytics';
+import MicrosoftClarity from './components/MicrosoftClarity';
 // import more pages...
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
                 <Router>
                     <ScrollToTop />
                     <GoogleAnalytics />
+                    <MicrosoftClarity />
                     <Routes>
                         {/* Admin Routes - Outside Layout to avoid header/footer */}
                         <Route

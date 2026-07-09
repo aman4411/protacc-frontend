@@ -17,6 +17,7 @@ import {
     FaArrowDown
 } from 'react-icons/fa';
 import { createLead } from '../services/api';
+import { trackLead } from '../utils/analytics';
 import toast from 'react-hot-toast';
 import { SITE_CONTACT } from '../config/siteContact';
 import Seo from '../components/Seo';
@@ -98,6 +99,7 @@ const Consultancy = () => {
 
         try {
             await createLead(formData);
+            trackLead('consultancy');
             setSubmitted(true);
             toast.success('Thank you! We will contact you soon.');
         } catch (error) {

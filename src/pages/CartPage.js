@@ -27,6 +27,7 @@ import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
 import { removeFromCart, createOrderFromCart, createPaymentOrder, verifyPayment, previewCoupon, getAvailableCoupons } from '../services/api';
 import { formatDeliveryDays } from '../utils/delivery';
+import { trackPurchase } from '../utils/analytics';
 
 const CartPage = () => {
     const [removingItem, setRemovingItem] = useState(null);
@@ -39,7 +40,7 @@ const CartPage = () => {
     const [promoDetails, setPromoDetails] = useState(null);
     const [availableCoupons, setAvailableCoupons] = useState([]);
     const navigate = useNavigate();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user } = useAuth();
     const { cartItems, loading, removeFromCartState } = useCart();
 
     useEffect(() => {
@@ -122,6 +123,7 @@ const CartPage = () => {
                         
                         // Dismiss verification toast and show success
                         toast.dismiss('payment-verify');
+                        trackPurchase(orderData.order_number, (paymentOrder.amount || 0) / 100);
                         toast.success('🎉 Order placed and payment successful!');
                         navigate(`/orders/${orderData.order_number}`);
                     } catch (error) {
@@ -131,9 +133,9 @@ const CartPage = () => {
                     }
                 },
                 prefill: {
-                    name: 'Customer',
-                    email: 'customer@example.com',
-                    contact: '9999999999'
+                    name: [user?.firstName, user?.lastName].filter(Boolean).join(' ').trim() || undefined,
+                    email: user?.email || undefined,
+                    contact: user?.phone || undefined
                 },
                 theme: {
                     color: '#4F46E5'

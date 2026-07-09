@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { getCartItems } from '../services/api';
+import { trackAddToCart } from '../utils/analytics';
 import { useAuth } from './AuthContext';
 
 const CartContext = createContext();
@@ -130,6 +131,7 @@ export const CartProvider = ({ children }) => {
 
     const addToCartSmart = async (serviceId, serviceData = null) => {
         addToCartState(serviceId, serviceData);
+        trackAddToCart(serviceData || { id: serviceId });
         await fetchCartItems(true);
     };
 

@@ -56,8 +56,16 @@ const HOME_FAQS = [
         answer: 'Pricing is transparent and listed on each service page. It depends on your business type and turnover — book a free consultation and our experts will share a quote tailored to your needs.',
     },
     {
-        question: 'Do you also serve clients locally in Kaithal and Haryana?',
+        question: 'Does ProtAcc also serve clients locally in Kaithal and Haryana?',
         answer: 'Yes. ProtAcc is based in Kaithal, Haryana, so local clients are welcome to visit — while our online services are available to individuals and businesses across all of India.',
+    },
+    {
+        question: 'Does ProtAcc serve clients across India?',
+        answer: 'Yes — we serve clients across India and are experienced with the regulations in all major states. Most of our services are handled remotely through secure online document sharing and digital communication.',
+    },
+    {
+        question: 'Does ProtAcc provide on-site support at the client’s location?',
+        answer: 'Yes. We provide on-site support and visit client locations whenever required — for audits, compliance reviews, business consultations and other professional services — ensuring personalised assistance wherever our clients are based.',
     },
 ];
 
