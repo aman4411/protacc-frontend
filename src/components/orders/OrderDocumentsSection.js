@@ -30,7 +30,7 @@ const DocumentCard = ({ doc }) => {
                     <div className="min-w-0">
                         <h4 className="font-semibold text-gray-900 truncate">{doc.title}</h4>
                         <p className="text-sm text-gray-500 mt-0.5">
-                            {doc.document_type === 'user_upload' ? 'Submitted by you' : 'Delivered by ProtAcc'}
+                            {doc.document_type === 'user_upload' ? 'Submitted by you' : 'Delivered by Protacc'}
                             {doc.uploader && doc.document_type === 'admin_delivery' && (
                                 <> · {doc.uploader.firstName} {doc.uploader.lastName}</>
                             )}
@@ -242,7 +242,7 @@ const OrderDocumentsSection = ({ orderId, orderStatus, isAdmin = false, onDocume
                     </h4>
                     {orderStatus === 'documents_required' && (
                         <p className="text-sm text-orange-700 bg-orange-50 border border-orange-100 rounded-lg p-3 mb-4">
-                            ProtAcc has requested documents for this order. Please share your Google Drive links below.
+                            Protacc has requested documents for this order. Please share your Google Drive links below.
                         </p>
                     )}
                     <AddDocumentForm
@@ -286,7 +286,7 @@ const OrderDocumentsSection = ({ orderId, orderStatus, isAdmin = false, onDocume
             {adminDeliveries.length > 0 && (
                 <div>
                     <h4 className="text-md font-semibold text-gray-900 mb-3">
-                        {isAdmin ? 'Deliverables Shared with Customer' : 'Documents from ProtAcc'}
+                        {isAdmin ? 'Deliverables Shared with Customer' : 'Documents from Protacc'}
                         <span className="ml-2 text-sm font-normal text-gray-500">({adminDeliveries.length})</span>
                     </h4>
                     <div className="space-y-4">

@@ -1,6 +1,6 @@
-# ProtAcc
+# Protacc
 
-> ProtAcc is a Chartered Accountant (CA) firm based in Kaithal, Haryana, offering online GST, income tax, company registration and compliance services to individuals and businesses across India.
+> Protacc is a Chartered Accountant (CA) firm based in Kaithal, Haryana, offering online GST, income tax, company registration and compliance services to individuals and businesses across India.
 
 ## Services
 
@@ -14,7 +14,7 @@
 
 - [Articles](https://protacc.in/articles): Guides and updates on GST, income tax and compliance
 - [Consultancy](https://protacc.in/consultancy): Book a free consultation with a Chartered Accountant
-- [Contact](https://protacc.in/contact): Reach the ProtAcc team
+- [Contact](https://protacc.in/contact): Reach the Protacc team
 
 ## Policies
 

@@ -253,14 +253,14 @@ export default function Header() {
                             <div className="relative">
                                 <img 
                                     src={logo} 
-                                    alt="ProtAcc" 
+                                    alt="Protacc" 
                                     className="h-12 w-12 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300 transform group-hover:scale-105"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-20 rounded-xl transition-opacity duration-300"></div>
                             </div>
                             <div className="hidden sm:block">
                                 <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                                    ProtAcc
+                                    Protacc
                                 </h1>
                                 <p className="text-xs text-gray-600">Professional Services</p>
                             </div>

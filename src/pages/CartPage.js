@@ -99,7 +99,7 @@ const CartPage = () => {
                 key: process.env.REACT_APP_RAZORPAY_KEY_ID,
                 amount: paymentOrder.amount,
                 currency: paymentOrder.currency,
-                name: 'ProtAcc Services',
+                name: 'Protacc Services',
                 description: `Payment for Order #${orderData.order_number}`,
                 order_id: paymentOrder.razorpay_order_id, // Use razorpay_order_id from backend response
                 handler: async function (response) {
@@ -270,7 +270,7 @@ const CartPage = () => {
                 <section className="py-20 bg-white">
                     <div className="container mx-auto px-4">
                         <div className="text-center mb-16">
-                            <h2 className="text-3xl font-bold text-gray-800 mb-4">Why Choose ProtAcc?</h2>
+                            <h2 className="text-3xl font-bold text-gray-800 mb-4">Why Choose Protacc?</h2>
                             <p className="text-gray-600 max-w-2xl mx-auto">Discover the benefits of our professional services</p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -308,7 +308,7 @@ const CartPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-header">
-            <Seo title="Your Cart | ProtAcc" path="/cart" noindex />
+            <Seo title="Your Cart | Protacc" path="/cart" noindex />
             {/* Hero Section */}
             <section className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-700 text-white py-16">
                 <div className="container mx-auto px-4">

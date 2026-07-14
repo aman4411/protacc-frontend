@@ -6,7 +6,7 @@ import Seo from '../components/Seo';
 const NotFoundPage = () => (
     <div className="min-h-screen bg-gray-50 pt-header flex items-center justify-center px-4 py-20">
         <Seo
-            title="Page not found | ProtAcc"
+            title="Page not found | Protacc"
             description="The page you are looking for doesn't exist or may have moved."
             path="/404"
             noindex

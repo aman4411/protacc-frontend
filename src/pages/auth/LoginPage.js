@@ -5,7 +5,7 @@ import Seo from '../../components/Seo';
 const LoginPage = () => {
     return (
         <div className="min-h-screen bg-white flex pt-header">
-            <Seo title="Login | ProtAcc" path="/login" noindex />
+            <Seo title="Login | Protacc" path="/login" noindex />
             {/* Left side - Features/Benefits */}
             <div className="hidden lg:flex lg:flex-1 bg-white border-r border-gray-100 p-12 flex-col justify-center">
                 <div className="max-w-md mx-auto">

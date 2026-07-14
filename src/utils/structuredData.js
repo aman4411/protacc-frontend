@@ -5,13 +5,13 @@ export const organizationSchema = () => ({
     '@context': 'https://schema.org',
     '@type': 'AccountingService',
     '@id': `${SITE_URL}/#organization`,
-    name: 'ProtAcc',
-    alternateName: 'ProtAcc Chartered Accountants',
+    name: 'Protacc',
+    alternateName: 'Protacc Chartered Accountants',
     url: SITE_URL,
     logo: `${SITE_URL}/logo512.png`,
     image: `${SITE_URL}/logo512.png`,
     description:
-        'ProtAcc is a Chartered Accountant and CA firm in Kaithal, Haryana offering GST registration, ITR filing, company registration, TDS returns, accounting and business compliance services across India.',
+        'Protacc is a Chartered Accountant and CA firm in Kaithal, Haryana offering GST registration, ITR filing, company registration, TDS returns, accounting and business compliance services across India.',
     telephone: SITE_CONTACT.phoneTel,
     email: SITE_CONTACT.email,
     priceRange: '₹₹',
@@ -33,8 +33,8 @@ export const organizationSchema = () => ({
         {
             '@type': 'OpeningHoursSpecification',
             dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-            opens: '09:00',
-            closes: '18:00',
+            opens: '09:30',
+            closes: '19:00',
         },
     ],
     areaServed: [
@@ -88,10 +88,10 @@ export const blogPostingSchema = (post) => ({
     datePublished: post.published_at || post.created_at,
     dateModified: post.updated_at || post.published_at || post.created_at,
     url: `${SITE_URL}/articles/${post.slug}`,
-    author: { '@type': 'Organization', name: 'ProtAcc' },
+    author: { '@type': 'Organization', name: 'Protacc' },
     publisher: {
         '@type': 'Organization',
-        name: 'ProtAcc',
+        name: 'Protacc',
         logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo512.png` },
     },
     mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/articles/${post.slug}` },
@@ -109,7 +109,7 @@ export const serviceSchema = (service, summary = null, reviews = []) => {
         image: service.cover_image || `${SITE_URL}/logo512.png`,
         brand: {
             '@type': 'Brand',
-            name: 'ProtAcc',
+            name: 'Protacc',
         },
         offers: service.price
             ? {

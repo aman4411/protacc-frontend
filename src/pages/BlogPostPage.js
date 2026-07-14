@@ -47,7 +47,7 @@ const BlogPostPage = () => {
     return (
         <div className="min-h-screen bg-white pt-header">
             <Seo
-                title={`${post.title} | ProtAcc`}
+                title={`${post.title} | Protacc`}
                 description={post.excerpt || post.title}
                 path={`/articles/${post.slug}`}
                 type="article"

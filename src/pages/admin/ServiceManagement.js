@@ -715,7 +715,7 @@ const ServiceForm = ({ formData, setFormData, categories, isReadOnly }) => {
                         onChange={(e) => handleChange('seo_title', e.target.value)}
                         readOnly={isReadOnly}
                         maxLength={70}
-                        placeholder="e.g. GST Registration Online — Fees, Documents & Process | ProtAcc"
+                        placeholder="e.g. GST Registration Online — Fees, Documents & Process | Protacc"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     />
                     <p className="mt-1 text-xs text-gray-400">Keep under ~60 characters. Leave blank to auto-generate from the service name.</p>

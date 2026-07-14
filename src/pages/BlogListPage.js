@@ -69,7 +69,7 @@ const BlogListPage = () => {
 
                 <div className="container mx-auto px-4 relative z-10 text-center">
                     <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-blue-100 to-indigo-100 bg-clip-text text-transparent">
-                        ProtAcc Articles
+                        Protacc Articles
                     </h1>
                     <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
                         Latest amendments, announcements and expert insights on GST, income tax &amp; compliance.

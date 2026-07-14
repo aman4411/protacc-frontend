@@ -167,7 +167,7 @@ const ServiceDetailPage = () => {
 
     const handleShare = async () => {
         const url = getCanonicalUrl(`/services/${service.slug}`);
-        const title = `${service.name} | ProtAcc`;
+        const title = `${service.name} | Protacc`;
         // Native share sheet (mobile) — exposes WhatsApp, Facebook, Instagram, etc.
         if (navigator.share) {
             try {
@@ -227,7 +227,7 @@ const ServiceDetailPage = () => {
     // keyword-friendly fallback so no service page ships with a bare title.
     const seoTitle = service.seo_title?.trim()
         ? service.seo_title.trim()
-        : `${service.name} — Fees, Process & Documents | ProtAcc`;
+        : `${service.name} — Fees, Process & Documents | Protacc`;
     const serviceDescription =
         (service.seo_description?.trim()) ||
         service.short_description ||
@@ -397,7 +397,7 @@ const ServiceDetailPage = () => {
                                                     { label: 'X (Twitter)', icon: FaTwitter, color: 'text-sky-500', href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(getCanonicalUrl(`/services/${service.slug}`))}&text=${encodeURIComponent(service.name)}` },
                                                     { label: 'LinkedIn', icon: FaLinkedinIn, color: 'text-blue-700', href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getCanonicalUrl(`/services/${service.slug}`))}` },
                                                     { label: 'Telegram', icon: FaTelegramPlane, color: 'text-sky-600', href: `https://t.me/share/url?url=${encodeURIComponent(getCanonicalUrl(`/services/${service.slug}`))}&text=${encodeURIComponent(service.name)}` },
-                                                    { label: 'Email', icon: FaEnvelope, color: 'text-gray-600', href: `mailto:?subject=${encodeURIComponent(`${service.name} | ProtAcc`)}&body=${encodeURIComponent(getCanonicalUrl(`/services/${service.slug}`))}` },
+                                                    { label: 'Email', icon: FaEnvelope, color: 'text-gray-600', href: `mailto:?subject=${encodeURIComponent(`${service.name} | Protacc`)}&body=${encodeURIComponent(getCanonicalUrl(`/services/${service.slug}`))}` },
                                                 ].map(({ label, icon: Icon, color, href }) => (
                                                     <a
                                                         key={label}
@@ -497,7 +497,7 @@ const ServiceDetailPage = () => {
                                         </div>
 
                                         <div className="bg-gradient-to-br from-purple-50 to-pink-100 p-6 rounded-xl">
-                                            <h4 className="text-lg font-semibold text-gray-900 mb-4">Why choose ProtAcc</h4>
+                                            <h4 className="text-lg font-semibold text-gray-900 mb-4">Why choose Protacc</h4>
                                             <ul className="space-y-2">
                                                 <li className="flex items-center gap-2">
                                                     <FaUserTie className="text-indigo-500" />

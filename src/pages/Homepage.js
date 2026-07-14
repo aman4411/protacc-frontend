@@ -41,12 +41,12 @@ import { sizedImage } from '../utils/images';
 
 const HOME_FAQS = [
     {
-        question: 'Can I use ProtAcc’s CA services online from anywhere in India?',
-        answer: 'Yes. ProtAcc is a fully online CA service — you can file GST returns, register for GST, file your income tax return (ITR), register a company and more from anywhere in India, without visiting an office. Everything is handled digitally with expert support.',
+        question: 'Can I use Protacc’s CA services online from anywhere in India?',
+        answer: 'Yes. Protacc is a fully online CA service — you can file GST returns, register for GST, file your income tax return (ITR), register a company and more from anywhere in India, without visiting an office. Everything is handled digitally with expert support.',
     },
     {
-        question: 'What services does ProtAcc offer?',
-        answer: 'ProtAcc provides GST registration & return filing, GST notice reply, income tax (ITR) filing, TDS return filing, private limited company / LLP / MSME registration, ROC & MCA compliance, accounting, bookkeeping, payroll, audit and tax planning services.',
+        question: 'What services does Protacc offer?',
+        answer: 'Protacc provides GST registration & return filing, GST notice reply, income tax (ITR) filing, TDS return filing, private limited company / LLP / MSME registration, ROC & MCA compliance, accounting, bookkeeping, payroll, audit and tax planning services.',
     },
     {
         question: 'How does the online process work?',
@@ -57,15 +57,15 @@ const HOME_FAQS = [
         answer: 'Pricing is transparent and listed on each service page. It depends on your business type and turnover — book a free consultation and our experts will share a quote tailored to your needs.',
     },
     {
-        question: 'Does ProtAcc also serve clients locally in Kaithal and Haryana?',
-        answer: 'Yes. ProtAcc is based in Kaithal, Haryana, so local clients are welcome to visit — while our online services are available to individuals and businesses across all of India.',
+        question: 'Does Protacc also serve clients locally in Kaithal and Haryana?',
+        answer: 'Yes. Protacc is based in Kaithal, Haryana, so local clients are welcome to visit — while our online services are available to individuals and businesses across all of India.',
     },
     {
-        question: 'Does ProtAcc serve clients across India?',
+        question: 'Does Protacc serve clients across India?',
         answer: 'Yes — we serve clients across India and are experienced with the regulations in all major states. Most of our services are handled remotely through secure online document sharing and digital communication.',
     },
     {
-        question: 'Does ProtAcc provide on-site support at the client’s location?',
+        question: 'Does Protacc provide on-site support at the client’s location?',
         answer: 'Yes. We provide on-site support and visit client locations whenever required — for audits, compliance reviews, business consultations and other professional services — ensuring personalised assistance wherever our clients are based.',
     },
 ];
@@ -254,7 +254,7 @@ export default function HomePage() {
     const fallbackReviews = [
         {
             name: "Rajesh K.",
-            text: "ProtAcc's expertise in tax planning and compliance has been invaluable. They helped us save significantly while staying fully compliant. Their proactive approach is remarkable!",
+            text: "Protacc's expertise in tax planning and compliance has been invaluable. They helped us save significantly while staying fully compliant. Their proactive approach is remarkable!",
             context: "Tax & Compliance",
             rating: 5
         },
@@ -347,10 +347,10 @@ export default function HomePage() {
                 {/* Hero Content */}
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="max-w-4xl mx-auto text-center">
-                        {/* ProtAcc Brand */}
+                        {/* Protacc Brand */}
                         <div className="mb-8 transform hover:scale-105 transition-all duration-500">
                             <div className="text-7xl md:text-8xl font-black mb-4 bg-gradient-to-r from-white via-indigo-200 to-purple-200 bg-clip-text text-transparent animate-gradient">
-                                ProtAcc
+                                Protacc
                             </div>
                             <div className="h-1 w-32 bg-gradient-to-r from-indigo-400 to-purple-400 mx-auto rounded-full"></div>
                         </div>
@@ -586,7 +586,7 @@ export default function HomePage() {
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-16 animate-fadeInUp">
                         <h2 className="text-5xl font-bold text-gray-900 mb-6">
-                            Why <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">ProtAcc</span>?
+                            Why <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Protacc</span>?
                         </h2>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
                             Real Chartered Accountants, clear pricing and on-time filing — tax &amp; compliance, done the way it should be.
@@ -699,7 +699,7 @@ export default function HomePage() {
                     <div className="text-center mb-16 animate-fadeInUp">
                         <h2 className="text-5xl font-bold text-gray-900 mb-6">Client Success Stories</h2>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            Discover how ProtAcc has transformed businesses across industries
+                            Discover how Protacc has transformed businesses across industries
                         </p>
                     </div>
 
@@ -812,8 +812,8 @@ export default function HomePage() {
                         </h2>
                         <p className="text-2xl text-indigo-200 mb-12 max-w-3xl mx-auto leading-relaxed">
                             {isAuthenticated
-                                ? 'Unlock new opportunities with ProtAcc\'s expert financial guidance and innovative solutions'
-                                : 'Join thousands of successful businesses who trust ProtAcc for their financial excellence'
+                                ? 'Unlock new opportunities with Protacc\'s expert financial guidance and innovative solutions'
+                                : 'Join thousands of successful businesses who trust Protacc for their financial excellence'
                             }
                         </p>
 

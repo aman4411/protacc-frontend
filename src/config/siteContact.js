@@ -1,5 +1,5 @@
 /**
- * Central contact & social details for ProtAcc website.
+ * Central contact & social details for Protacc website.
  * Update here to reflect changes across header, footer, contact pages, etc.
  */
 

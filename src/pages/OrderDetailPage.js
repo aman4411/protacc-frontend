@@ -198,7 +198,7 @@ const OrderDetailPage = () => {
                 key: razorpayKeyId,
                 amount: paymentOrder.amount,
                 currency: paymentOrder.currency,
-                name: 'ProtAcc',
+                name: 'Protacc',
                 description: `Payment for Order ${paymentOrder.order_number}`,
                 order_id: paymentOrder.razorpay_order_id,
                 handler: async (response) => {

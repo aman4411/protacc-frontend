@@ -27,13 +27,13 @@ const TermsOfServicePage = () => {
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Terms of Service</h1>
                     <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                        Terms governing your access to and use of the ProtAcc website and services.
+                        Terms governing your access to and use of the Protacc website and services.
                     </p>
                 </div>
 
                 <article className="bg-white rounded-3xl shadow-xl p-8 md:p-12 text-gray-700 leading-relaxed">
                     <p className="mb-4">
-                        Welcome to <strong>ProtAcc</strong>. These Terms of Service (&ldquo;Terms&rdquo;) govern your
+                        Welcome to <strong>Protacc</strong>. These Terms of Service (&ldquo;Terms&rdquo;) govern your
                         access to and use of our website and services. By using this website, you agree to comply with
                         these Terms.
                     </p>
@@ -46,7 +46,7 @@ const TermsOfServicePage = () => {
                     <section>
                         <h2 className="text-2xl font-bold text-gray-900 mb-4">1. About Us</h2>
                         <p className="mb-4">
-                            ProtAcc provides professional services including but not limited to:
+                            Protacc provides professional services including but not limited to:
                         </p>
                         <ul className="list-disc pl-6 space-y-2">
                             <li>Income Tax Return (ITR) Filing</li>
@@ -146,7 +146,7 @@ const TermsOfServicePage = () => {
                             <li>Content structure</li>
                         </ul>
                         <p>
-                            are the intellectual property of ProtAcc and may not be copied, reproduced, or distributed
+                            are the intellectual property of Protacc and may not be copied, reproduced, or distributed
                             without prior written permission.
                         </p>
                     </section>
@@ -155,7 +155,7 @@ const TermsOfServicePage = () => {
 
                     <section>
                         <h2 className="text-2xl font-bold text-gray-900 mb-4">8. Limitation of Liability</h2>
-                        <p className="mb-4">ProtAcc shall not be liable for:</p>
+                        <p className="mb-4">Protacc shall not be liable for:</p>
                         <ul className="list-disc pl-6 space-y-2 mb-4">
                             <li>Any indirect or consequential loss</li>
                             <li>Rejection of applications due to incorrect client information</li>
@@ -220,7 +220,7 @@ const TermsOfServicePage = () => {
                             <li>
                                 <span className="font-medium text-gray-900">Website:</span>{' '}
                                 <Link to="/" className="text-indigo-600 hover:text-indigo-800 font-medium">
-                                    ProtAcc
+                                    Protacc
                                 </Link>
                             </li>
                             <li className="flex items-center gap-2">

@@ -92,7 +92,7 @@ const ResetPasswordPage = () => {
                     <div className="text-center mb-8">
                         <h1 className="text-3xl font-extrabold text-gray-900">Set New Password</h1>
                         <p className="text-sm text-gray-600 mt-2">
-                            Choose a strong password for your ProtAcc account
+                            Choose a strong password for your Protacc account
                         </p>
                     </div>
 

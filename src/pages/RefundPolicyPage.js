@@ -27,13 +27,13 @@ const RefundPolicyPage = () => {
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Refund Policy</h1>
                     <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                        Terms under which refunds may or may not be provided for ProtAcc services.
+                        Terms under which refunds may or may not be provided for Protacc services.
                     </p>
                 </div>
 
                 <article className="bg-white rounded-3xl shadow-xl p-8 md:p-12 text-gray-700 leading-relaxed">
                     <p className="mb-6">
-                        Welcome to <strong>ProtAcc</strong>. At ProtAcc, we strive to provide high-quality
+                        Welcome to <strong>Protacc</strong>. At Protacc, we strive to provide high-quality
                         professional services related to taxation, compliance, accounting, registration, and
                         consultancy. This Refund Policy explains the terms under which refunds may or may not be
                         provided.
@@ -46,7 +46,7 @@ const RefundPolicyPage = () => {
                             stage of work completed and resources already utilized.
                         </p>
                         <p>
-                            By purchasing any service from ProtAcc, you agree to this Refund Policy.
+                            By purchasing any service from Protacc, you agree to this Refund Policy.
                         </p>
                     </section>
 
@@ -144,7 +144,7 @@ const RefundPolicyPage = () => {
 
                     <section>
                         <h2 className="text-2xl font-bold text-gray-900 mb-4">7. Limitation of Liability</h2>
-                        <p className="mb-4">ProtAcc shall not be responsible for:</p>
+                        <p className="mb-4">Protacc shall not be responsible for:</p>
                         <ul className="list-disc pl-6 space-y-2">
                             <li>Delays caused by government departments/portals</li>
                             <li>Technical failures beyond our control</li>
@@ -171,7 +171,7 @@ const RefundPolicyPage = () => {
                             <li>
                                 <span className="font-medium text-gray-900">Website:</span>{' '}
                                 <Link to="/" className="text-indigo-600 hover:text-indigo-800 font-medium">
-                                    ProtAcc
+                                    Protacc
                                 </Link>
                             </li>
                             <li className="flex items-center gap-2">

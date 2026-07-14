@@ -545,7 +545,7 @@ const ContactPage = () => {
 
                     <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
                         <iframe
-                            title="ProtAcc office location"
+                            title="Protacc office location"
                             src={`https://www.google.com/maps?q=${encodeURIComponent(SITE_CONTACT.address.full)}&output=embed`}
                             width="100%"
                             height="420"
@@ -586,11 +586,11 @@ const ContactPage = () => {
                     <div className="space-y-6">
                         {[
                             {
-                                question: "How quickly does ProtAcc respond to inquiries?",
+                                question: "How quickly does Protacc respond to inquiries?",
                                 answer: "We typically respond to all inquiries within 24 hours during business days. For urgent matters, you can call us directly for immediate assistance."
                             },
                             {
-                                question: "Does ProtAcc offer free consultations?",
+                                question: "Does Protacc offer free consultations?",
                                 answer: "Yes, we offer a free initial consultation to understand your requirements and provide preliminary guidance on the best approach for your business needs."
                             },
                             {
@@ -598,11 +598,11 @@ const ContactPage = () => {
                                 answer: "The required documents vary by service. During our initial consultation, we'll provide you with a comprehensive list of documents specific to your requirements."
                             },
                             {
-                                question: "Does ProtAcc serve clients across India?",
+                                question: "Does Protacc serve clients across India?",
                                 answer: "Absolutely! We serve clients across India and have experience with regulations in all major states. Many of our services can be handled remotely through digital communication and secure document sharing."
                             },
                             {
-                                question: "Does ProtAcc provide on-site support at the client's location?",
+                                question: "Does Protacc provide on-site support at the client's location?",
                                 answer: "Yes, we provide on-site support and visit client locations whenever required for audits, compliance reviews, business consultations, and other professional services, ensuring personalized assistance wherever our clients are located."
                             }
                         ].map((faq, index) => (
