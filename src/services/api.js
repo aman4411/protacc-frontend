@@ -354,6 +354,27 @@ export const deleteCategory = async (categoryId) => {
     }
 };
 
+// Admin Cache Management
+export const getCacheStats = async () => {
+    try {
+        const response = await api.get('/admin/cache');
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to fetch cache stats';
+    }
+};
+
+export const purgeCache = async (prefix = '') => {
+    try {
+        const response = await api.post('/admin/cache/purge', null, {
+            params: prefix ? { prefix } : {},
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data?.error || 'Failed to purge cache';
+    }
+};
+
 // Admin Settings Management
 export const getAllSettings = async () => {
     try {

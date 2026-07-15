@@ -1,5 +1,19 @@
 # Canonical host: redirect www -> apex (301)
 https://www.protacc.in/*   https://protacc.in/:splat   301!
 
+# Legacy URLs from the previous PHP site on this domain. They no longer exist,
+# but Google keeps re-crawling them and logging soft-404s (the SPA fallback
+# below would otherwise serve them a 200). Return 410 Gone so Google drops them
+# permanently and stops wasting crawl budget.
+/page.php        /index.html   410
+/view_blog.php   /index.html   410
+/lib/*           /index.html   410
+/utils/*         /index.html   410
+/cgi-sys/*       /index.html   410
+
+# Fix legacy slug typo (double "L") -> canonical slug, with a real 301 so any
+# accrued signal passes to the correct URL.
+/services/gstr-1-filling   /services/gstr-1-filing   301!
+
 # SPA fallback (client-side routing)
 /*    /index.html   200

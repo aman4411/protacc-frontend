@@ -16,7 +16,8 @@ import {
     FaStar,
     FaTags,
     FaCalendarAlt,
-    FaPenNib
+    FaPenNib,
+    FaDatabase
 } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 
@@ -38,6 +39,7 @@ const AdminLayout = ({ children }) => {
         { name: 'Contact Management', path: '/admin/contacts', icon: FaEnvelope },
         { name: 'Priority Management', path: '/admin/priority', icon: FaSortNumericDown },
         { name: 'Reports & Analytics', path: '/admin/reports', icon: FaChartLine },
+        { name: 'Cache Management', path: '/admin/cache', icon: FaDatabase },
         { name: 'System Settings', path: '/admin/settings', icon: FaCog }
     ];
 
